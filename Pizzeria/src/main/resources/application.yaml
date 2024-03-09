@@ -1,0 +1,11 @@
+server:
+  port: 8084
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/Pizzeria
+    username: postgres
+    password: 1
