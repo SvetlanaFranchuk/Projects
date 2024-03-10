@@ -7,6 +7,7 @@
 - доменная модель
 - слой персистентности
 - https://docs.google.com/document/d/1IGQ_n4nNZmuaksHzg2kVGd0BTzHNFlWaRiBoeUFZl6M/edit?usp=sharing
+
 ***осталось***
 - обмен данными
 - представления
