@@ -33,15 +33,15 @@ public class OrderDetails {
     @Column(name = "delivery_date_time")
     private LocalDateTime deliveryDateTime;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type_bonus")
+    private TypeBonus typeBonus;
+
     @OneToOne
     private Order order;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pizza> pizzas = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Bonus> bonuses = new ArrayList<>();
-
 
     public void addPizza(Pizza pizza){
         pizzas.add(pizza);
@@ -51,13 +51,4 @@ public class OrderDetails {
         pizzas.remove(pizza);
     }
 
-    public void addBonus(Bonus bonus){
-        bonuses.add(bonus);
-        bonus.setOrderDetails(this);
-    }
-
-    public void removeBonus(Bonus bonus){
-        bonuses.remove(bonus);
-        bonus.setOrderDetails(null);
-    }
 }

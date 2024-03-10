@@ -11,6 +11,7 @@ import org.example.pizzeria.entity.benefits.Review;
 import org.example.pizzeria.entity.order.Basket;
 import org.example.pizzeria.entity.order.Order;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -61,14 +62,14 @@ public class UserApp {
     @Column(name = "role")
     private Role role;
 
+    @Embedded
+    private Bonus bonus;
+
     @OneToOne(cascade = CascadeType.REMOVE)
     private Basket basket;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Favorites> favorites = new HashSet<>();
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Bonus> bonuses = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Review> reviews = new HashSet<>();
@@ -85,16 +86,6 @@ public class UserApp {
     public void removeFavorites(Favorites favorite) {
         favorites.remove(favorite);
         favorite.setUserApp(null);
-    }
-
-    public void addBonus(Bonus bonus) {
-        bonuses.add(bonus);
-        bonus.setUserApp(this);
-    }
-
-    public void removeBonus(Bonus bonus) {
-        bonuses.remove(bonus);
-        bonus.setUserApp(null);
     }
 
     public void addReview(Review review) {

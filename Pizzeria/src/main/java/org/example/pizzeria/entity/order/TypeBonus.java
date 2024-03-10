@@ -1,4 +1,4 @@
-package org.example.pizzeria.entity.benefits;
+package org.example.pizzeria.entity.order;
 
 public enum TypeBonus {
     DISCOUNT_50,
