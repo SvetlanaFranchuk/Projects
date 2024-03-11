@@ -1,18 +1,9 @@
 # Хронология проекта
 
 #### 10.03.2024
-### В ТЗ описано:
-- схема работы приложения, 
-- сущности и связи между ними,
-- доменная модель
-- слой персистентности
-- https://docs.google.com/document/d/1IGQ_n4nNZmuaksHzg2kVGd0BTzHNFlWaRiBoeUFZl6M/edit?usp=sharing
+### Техническое задание
 
-***осталось***
-- обмен данными
-- представления
-- безопасность
-- перечень используемых технологий
+- https://docs.google.com/document/d/1IGQ_n4nNZmuaksHzg2kVGd0BTzHNFlWaRiBoeUFZl6M/edit?usp=sharing
 
 ### В проекте:
 - добавлены entity
