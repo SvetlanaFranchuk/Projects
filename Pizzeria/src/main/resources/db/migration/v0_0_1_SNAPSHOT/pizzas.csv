@@ -1,0 +1,30 @@
+title,description,styles,toppings_fillings,size,is_standard_recipe,dough_id
+Tim Burr,description for Tim Burr,SPECIALITY,SEAFOOD,MEDIUM,false,6
+Bart Ender,description for Bart Ender,CLASSIC_ITALIAN,CHEESE,SMALL,false,2
+Colin Allcars,description for Colin Allcars,SPECIALITY,VEGETABLES,LARGE,true,5
+Mike Raffone,description for Mike Raffone,CLASSIC_ITALIAN,CHEESE,SMALL,false,6
+Carrie A. Tune,description for Carrie A. Tune,AMERICAN,VEGETABLES,SMALL,false,1
+Gladys Eeya,description for Gladys Eeya,AMERICAN,VEGETABLES,LARGE,true,3
+Kenny Penny,description for Kenny Penny,SPECIALITY,CHEESE,LARGE,true,1
+Polly Dent,description for Polly Dent,CLASSIC_ITALIAN,SEAFOOD,SMALL,true,1
+Kat Toy,description for Kat Toy,AMERICAN,SEAFOOD,LARGE,true,3
+Bonnie Ann Clyde,description for Bonnie Ann Clyde,AMERICAN,SEAFOOD,LARGE,true,4
+Michelle Lynn,description for Michelle Lynn,SPECIALITY,SEAFOOD,MEDIUM,true,1
+Owen Big,description for Owen Big,AMERICAN,CHEESE,SMALL,true,4
+Ricky T. Ladder,description for Ricky T. Ladder,AMERICAN,MEAT,MEDIUM,false,4
+Ed Jewcation,description for Ed Jewcation,CLASSIC_ITALIAN,SEAFOOD,LARGE,false,2
+Anna Sasin,description for Anna Sasin,CLASSIC_ITALIAN,SEAFOOD,MEDIUM,false,2
+Maude L. T. Ford,description for Maude L. T. Ford,AMERICAN,CHEESE,LARGE,false,2
+I. D. Clair,description for I. D. Clair,CLASSIC_ITALIAN,MEAT,LARGE,true,3
+Ryan Carnation,description for Ryan Carnation,CLASSIC_ITALIAN,VEGETABLES,MEDIUM,false,1
+Les Moore,description for Les Moore,AMERICAN,MEAT,LARGE,false,1
+Jed Dye,description for Jed Dye,SPECIALITY,SEAFOOD,MEDIUM,false,1
+Skip Roper,description for Skip Roper,SPECIALITY,VEGETABLES,MEDIUM,true,3
+Dennis Toffice,description for Dennis Toffice,CLASSIC_ITALIAN,VEGETABLES,MEDIUM,true,5
+Lou Briccant,description for Lou Briccant,SPECIALITY,MEAT,MEDIUM,true,4
+Rose Gardner,description for Rose Gardner,CLASSIC_ITALIAN,CHEESE,SMALL,true,3
+Rich Feller,description for Rich Feller,CLASSIC_ITALIAN,VEGETABLES,LARGE,false,4
+Sandy Beech,description for Sandy Beech,AMERICAN,CHEESE,LARGE,false,2
+Sue Case,description for Sue Case,AMERICAN,MEAT,MEDIUM,true,2
+Sid Down,description for Sid Down,SPECIALITY,VEGETABLES,LARGE,true,2
+Howie Doohan,description for Howie Doohan,AMERICAN,SEAFOOD,SMALL,true,1
