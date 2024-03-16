@@ -1,6 +1,0 @@
-databaseChangeLog:
-  - include:
-      file: db/migration/v0_0_1_SNAPSHOT/create-tables-structure.yaml
-  - include:
-      file: db/migration/v0_0_1_SNAPSHOT/insert-tables-product.yaml
-
