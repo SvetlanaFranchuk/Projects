@@ -1,0 +1,3 @@
+databaseChangeLog:
+  - include:
+      file: db/migration/v0_0_1_SNAPSHOT/v0.0.1-master.yaml

@@ -1,0 +1,30 @@
+title,description,styles,toppings_fillings,size,is_standard_recipe,amount,nutrition,dough_id
+Lisa Honda,description for Lisa Honda,CLASSIC_ITALIAN,SEAFOOD,SMALL,false,13,1450,6
+Bertha D. Blues,description for Bertha D. Blues,CLASSIC_ITALIAN,VEGETABLES,MEDIUM,true,17,1286,5
+Andy Structible,description for Andy Structible,AMERICAN,CHEESE,MEDIUM,true,20,1396,2
+Al B. Zienya,description for Al B. Zienya,SPECIALITY,MEAT,SMALL,false,17,1001,3
+Val Crow,description for Val Crow,AMERICAN,VEGETABLES,SMALL,true,19,1366,5
+Ken Dahl,description for Ken Dahl,CLASSIC_ITALIAN,CHEESE,SMALL,true,14,1454,5
+Ty Tannick,description for Ty Tannick,CLASSIC_ITALIAN,VEGETABLES,SMALL,true,15,1108,3
+Marge Innastraightline,description for Marge Innastraightline,AMERICAN,CHEESE,MEDIUM,false,14,1046,5
+Shandy Lear,description for Shandy Lear,SPECIALITY,SEAFOOD,SMALL,true,18,1157,2
+Agatha L. Outtathere,description for Agatha L. Outtathere,AMERICAN,SEAFOOD,SMALL,true,14,1080,5
+Lynn O. Liam,description for Lynn O. Liam,SPECIALITY,SEAFOOD,LARGE,false,13,1464,5
+Warren Piece,description for Warren Piece,SPECIALITY,SEAFOOD,SMALL,false,17,1082,5
+Max Little,description for Max Little,AMERICAN,MEAT,MEDIUM,false,15,1243,5
+Louise E. Anna,description for Louise E. Anna,CLASSIC_ITALIAN,SEAFOOD,MEDIUM,true,16,1643,3
+Crystal Glass,description for Crystal Glass,CLASSIC_ITALIAN,MEAT,MEDIUM,false,17,1263,6
+Harry Beard,description for Harry Beard,SPECIALITY,SEAFOOD,SMALL,false,21,1148,2
+Freida Convict,description for Freida Convict,AMERICAN,SEAFOOD,SMALL,true,19,1643,3
+Frank Furter,description for Frank Furter,AMERICAN,MEAT,MEDIUM,false,14,1439,1
+Joy Rider,description for Joy Rider,SPECIALITY,VEGETABLES,SMALL,false,0,0,2
+Anna Prentice,description for Anna Prentice,CLASSIC_ITALIAN,VEGETABLES,LARGE,false,14,1266,6
+Sal Sage,description for Sal Sage,SPECIALITY,VEGETABLES,SMALL,false,10,1281,3
+Oliver Sutton,description for Oliver Sutton,AMERICAN,MEAT,SMALL,false,14,1262,4
+Chris P. Nugget,description for Chris P. Nugget,SPECIALITY,CHEESE,SMALL,false,13,1594,1
+Milton Yermouth,description for Milton Yermouth,AMERICAN,MEAT,LARGE,true,17,1362,4
+Robin DeCraydle,description for Robin DeCraydle,CLASSIC_ITALIAN,SEAFOOD,MEDIUM,false,18,873,4
+Brandon Cattell,description for Brandon Cattell,CLASSIC_ITALIAN,VEGETABLES,SMALL,false,21,1427,4
+Al Fresco,description for Al Fresco,AMERICAN,SEAFOOD,LARGE,true,22,1342,4
+Mark Mywords,description for Mark Mywords,SPECIALITY,SEAFOOD,LARGE,false,19,1303,3
+Shanda Lear,description for Shanda Lear,AMERICAN,VEGETABLES,LARGE,false,21,1440,6
