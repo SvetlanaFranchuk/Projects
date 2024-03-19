@@ -6,5 +6,7 @@ public class ErrorMessage {
     public static final String USER_ALREADY_EXIST = "User has already exist";
     public static final String DATA_IS_NULL = "Date is null";
     public static final String USER_REVIEW_NOT_FOUND = "User doesn`t have any reviews";
+    public static final String USER_BLOCKED = "User can`t stay review";
+    public static final String CANT_REVIEW_UPDATED = "User can`t update review";
 
 }

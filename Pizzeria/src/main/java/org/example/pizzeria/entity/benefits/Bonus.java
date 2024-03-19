@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 public class Bonus {
 
     @Column(name = "count_orders")
-    private int countOrders;
+    private Integer countOrders;
 
     @Column(name = "sum_orders")
-    private double sumOrders;
+    private Double sumOrders;
 
 }

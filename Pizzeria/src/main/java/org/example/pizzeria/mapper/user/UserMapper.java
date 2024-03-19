@@ -1,5 +1,8 @@
 package org.example.pizzeria.mapper.user;
 
+//import org.example.pizzeria.dto.user.UserBlockedResponseDto;
+//import org.example.pizzeria.dto.user.UserBonusDto;
+//import org.example.pizzeria.dto.user.UserResponseDto;
 import org.example.pizzeria.dto.user.UserBlockedResponseDto;
 import org.example.pizzeria.dto.user.UserBonusDto;
 import org.example.pizzeria.dto.user.UserResponseDto;
@@ -30,9 +33,7 @@ public interface UserMapper {
 
     UserResponseDto toUserResponseDto(UserApp userApp);
 
-    @Mapping(target = "countOrders", source = "bonus.countOrders")
-    @Mapping(target = "sumOrders", source = "bonus.sumOrders")
-    UserBonusDto toUserBonusDto(Bonus bonus);
+    UserBonusDto toUserBonusDto(Integer countOrders, Double sumOrders);
 
     UserBlockedResponseDto toUserBlockedResponseDto(Long id, String userName, boolean isBlocked, LocalDateTime reviewDate);
 }

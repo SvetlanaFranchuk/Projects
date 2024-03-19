@@ -22,11 +22,11 @@ import java.util.Set;
 @Builder
 @Entity
 @Table(name = "users",
-uniqueConstraints = {
-        @UniqueConstraint(columnNames = "userName"),
-        @UniqueConstraint(columnNames = "email")
-})
-public class UserApp  {
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "userName"),
+                @UniqueConstraint(columnNames = "email")
+        })
+public class UserApp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

@@ -21,5 +21,6 @@ public class UserBlockedResponseDto {
     @Schema(description = "is blocked")
     @BooleanFlag
     private  boolean isBlocked;
+    @Schema(description = "data review")
     private  @PastOrPresent LocalDateTime reviewDate;
 }

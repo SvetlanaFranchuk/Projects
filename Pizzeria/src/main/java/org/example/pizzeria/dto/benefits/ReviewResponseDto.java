@@ -19,7 +19,6 @@ public record ReviewResponseDto(
         @Size(min = 5, max = 25, message = "User name length could be from 5 to 25 symbols")
         String userName,
         @Schema(description = "Data reviews", example = "2004-08-29")
-        @CreationTimestamp
         LocalDateTime reviewDate
 ) {
 }

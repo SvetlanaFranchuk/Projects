@@ -23,12 +23,5 @@ public interface UserRepository extends JpaRepository<UserApp, Long> {
     Boolean existsUserAppByUserName(String userName);
     Boolean existsUserAppByEmail(String email);
     List<UserApp> findAllByUserNameAndEmail(String UserName, String email);
-    UserApp updateUserAppByIdAndPasswordAndEmailAndBirthDateAndAddressAndPhoneNumber(Long id, String password,
-                        String email, LocalDate birthDate, Address address, ContactInformation phoneNumber);
-
-    UserApp updateUserAppByBonus(UserApp userApp, Bonus bonus);
-    @Modifying
-    @Query("UPDATE UserApp u SET u.isBlocked = :isBlocked WHERE u.id = :userId")
-    UserApp updateUserBlockedStatus(@Param("userId") Long userId, @Param("isBlocked") boolean isBlocked);
 
 }

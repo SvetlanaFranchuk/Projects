@@ -55,9 +55,6 @@ class UserServiceImplTest {
     private static final UserResponseDto USER_RESPONSE_DTO = new UserResponseDto("IvanAdmin",
             "iv.admin@pizzeria.com", LocalDate.of(2000, 1, 15), ADDRESS,
             CONTACT_INFORMATION);
-    private static final UserResponseDto USER_RESPONSE_DTO_2 = new UserResponseDto("IvanAdmin",
-            "iv.admin@pizzeria.com", LocalDate.of(2000, 1, 15), ADDRESS_NEW,
-            CONTACT_INFORMATION_NEW);
     private static final UserApp USER_APP = UserApp.builder()
             .id(1L)
             .userName("IvanAdmin")
@@ -69,7 +66,7 @@ class UserServiceImplTest {
             .phoneNumber(CONTACT_INFORMATION)
             .isBlocked(false)
             .role(Role.CLIENT)
-            .bonus(new Bonus(0,0))
+            .bonus(new Bonus(0,0.0))
             .build();
     private static final UserApp USER_APP_NOT_BLOCKED = UserApp.builder()
             .id(2L)
@@ -82,7 +79,7 @@ class UserServiceImplTest {
             .phoneNumber(CONTACT_INFORMATION)
             .isBlocked(false)
             .role(Role.CLIENT)
-            .bonus(new Bonus(0,0))
+            .bonus(new Bonus(0,0.0))
             .build();
     private static final UserApp USER_APP_BLOCKED = UserApp.builder()
             .id(2L)
@@ -95,27 +92,13 @@ class UserServiceImplTest {
             .phoneNumber(CONTACT_INFORMATION)
             .isBlocked(true)
             .role(Role.CLIENT)
-            .bonus(new Bonus(0,0))
+            .bonus(new Bonus(0,0.0))
             .build();
-    private static final UserApp USER_APP_NEW = UserApp.builder()
-            .id(1L)
-            .userName("IvanAdmin")
-            .password("12345")
-            .email("iv.admin@pizzeria.com")
-            .birthDate(LocalDate.of(2000, 1, 15))
-            .dateRegistration(LocalDate.now())
-            .address(ADDRESS_NEW)
-            .phoneNumber(CONTACT_INFORMATION_NEW)
-            .isBlocked(false)
-            .role(Role.CLIENT)
-            .bonus(new Bonus(0,0))
-            .build();
-    private static final ReviewResponseDto REVIEW_RESPONSE_DTO = new ReviewResponseDto("I like pizza Margaritta",
-            10, "IvanAdmin", LocalDateTime.of(2024, 3, 17, 7, 20));
+
     private static final UserBlockedResponseDto USER_BLOCKED_RESPONSE_DTO = new UserBlockedResponseDto(2L,
-            "TestClient", true, LocalDateTime.of(2024,3,17, 7,15));
+            "TestClient", true, LocalDateTime.now());
     private static final Review REVIEW = new Review(1L, "Bad comment", 0,
-            LocalDateTime.of(2024,3,17, 7,15), USER_APP_BLOCKED);
+            LocalDateTime.of(2024,3,17, 7,15), USER_APP_NOT_BLOCKED);
 
     @Mock
     private UserRepository userRepository;
@@ -137,21 +120,19 @@ class UserServiceImplTest {
        }
     @Test
     void save() {
-        UserRegisterRequestDto candidate = USER_REGISTER_REQUEST_DTO;
-        UserApp userApp = USER_APP;
-        when(userMapper.toUserApp(candidate.userName(), candidate.password(),
-                        candidate.email(), candidate.birthDate(), ADDRESS,
+        when(userMapper.toUserApp(USER_REGISTER_REQUEST_DTO.userName(), USER_REGISTER_REQUEST_DTO.password(),
+                USER_REGISTER_REQUEST_DTO.email(), USER_REGISTER_REQUEST_DTO.birthDate(), ADDRESS,
                         CONTACT_INFORMATION, false, Role.CLIENT,
-                        new Bonus(0,0))).thenReturn(userApp);
+                        new Bonus(0,0.0))).thenReturn(USER_APP);
         UserResponseDto expectedResponseDto = USER_RESPONSE_DTO;
-        when(userRepository.save(userApp)).thenReturn(USER_APP);
-        when(userMapper.toUserResponseDto(userApp)).thenReturn(expectedResponseDto);
+        when(userRepository.save(USER_APP)).thenReturn(USER_APP);
+        when(userMapper.toUserResponseDto(USER_APP)).thenReturn(expectedResponseDto);
         Basket basket = new Basket();
-        basket.setUserApp(userApp);
+        basket.setUserApp(USER_APP);
         Favorites favorites = new Favorites();
-        favorites.setUserApp(userApp);
+        favorites.setUserApp(USER_APP);
 
-        UserResponseDto actualResponseDto = userServiceImpl.save(candidate);
+        UserResponseDto actualResponseDto = userServiceImpl.save(USER_REGISTER_REQUEST_DTO);
         assertEquals(expectedResponseDto, actualResponseDto);
         assertEquals("IvanAdmin", actualResponseDto.getUserName());
         verify(basketRepository, times(1)).save(basket);
@@ -160,24 +141,22 @@ class UserServiceImplTest {
 
     @Test
     void save_UserAlreadyExists() {
-        UserRegisterRequestDto requestDto = USER_REGISTER_REQUEST_DTO;
-        when(userRepository.findAllByUserNameAndEmail(requestDto.userName(),
-                requestDto.email())).thenReturn(Collections.singletonList(new UserApp()));
+        when(userRepository.findAllByUserNameAndEmail(USER_REGISTER_REQUEST_DTO.userName(),
+                USER_REGISTER_REQUEST_DTO.email())).thenReturn(Collections.singletonList(new UserApp()));
 
-        assertThrows(UserCreateError.class, () -> userServiceImpl.save(requestDto));
-        verify(userRepository).findAllByUserNameAndEmail(requestDto.userName(), requestDto.email());
+        assertThrows(UserCreateError.class, () -> userServiceImpl.save(USER_REGISTER_REQUEST_DTO));
+        verify(userRepository).findAllByUserNameAndEmail(USER_REGISTER_REQUEST_DTO.userName(), USER_REGISTER_REQUEST_DTO.email());
         verifyNoMoreInteractions(userRepository);
     }
     @Test
     void getUser() {
         Long userId = 1L;
-        UserApp userApp = USER_APP;
-        when(userRepository.getReferenceById(userId)).thenReturn(userApp);
-        when(userMapper.toUserResponseDto(userApp)).thenReturn(USER_RESPONSE_DTO);
+        when(userRepository.getReferenceById(userId)).thenReturn(USER_APP);
+        when(userMapper.toUserResponseDto(USER_APP)).thenReturn(USER_RESPONSE_DTO);
 
         UserResponseDto result = userServiceImpl.getUser(userId);
         assertEquals(USER_RESPONSE_DTO, result);
-        verify(userMapper, times(1)).toUserResponseDto(userApp);
+        verify(userMapper, times(1)).toUserResponseDto(USER_APP);
         verify(userRepository, times(1)).getReferenceById(userId);
     }
 
@@ -190,27 +169,13 @@ class UserServiceImplTest {
     }
 
     @Test
-    void update() {
-        Long id = 1L;
-        UserRequestDto requestDto = USER_REQUEST_DTO;
-        UserApp userApp = USER_APP;
-        UserApp updatedUserApp = USER_APP_NEW;
-        when(userRepository.getReferenceById(id)).thenReturn(userApp);
-        when(userRepository.updateUserAppByIdAndPasswordAndEmailAndBirthDateAndAddressAndPhoneNumber(id,
-                USER_REQUEST_DTO.password(),
-                USER_REQUEST_DTO.email(), USER_REQUEST_DTO.birthDate(), ADDRESS_NEW, CONTACT_INFORMATION_NEW))
-                .thenReturn(updatedUserApp);
-        when(userMapper.toUserResponseDto(updatedUserApp)).thenReturn(USER_RESPONSE_DTO_2);
+        public void update()  {
+            when(userRepository.getReferenceById(1L)).thenReturn(USER_APP);
 
-        UserResponseDto responseDto = userServiceImpl.update(id, requestDto);
-        assertNotNull(responseDto);
-        assertEquals(ADDRESS_NEW, responseDto.getAddress());
-        verify(userRepository).getReferenceById(id);
-        verify(userRepository).updateUserAppByIdAndPasswordAndEmailAndBirthDateAndAddressAndPhoneNumber(id,
-                USER_REQUEST_DTO.password(),
-                USER_REQUEST_DTO.email(), USER_REQUEST_DTO.birthDate(), ADDRESS_NEW, CONTACT_INFORMATION_NEW);
-        verify(userMapper).toUserResponseDto(updatedUserApp);
-    }
+            userServiceImpl.update(1L, USER_REQUEST_DTO);
+            assertEquals(ADDRESS_NEW, USER_APP.getAddress());
+            assertEquals(CONTACT_INFORMATION_NEW, USER_APP.getPhoneNumber());
+        }
 
     @Test
     void update_UserNotFound() {
@@ -247,7 +212,6 @@ class UserServiceImplTest {
         verifyNoInteractions(userMapper);
     }
 
-
     @Test
     void getUserByClientRole() {
         List<UserApp> users = new ArrayList<>();
@@ -280,40 +244,47 @@ class UserServiceImplTest {
 
     @Test
     void getUserBlocked() {
-//        List<UserApp> userList = List.of(USER_APP, USER_APP_BLOCKED);
-//        Review review = REVIEW;
-//
-//        when(reviewRepository.save(REVIEW)).thenReturn(review);
-//        when(userRepository.findAll()).thenReturn(userList);
-//        when(userMapper.toUserBlockedResponseDto(USER_APP_BLOCKED,
-//                LocalDateTime.of(2024,3,17, 7,15))).thenReturn(USER_BLOCKED_RESPONSE_DTO);
-//
-//        List<UserBlockedResponseDto> responseDtoList = userServiceImpl.getUserBlocked();
-//
-//        assertNotNull(responseDtoList);
-//        assertEquals(1, responseDtoList.size());
-//        assertEquals("TestClient", responseDtoList.get(1).userName());
-//        assertNotNull(responseDtoList.get(1).reviewDate());
-//
-//        verify(userRepository).findAll();
-//        verify(userMapper).toUserBlockedResponseDto(USER_APP, null);
-//        verify(userMapper, times(2)).toUserBlockedResponseDto(any(), any());
-//        verifyNoMoreInteractions(userRepository, userMapper);
-     }
+        LocalDateTime dateTime = LocalDateTime.now();
+        Review review1 = new Review(2L, "Bad review", 10, dateTime, USER_APP_BLOCKED);
 
+        when(userRepository.findAll()).thenReturn(List.of(USER_APP_BLOCKED));
+        when(reviewRepository.findAllByUserApp(USER_APP_BLOCKED)).thenReturn(List.of(review1));
+        when(userMapper.toUserBlockedResponseDto(2L, "TestClient", true, dateTime)).thenReturn(
+                new UserBlockedResponseDto(2L, "TestClient", true, dateTime));
+        List<UserBlockedResponseDto> result = userServiceImpl.getUserBlocked();
+
+        assertEquals(1, result.size());
+        assertEquals(USER_APP_BLOCKED.getUserName(), result.get(0).getUserName());
+        assertTrue(result.get(0).isBlocked());
+        }
 
     @Test
+    void getUserBlockedNoBlockedUsers() {
+        when(userRepository.findAll()).thenReturn(List.of(USER_APP));
+        List<UserBlockedResponseDto> result = userServiceImpl.getUserBlocked();
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+    @Test
     void changeBlockingUser() {
-        Long userId = 2L;
-        LocalDateTime reviewDate = LocalDateTime.of(2024,3,17, 7,15);
-        UserApp userApp = USER_APP_NOT_BLOCKED;
-        when(userRepository.getReferenceById(userId)).thenReturn(userApp);
-        when(reviewRepository.findLastMessageByUserId(userId)).thenReturn(REVIEW);
+        when(userRepository.getReferenceById(2L)).thenReturn(USER_APP_NOT_BLOCKED);
+        LocalDateTime reviewDate = LocalDateTime.now();
+        Review review1 = new Review(1L, "Good pizza", 10, reviewDate, USER_APP_NOT_BLOCKED);
+        when(reviewRepository.findAllByUserApp(USER_APP_NOT_BLOCKED)).thenReturn(List.of(review1));
+        when(userRepository.save(USER_APP_BLOCKED)).thenReturn(USER_APP_BLOCKED);
+        when(userMapper.toUserBlockedResponseDto(2L, USER_APP_BLOCKED.getUserName(), true, reviewDate))
+                .thenReturn(new UserBlockedResponseDto(2L, USER_APP_BLOCKED.getUserName(), true, reviewDate));
 
-        UserBlockedResponseDto responseDto = userServiceImpl.changeBlockingUser(2L, true);
-        assertEquals(userId, responseDto.getId());
-        assertEquals("TestClient", responseDto.getUserName());
-        assertTrue(responseDto.isBlocked());
-        assertEquals(reviewDate, responseDto.getReviewDate());
-   }
+        UserBlockedResponseDto result = userServiceImpl.changeBlockingUser(2L, true);
+        assertEquals(USER_BLOCKED_RESPONSE_DTO.getUserName(), result.getUserName());
+        assertEquals(USER_BLOCKED_RESPONSE_DTO.isBlocked(), result.isBlocked());
+    }
+    @Test
+    void changeBlockingNotFoundUser() {
+        Long userId=123L;
+        when(userRepository.getReferenceById(userId)).thenReturn(null);
+        assertThrows(UserNotFoundException.class, () -> userServiceImpl.changeBlockingUser(userId, true));
+        verifyNoMoreInteractions(reviewRepository);
+    }
 }
+
