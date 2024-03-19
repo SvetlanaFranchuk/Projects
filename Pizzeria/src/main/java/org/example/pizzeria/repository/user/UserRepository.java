@@ -1,7 +1,13 @@
 package org.example.pizzeria.repository.user;
 
+import org.example.pizzeria.entity.benefits.Bonus;
+import org.example.pizzeria.entity.user.Address;
+import org.example.pizzeria.entity.user.ContactInformation;
 import org.example.pizzeria.entity.user.UserApp;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -16,4 +22,13 @@ public interface UserRepository extends JpaRepository<UserApp, Long> {
     List<UserApp> findUserAppByBirthDate (LocalDate birthdate);
     Boolean existsUserAppByUserName(String userName);
     Boolean existsUserAppByEmail(String email);
+    List<UserApp> findAllByUserNameAndEmail(String UserName, String email);
+    UserApp updateUserAppByIdAndPasswordAndEmailAndBirthDateAndAddressAndPhoneNumber(Long id, String password,
+                        String email, LocalDate birthDate, Address address, ContactInformation phoneNumber);
+
+    UserApp updateUserAppByBonus(UserApp userApp, Bonus bonus);
+    @Modifying
+    @Query("UPDATE UserApp u SET u.isBlocked = :isBlocked WHERE u.id = :userId")
+    UserApp updateUserBlockedStatus(@Param("userId") Long userId, @Param("isBlocked") boolean isBlocked);
+
 }
