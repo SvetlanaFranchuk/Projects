@@ -1,6 +1,5 @@
 package org.example.pizzeria.service.user;
 
-import org.example.pizzeria.dto.benefits.ReviewResponseDto;
 import org.example.pizzeria.dto.user.UserBlockedResponseDto;
 import org.example.pizzeria.dto.user.UserRegisterRequestDto;
 import org.example.pizzeria.dto.user.UserRequestDto;
@@ -13,10 +12,9 @@ import org.example.pizzeria.entity.user.Address;
 import org.example.pizzeria.entity.user.ContactInformation;
 import org.example.pizzeria.entity.user.Role;
 import org.example.pizzeria.entity.user.UserApp;
-import org.example.pizzeria.exeption.DateIsNullException;
-import org.example.pizzeria.exeption.UserCreateError;
-import org.example.pizzeria.exeption.UserNotFoundException;
-import org.example.pizzeria.mapper.benefits.ReviewMapper;
+import org.example.pizzeria.exception.DateIsNullException;
+import org.example.pizzeria.exception.user.UserCreateError;
+import org.example.pizzeria.exception.user.UserNotFoundException;
 import org.example.pizzeria.mapper.user.UserMapper;
 import org.example.pizzeria.repository.benefits.FavoritesRepository;
 import org.example.pizzeria.repository.benefits.ReviewRepository;

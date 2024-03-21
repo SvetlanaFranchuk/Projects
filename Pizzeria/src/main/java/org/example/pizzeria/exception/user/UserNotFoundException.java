@@ -1,4 +1,4 @@
-package org.example.pizzeria.exeption;
+package org.example.pizzeria.exception.user;
 
 public class UserNotFoundException extends RuntimeException{
     public UserNotFoundException(String message) {

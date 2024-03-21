@@ -4,7 +4,7 @@ import org.example.pizzeria.dto.user.UserBonusDto;
 import org.example.pizzeria.entity.benefits.Bonus;
 import org.example.pizzeria.entity.user.Role;
 import org.example.pizzeria.entity.user.UserApp;
-import org.example.pizzeria.exeption.UserNotFoundException;
+import org.example.pizzeria.exception.user.UserNotFoundException;
 import org.example.pizzeria.mapper.user.UserMapper;
 import org.example.pizzeria.repository.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
