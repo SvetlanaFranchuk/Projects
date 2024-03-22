@@ -1,4 +1,4 @@
-package org.example.pizzeria.exeption;
+package org.example.pizzeria.exception.user;
 
 import org.springframework.security.access.AccessDeniedException;
 

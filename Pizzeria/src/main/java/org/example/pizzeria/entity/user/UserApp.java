@@ -1,10 +1,7 @@
 package org.example.pizzeria.entity.user;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.pizzeria.entity.benefits.Bonus;
 import org.example.pizzeria.entity.benefits.Favorites;
 import org.example.pizzeria.entity.benefits.Review;
@@ -19,6 +16,8 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"orders", "reviews"})
+@EqualsAndHashCode(exclude = {"orders", "reviews"})
 @Builder
 @Entity
 @Table(name = "users",

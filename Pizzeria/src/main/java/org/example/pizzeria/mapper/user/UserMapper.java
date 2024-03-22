@@ -1,8 +1,5 @@
 package org.example.pizzeria.mapper.user;
 
-//import org.example.pizzeria.dto.user.UserBlockedResponseDto;
-//import org.example.pizzeria.dto.user.UserBonusDto;
-//import org.example.pizzeria.dto.user.UserResponseDto;
 import org.example.pizzeria.dto.user.UserBlockedResponseDto;
 import org.example.pizzeria.dto.user.UserBonusDto;
 import org.example.pizzeria.dto.user.UserResponseDto;

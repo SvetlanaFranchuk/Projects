@@ -1,4 +1,4 @@
-package org.example.pizzeria.exeption;
+package org.example.pizzeria.exception;
 
 public class DateIsNullException extends RuntimeException {
     public DateIsNullException(String message) {
