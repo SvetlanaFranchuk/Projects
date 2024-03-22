@@ -88,13 +88,13 @@ class ProductServiceImpl_Test_Favorites {
     private static final Pizza PIZZA_3 = new Pizza(3L, "Test3Carbonara",
             "Description for pizza Carbonara", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
             TypeBySize.LARGE, true, (0.2 + 0.4 + 0.23) * 1.7, 493, DOUGH, List.of(INGREDIENT_1, INGREDIENT_2));
-    private static final PizzaResponseDto PIZZA_RESPONSE_DTO = new PizzaResponseDto("Margarita",
+    private static final PizzaResponseDto PIZZA_RESPONSE_DTO = new PizzaResponseDto(1L, "Margarita",
             "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
             TypeBySize.MEDIUM, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList, (0.2 + 0.4 + 0.23) * 1.3, 377);
-    private static final PizzaResponseDto PIZZA_RESPONSE_DTO_2 = new PizzaResponseDto("Carbonara",
+    private static final PizzaResponseDto PIZZA_RESPONSE_DTO_2 = new PizzaResponseDto(2L, "Carbonara",
             "Description for pizza Carbonara", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
             TypeBySize.LARGE, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList, (0.2 + 0.4 + 0.23) * 1.7, 493);
-    private static final PizzaResponseDto PIZZA_RESPONSE_DTO_3 = new PizzaResponseDto("Test3Carbonara",
+    private static final PizzaResponseDto PIZZA_RESPONSE_DTO_3 = new PizzaResponseDto(3L, "Test3Carbonara",
             "Description for pizza Carbonara", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
             TypeBySize.LARGE, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList, (0.2 + 0.4 + 0.23) * 1.7, 493);
 

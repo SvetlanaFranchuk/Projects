@@ -74,10 +74,10 @@ class ProductServiceImpl_Test_Pizza {
             "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
             TypeBySize.LARGE, true, (0.2 + 0.4 + 0.23) * 1.7, 493, DOUGH, List.of(INGREDIENT_1, INGREDIENT_2));
 
-    private static final PizzaResponseDto PIZZA_RESPONSE_DTO = new PizzaResponseDto("Margarita",
+    private static final PizzaResponseDto PIZZA_RESPONSE_DTO = new PizzaResponseDto(1L, "Margarita",
             "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
             TypeBySize.MEDIUM, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList, (0.2 + 0.4 + 0.23) * 1.3, 377);
-    private static final PizzaResponseDto PIZZA_RESPONSE_DTO_NEW = new PizzaResponseDto("Margarita",
+    private static final PizzaResponseDto PIZZA_RESPONSE_DTO_NEW = new PizzaResponseDto(1L, "Margarita",
             "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
             TypeBySize.LARGE, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList, (0.2 + 0.4 + 0.23) * 1.7, 493);
     private static final UserApp USER_APP = UserApp.builder()

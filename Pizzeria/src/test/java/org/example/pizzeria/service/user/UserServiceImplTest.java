@@ -95,9 +95,6 @@ class UserServiceImplTest {
 
     private static final UserBlockedResponseDto USER_BLOCKED_RESPONSE_DTO = new UserBlockedResponseDto(2L,
             "TestClient", true, LocalDateTime.now());
-    private static final Review REVIEW = new Review(1L, "Bad comment", 0,
-            LocalDateTime.of(2024,3,17, 7,15), USER_APP_NOT_BLOCKED);
-
     @Mock
     private UserRepository userRepository;
     @Mock

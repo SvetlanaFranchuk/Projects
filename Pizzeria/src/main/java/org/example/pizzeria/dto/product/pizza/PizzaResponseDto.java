@@ -14,6 +14,7 @@ import java.util.List;
 
 @Schema(description = "Form for reading recipe of pizza")
 public record PizzaResponseDto(
+        Long id,
         @Schema(description = "Title")
         @NotNull(message = "Field must be filled in")
         @Size(min = 5, max = 35, message = "Title length of pizza should be from 5 to 35 symbols")

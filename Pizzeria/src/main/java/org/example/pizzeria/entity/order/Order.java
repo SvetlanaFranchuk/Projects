@@ -1,18 +1,19 @@
 package org.example.pizzeria.entity.order;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.example.pizzeria.entity.benefits.Review;
 import org.example.pizzeria.entity.user.UserApp;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"orderDetail"})
+@EqualsAndHashCode(exclude = {"orderDetail"})
 @Builder
 @Entity
 @Table(name = "orders")
@@ -42,4 +43,16 @@ public class Order {
     @ManyToOne
     private UserApp userApp;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order)  o;
+        return Objects.equals(id, order.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

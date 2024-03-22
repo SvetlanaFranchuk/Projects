@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -91,7 +92,9 @@ private DoughMapper doughMapper;
         Dough dough = new Dough(1, TypeDough.CORNMEAL, 130, 140, 0.23);
         when(doughRepository.findById(1)).thenReturn(Optional.of(dough));
         when(pizzaRepository.findAllByDoughIs(dough)).thenReturn(Collections.emptyList());
-        productService.deleteDough(1);
+        assertDoesNotThrow(() -> productService.deleteDough(1));
+        verify(doughRepository).findById(1);
+        verify(doughRepository).delete(dough);
     }
     @Test
     void deleteDough_DoughNotFound() {
