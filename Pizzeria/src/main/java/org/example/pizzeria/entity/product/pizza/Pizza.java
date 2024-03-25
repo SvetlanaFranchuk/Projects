@@ -45,7 +45,7 @@ public class Pizza {
     private TypeBySize size;
 
     @Column(name = "is_standard_recipe")
-    private boolean isStandardRecipe;
+    private boolean standardRecipe;
 
     @Column(name = "amount")
     private Double amount;

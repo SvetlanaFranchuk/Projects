@@ -21,7 +21,7 @@ public interface UserService {
 
     List<UserBlockedResponseDto> getUserBlocked();
 
-    UserBlockedResponseDto changeBlockingUser(Long id, boolean isBlocked);
+    UserBlockedResponseDto changeUserBlocking (Long id, boolean isBlocked);
 
     UserBonusDto getUserBonus(Long userId);
 

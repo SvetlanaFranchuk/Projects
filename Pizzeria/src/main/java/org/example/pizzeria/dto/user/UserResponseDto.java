@@ -1,10 +1,7 @@
 package org.example.pizzeria.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.example.pizzeria.entity.user.Address;
@@ -23,7 +20,7 @@ public class UserResponseDto {
     @Schema(description = "e-mail")
     private  @Email @NotBlank String email;
     @Schema(description = "User birthday in format yyyy-MM-dd", example = "2004-08-29")
-    private  @Past(message = "Date of birth must be in the past") LocalDate birthDate;
+    private  @NotNull @Past(message = "Date of birth must be in the past") LocalDate birthDate;
     @Schema(description = "This address is used for default delivery from user")
     private  Address address;
     @Schema(description = "Phone number")

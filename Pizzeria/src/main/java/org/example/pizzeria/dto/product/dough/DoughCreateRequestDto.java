@@ -6,11 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.example.pizzeria.entity.product.ingredient.TypeDough;
 
-@Schema(description = "Form for read information about dough")
-public record DoughResponseDto(
-        @Schema(description = "ID dough")
-        int id,
-
+@Schema(description = "Form for create dough")
+public record DoughCreateRequestDto(
         @Schema(description = "Type of dough")
         @NotNull(message = "Field must be filled in") TypeDough typeDough,
 
@@ -21,6 +18,5 @@ public record DoughResponseDto(
         @NotNull(message = "Field must be filled in") @Positive @Max(600) int smallNutrition,
 
         @Schema(description = "Price for small pizza")
-        @NotNull(message = "Field must be filled in") @Positive double smallPrice){
-
+        @NotNull(message = "Field must be filled in") @Positive double smallPrice) {
 }

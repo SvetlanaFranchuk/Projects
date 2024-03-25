@@ -88,8 +88,9 @@ databaseChangeLog:
                   name: id
                   type: bigserial
                   constraints:
-                    nullable: false
                     primaryKey: true
+                    nullable: false
+                    incrementBy: 1
               - column:
                   name: name
                   type: varchar(75)
@@ -215,6 +216,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     primaryKey: true
+                    incrementBy: 1
               - column:
                   name: description
                   type: varchar(255)
@@ -355,7 +357,7 @@ databaseChangeLog:
                   constraints:
                     unique: true
               - column:
-                  name: userName
+                  name: user_name
                   type: varchar(25)
                   constraints:
                     unique: true

@@ -9,18 +9,25 @@ import org.example.pizzeria.entity.user.UserApp;
 import org.example.pizzeria.mapper.product.DoughMapper;
 import org.example.pizzeria.mapper.product.IngredientMapper;
 import org.example.pizzeria.mapper.product.PizzaMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class FavoritesMapper {
 
     private final PizzaMapper pizzaMapper;
     private final DoughMapper doughMapper;
     private final IngredientMapper ingredientMapper;
+
+   @Autowired
+   public FavoritesMapper(PizzaMapper pizzaMapper, DoughMapper doughMapper, IngredientMapper ingredientMapper) {
+        this.pizzaMapper = pizzaMapper;
+        this.doughMapper = doughMapper;
+        this.ingredientMapper = ingredientMapper;
+    }
 
     public Favorites ToFavorites(List<Pizza> pizzas, UserApp userApp) {
         Favorites favorites = new Favorites();
@@ -31,10 +38,7 @@ public class FavoritesMapper {
 
     public FavoritesResponseDto toFavoriteResponseDto(Favorites favorites) {
         List<PizzaResponseDto> pizzaResponseDtos = favorites.getPizzas().stream()
-                .map(pizza -> pizzaMapper.toPizzaResponseDto(pizza,
-                        doughMapper.toDoughResponseClientDto(pizza.getDough()),
-                        pizza.getIngredientsList().stream()
-                                .map(ingredientMapper::toIngredientResponseClientDto).toList())).toList();
+                .map(pizzaMapper::toPizzaResponseDto).toList();
         return new FavoritesResponseDto(new ArrayList<>(pizzaResponseDtos));
     }
 

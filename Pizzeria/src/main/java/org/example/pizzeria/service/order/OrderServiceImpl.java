@@ -1,20 +1,15 @@
 package org.example.pizzeria.service.order;
 
-import lombok.RequiredArgsConstructor;
 import org.example.pizzeria.dto.order.*;
 import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
 import org.example.pizzeria.entity.benefits.Bonus;
 import org.example.pizzeria.entity.order.*;
 import org.example.pizzeria.entity.product.pizza.Pizza;
 import org.example.pizzeria.entity.user.UserApp;
+import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
 import org.example.pizzeria.exception.ErrorMessage;
-import org.example.pizzeria.exception.InvalidIDException;
 import org.example.pizzeria.exception.NotCorrectArgumentException;
-import org.example.pizzeria.exception.order.BasketNotFoundException;
 import org.example.pizzeria.exception.order.InvalidOrderStatusException;
-import org.example.pizzeria.exception.order.OrderNotFoundException;
-import org.example.pizzeria.exception.product.PizzaNotFoundException;
-import org.example.pizzeria.exception.user.UserNotFoundException;
 import org.example.pizzeria.mapper.order.BasketMapper;
 import org.example.pizzeria.mapper.order.OrderDetailsMapper;
 import org.example.pizzeria.mapper.order.OrderMapper;
@@ -26,6 +21,7 @@ import org.example.pizzeria.repository.order.OrderDetailsRepository;
 import org.example.pizzeria.repository.order.OrderRepository;
 import org.example.pizzeria.repository.product.PizzaRepository;
 import org.example.pizzeria.repository.user.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,55 +32,64 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
-    private UserRepository userRepository;
-    private BasketRepository basketRepository;
-    private PizzaRepository pizzaRepository;
-    private OrderDetailsRepository orderDetailsRepository;
-    private OrderRepository orderRepository;
-    private PizzaMapper pizzaMapper;
-    private DoughMapper doughMapper;
-    private IngredientMapper ingredientMapper;
-    private BasketMapper basketMapper;
-    private OrderMapper orderMapper;
-    private OrderDetailsMapper orderDetailsMapper;
+    private final UserRepository userRepository;
+    private final BasketRepository basketRepository;
+    private final PizzaRepository pizzaRepository;
+    private final OrderDetailsRepository orderDetailsRepository;
+    private final OrderRepository orderRepository;
+    private final PizzaMapper pizzaMapper;
+    private final DoughMapper doughMapper;
+    private final IngredientMapper ingredientMapper;
+    private final BasketMapper basketMapper;
+    private final OrderMapper orderMapper;
+    private final OrderDetailsMapper orderDetailsMapper;
+
+   @Autowired
+   public OrderServiceImpl(UserRepository userRepository, BasketRepository basketRepository, PizzaRepository pizzaRepository, OrderDetailsRepository orderDetailsRepository, OrderRepository orderRepository, PizzaMapper pizzaMapper, DoughMapper doughMapper, IngredientMapper ingredientMapper, BasketMapper basketMapper, OrderMapper orderMapper, OrderDetailsMapper orderDetailsMapper) {
+        this.userRepository = userRepository;
+        this.basketRepository = basketRepository;
+        this.pizzaRepository = pizzaRepository;
+        this.orderDetailsRepository = orderDetailsRepository;
+        this.orderRepository = orderRepository;
+        this.pizzaMapper = pizzaMapper;
+        this.doughMapper = doughMapper;
+        this.ingredientMapper = ingredientMapper;
+        this.basketMapper = basketMapper;
+        this.orderMapper = orderMapper;
+        this.orderDetailsMapper = orderDetailsMapper;
+    }
 
     @Override
     @Transactional
     public BasketResponseDto addPizzaToBasket(Long userId, Long pizzaId, int countPizza) {
-        UserApp userApp = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(ErrorMessage.USER_NOT_FOUND));
-        Pizza pizza = pizzaRepository.findById(pizzaId)
-                .orElseThrow(() -> new PizzaNotFoundException(ErrorMessage.PIZZA_NOT_FOUND));
-        if (userId == null || pizzaId == null || countPizza <= 0) {
+        Pizza pizza = pizzaRepository.getReferenceById(pizzaId);
+        if (countPizza <= 0) {
             throw new NotCorrectArgumentException(ErrorMessage.NOT_CORRECT_ARGUMENT);
         }
-        Basket basket = basketRepository.findByUserApp(userApp)
-                .orElseThrow(() -> new BasketNotFoundException(ErrorMessage.BASKET_NOT_FOUND));
-        List<Pizza> pizzas = basket.getPizzas();
+        Optional<Basket> optionalBasket = basketRepository.findByUserApp_Id(userId);
+        Basket basket = optionalBasket.orElseThrow(() -> new EntityInPizzeriaNotFoundException("Basket", ErrorMessage.ENTITY_NOT_FOUND));
+
+        List<Pizza> pizzas = new ArrayList<>(basket.getPizzas());
         for (int i = 0; i < countPizza; i++) {
             pizzas.add(pizza);
         }
         basket.setPizzas(pizzas);
         basketRepository.save(basket);
-        List<PizzaResponseDto> pizzaResponseDtoList = pizzaMapper.mapPizzasToPizzaResponseDtos(pizzas, doughMapper, ingredientMapper);
+        List<PizzaResponseDto> pizzaResponseDtoList = pizzaMapper.mapPizzasToPizzaResponseDtos(pizzas);
         Map<PizzaResponseDto, Integer> pizzaCountMap = pizzaResponseDtoList.stream()
                 .collect(Collectors.groupingBy(p -> p, Collectors.reducing(0, e -> 1, Integer::sum)));
         return basketMapper.toBasketResponseDto(pizzaCountMap, userId);
     }
 
-
     @Override
     public BasketResponseDto getBasketByUser(Long userId) {
-        UserApp userApp = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(ErrorMessage.USER_NOT_FOUND));
-        Basket basket = basketRepository.findByUserApp(userApp)
-                .orElseThrow(() -> new BasketNotFoundException(ErrorMessage.BASKET_NOT_FOUND));
+        Basket basket = basketRepository.findByUserApp_Id(userId)
+                .orElseThrow(() -> new EntityInPizzeriaNotFoundException("Basket",ErrorMessage.ENTITY_NOT_FOUND));
         List<PizzaResponseDto> pizzaResponseDtoList = new ArrayList<>();
         if (basket.getPizzas() != null) {
             pizzaResponseDtoList = pizzaMapper.mapPizzasToPizzaResponseDtos(
-                    basket.getPizzas(), doughMapper, ingredientMapper);
+                    basket.getPizzas());
         }
         Map<PizzaResponseDto, Integer> pizzaCountMap = pizzaResponseDtoList.stream()
                 .collect(Collectors.groupingBy(p -> p, Collectors.reducing(0, e -> 1, Integer::sum)));
@@ -94,10 +99,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public BasketResponseDto changePizzasInBasket(BasketRequestDto request) {
-        UserApp userApp = userRepository.findById(request.userId())
-                .orElseThrow(() -> new UserNotFoundException(ErrorMessage.USER_NOT_FOUND));
-        Basket basket = basketRepository.findByUserApp(userApp)
-                .orElseThrow(() -> new BasketNotFoundException(ErrorMessage.BASKET_NOT_FOUND));
+        Basket basket = basketRepository.findByUserApp_Id(request.userId())
+        .orElseThrow(() -> new EntityInPizzeriaNotFoundException("Basket",ErrorMessage.ENTITY_NOT_FOUND));
         Map<PizzaResponseDto, Integer> pizzaToCount = request.pizzaToCount();
         List<Pizza> newListPizzas = new ArrayList<>();
 
@@ -122,7 +125,7 @@ public class OrderServiceImpl implements OrderService {
         Map<PizzaResponseDto, Integer> pizzaToCount = basketRequestDto.pizzaToCount();
         Long userId = basketRequestDto.userId();
         UserApp userApp = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(ErrorMessage.USER_NOT_FOUND));
+                .orElseThrow(() -> new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND));
         Order order = new Order();
         order.setOrderDateTime(LocalDateTime.now());
         order.setDeliveryAddress(new DeliveryAddress(userApp.getAddress().getCity(), userApp.getAddress().getStreetName(),
@@ -130,26 +133,15 @@ public class OrderServiceImpl implements OrderService {
         order.setStatusOrder(StatusOrder.NEW);
         order.setUserApp(userApp);
 
-        List<Pizza> pizzas = new ArrayList<>();
-        double sum = 0;
-        for (Map.Entry<PizzaResponseDto, Integer> entry : pizzaToCount.entrySet()) {
-            PizzaResponseDto pizzaResponseDto = entry.getKey();
-            Integer count = entry.getValue();
-            Pizza pizza = pizzaRepository.findById(pizzaResponseDto.id())
-                    .orElseThrow(() -> new PizzaNotFoundException(ErrorMessage.PIZZA_NOT_FOUND));
-            for (int i = 0; i < count; i++) {
-                pizzas.add(pizza);
-                sum += pizza.getAmount();
-            }
-        }
-        OrderDetails orderDetails = orderDetailsMapper.toOrderDetails(LocalDateTime.now().plusHours(1), pizzas);
+        OrderDetails orderDetails = orderDetailsMapper.toOrderDetails(LocalDateTime.now().plusHours(1), new ArrayList<>());
+        addPizzasToListAndCountSum(orderDetails, order, pizzaToCount);
+
         OrderDetails savedOrderDetails = orderDetailsRepository.save(orderDetails);
         order.setOrderDetail(savedOrderDetails);
-        order.setSum(sum);
-        applyBonus(userApp, order, orderDetails, sum);
+        applyBonus(userApp, order, orderDetails, order.getSum());
         Order savedOrder = orderRepository.save(order);
-        Basket basket = basketRepository.findByUserApp(userApp)
-                .orElseThrow(() -> new BasketNotFoundException(ErrorMessage.BASKET_NOT_FOUND));
+        Basket basket = basketRepository.findByUserApp_Id(userApp.getId())
+                .orElseThrow(() -> new EntityInPizzeriaNotFoundException("Basket",ErrorMessage.ENTITY_NOT_FOUND));
         if (basket.getPizzas() != null) {
             basket.getPizzas().clear();
         }
@@ -205,23 +197,33 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponseDto updateOrderDetails(OrderRequestDto orderRequestDto) {
         Long orderId = orderRequestDto.id();
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException(ErrorMessage.ORDER_NOT_FOUND));
+                .orElseThrow(() -> new EntityInPizzeriaNotFoundException("Order",ErrorMessage.ENTITY_NOT_FOUND));
         OrderDetails orderDetails = order.getOrderDetail();
 
         order.setDeliveryAddress(new DeliveryAddress(orderRequestDto.deliveryCity(),
                 orderRequestDto.deliveryStreetName(),
                 orderRequestDto.deliveryHouseNumber(),
                 orderRequestDto.deliveryApartmentNumber()));
-
+        addPizzasToListAndCountSum(orderDetails, order, orderRequestDto.pizzaToCount());
         orderDetails.setDeliveryDateTime(orderRequestDto.deliveryDateTime());
 
+        UserApp userApp = userRepository.findById(orderRequestDto.userAppId())
+                .orElseThrow(() -> new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND));
+        applyBonus(userApp, order, orderDetails, order.getSum());
+
+        OrderDetails savedOrderDetails = orderDetailsRepository.save(orderDetails);
+        Order savedOrder = orderRepository.save(order);
+        return orderMapper.toOrderResponseDto(savedOrder, savedOrder.getDeliveryAddress(), savedOrderDetails, orderRequestDto.pizzaToCount());
+    }
+
+    private void addPizzasToListAndCountSum(OrderDetails orderDetails, Order order, Map<PizzaResponseDto, Integer>  pizzaToCount){
         List<Pizza> pizzas = new ArrayList<>();
         double sum = 0;
-        for (Map.Entry<PizzaResponseDto, Integer> entry : orderRequestDto.pizzaToCount().entrySet()) {
+        for (Map.Entry<PizzaResponseDto, Integer> entry : pizzaToCount.entrySet()) {
             PizzaResponseDto pizzaResponseDto = entry.getKey();
             Integer count = entry.getValue();
             Pizza pizza = pizzaRepository.findById(pizzaResponseDto.id())
-                    .orElseThrow(() -> new PizzaNotFoundException(ErrorMessage.PIZZA_NOT_FOUND));
+                    .orElseThrow(() -> new EntityInPizzeriaNotFoundException("Pizza", ErrorMessage.ENTITY_NOT_FOUND));
             for (int i = 0; i < count; i++) {
                 pizzas.add(pizza);
                 sum += pizza.getAmount();
@@ -229,21 +231,13 @@ public class OrderServiceImpl implements OrderService {
         }
         orderDetails.setPizzas(pizzas);
         order.setSum(sum);
-
-        UserApp userApp = userRepository.findById(orderRequestDto.userAppId())
-                .orElseThrow(() -> new UserNotFoundException(ErrorMessage.USER_NOT_FOUND));
-        applyBonus(userApp, order, orderDetails, sum);
-
-        OrderDetails savedOrderDetails = orderDetailsRepository.save(orderDetails);
-        Order savedOrder = orderRepository.save(order);
-        return orderMapper.toOrderResponseDto(savedOrder, savedOrder.getDeliveryAddress(), savedOrderDetails, orderRequestDto.pizzaToCount());
     }
 
     @Override
     @Transactional
     public void deleteOrder(Long id) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new OrderNotFoundException(ErrorMessage.ORDER_NOT_FOUND));
+                .orElseThrow(() -> new EntityInPizzeriaNotFoundException("Order", ErrorMessage.ENTITY_NOT_FOUND));
         if (order.getStatusOrder() == StatusOrder.NEW) {
             orderDetailsRepository.delete(order.getOrderDetail());
             orderRepository.delete(order);
@@ -256,7 +250,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderStatusResponseDto updateStatusOrder(Long orderId, StatusOrder statusOrder) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException(ErrorMessage.ORDER_NOT_FOUND));
+                .orElseThrow(() -> new EntityInPizzeriaNotFoundException("Order", ErrorMessage.ENTITY_NOT_FOUND));
         order.setStatusOrder(statusOrder);
         Order updatedOrder = orderRepository.save(order);
         return orderMapper.toOrderStatusResponseDto(updatedOrder);
@@ -265,23 +259,20 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderResponseDto> getAllOrdersByUser(Long userId) {
         UserApp userApp = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(ErrorMessage.USER_NOT_FOUND));
+                .orElseThrow(() -> new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND));
         List<Order> orders = orderRepository.findAllByUserApp(userApp);
-        List<OrderResponseDto> orderResponseDtos = new ArrayList<>();
+        List<OrderResponseDto> orderResponseDtoList = new ArrayList<>();
         for (Order order : orders) {
-            orderResponseDtos.add(getOrderByUser(order.getId()));
+            orderResponseDtoList.add(getOrderByUser(order.getId()));
         }
-        return orderResponseDtos;
+        return orderResponseDtoList;
     }
 
     @Override
     public OrderResponseDto getOrderByUser(Long orderId) {
         Order order = orderRepository.getReferenceById(orderId);
-        if (order == null) {
-            throw new OrderNotFoundException(ErrorMessage.ORDER_NOT_FOUND);
-        }
         List<PizzaResponseDto> pizzaResponseDtoList = pizzaMapper.mapPizzasToPizzaResponseDtos(
-                order.getOrderDetail().getPizzas(), doughMapper, ingredientMapper);
+                order.getOrderDetail().getPizzas());
         Map<PizzaResponseDto, Integer> pizzaCountMap = pizzaResponseDtoList.stream()
                     .collect(Collectors.groupingBy(p -> p, Collectors.reducing(0, e -> 1, Integer::sum)));
         return orderMapper.toOrderResponseDto(order, order.getDeliveryAddress(),  order.getOrderDetail(),pizzaCountMap);
@@ -291,8 +282,8 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderStatusResponseDto> getOrderByStatus(StatusOrder statusOrder) {
         List<Order> orders = orderRepository.findAllByStatusOrder(statusOrder);
         if (!orders.isEmpty())
-            return orders.stream().map(o->orderMapper.toOrderStatusResponseDto(o)).toList();
-        else throw new OrderNotFoundException(ErrorMessage.ORDER_NOT_FOUND);
+            return orders.stream().map(orderMapper::toOrderStatusResponseDto).toList();
+        else throw new EntityInPizzeriaNotFoundException("Order", ErrorMessage.ENTITY_NOT_FOUND);
     }
 
     @Override
@@ -303,6 +294,6 @@ public class OrderServiceImpl implements OrderService {
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
         List<Order> orders = orderRepository.findAllByOrderDateTimeBetween(startDateTime, endDateTime);
-        return orders.stream().map(o->orderMapper.toOrderStatusResponseDto(o)).toList();
+        return orders.stream().map(orderMapper::toOrderStatusResponseDto).toList();
     }
 }

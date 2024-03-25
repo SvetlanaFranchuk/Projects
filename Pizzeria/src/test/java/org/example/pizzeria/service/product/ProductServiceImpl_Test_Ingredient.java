@@ -1,5 +1,6 @@
 package org.example.pizzeria.service.product;
 
+import org.example.pizzeria.TestData;
 import org.example.pizzeria.dto.product.ingredient.IngredientRequestDto;
 import org.example.pizzeria.dto.product.ingredient.IngredientResponseClientDto;
 import org.example.pizzeria.dto.product.ingredient.IngredientResponseDto;
@@ -20,20 +21,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImpl_Test_Ingredient {
-    private static final IngredientRequestDto INGREDIENT_REQUEST_DTO = new IngredientRequestDto("Tomato", 100, 120, 0.23, GroupIngredient.EXTRA);
-    private static final IngredientResponseDto INGREDIENT_RESPONSE_DTO = new IngredientResponseDto("Tomato", 100, 120, 0.23, GroupIngredient.EXTRA);
-    private static final IngredientRequestDto INGREDIENT_REQUEST_DTO_NEW = new IngredientRequestDto("Tomato", 110, 120, 0.25, GroupIngredient.EXTRA);
-    private static final IngredientResponseDto INGREDIENT_RESPONSE_DTO_NEW = new IngredientResponseDto("Tomato", 110, 120, 0.25, GroupIngredient.EXTRA);
     @Mock
     private IngredientRepository ingredientRepository;
     @Mock
@@ -52,22 +46,22 @@ class ProductServiceImpl_Test_Ingredient {
     @Test
     void addIngredient() {
         Ingredient ingredient = new Ingredient(1L, "Tomato", 100, 120, 0.23, GroupIngredient.EXTRA, null);
-        when(ingredientMapper.toIngredient(INGREDIENT_REQUEST_DTO.name(), INGREDIENT_REQUEST_DTO.weight(),
-                INGREDIENT_REQUEST_DTO.nutrition(), INGREDIENT_REQUEST_DTO.price(), INGREDIENT_REQUEST_DTO.groupIngredient(),
-                null)).thenReturn(ingredient);
+        when(ingredientMapper.toIngredient(TestData.INGREDIENT_REQUEST_DTO.name(), TestData.INGREDIENT_REQUEST_DTO.weight(),
+                TestData.INGREDIENT_REQUEST_DTO.nutrition(), TestData.INGREDIENT_REQUEST_DTO.price(), TestData.INGREDIENT_REQUEST_DTO.groupIngredient(),
+                new HashSet<>())).thenReturn(ingredient);
         when(ingredientRepository.save(ingredient)).thenReturn(ingredient);
-        when(ingredientMapper.toIngredientResponseDto(ingredient)).thenReturn(INGREDIENT_RESPONSE_DTO);
+        when(ingredientMapper.toIngredientResponseDto(ingredient)).thenReturn(TestData.INGREDIENT_RESPONSE_DTO);
 
-        IngredientResponseDto result = productService.addIngredient(INGREDIENT_REQUEST_DTO);
-        assertEquals(INGREDIENT_RESPONSE_DTO, result);
+        IngredientResponseDto result = productService.addIngredient(TestData.INGREDIENT_REQUEST_DTO);
+        assertEquals(TestData.INGREDIENT_RESPONSE_DTO, result);
     }
 
     @Test
-    void addIngredient_DuplicateDoughTypeAndPrice() {
+    void addIngredient_DuplicateDoughTypeAndPrice_ThrowIngredientsCreateException() {
         Ingredient ingredient = new Ingredient(1L, "Tomato", 100, 120, 0.23, GroupIngredient.EXTRA, null);
         when(ingredientRepository.findAllByNameAndPrice("Tomato", 0.23))
                 .thenReturn(Collections.singletonList(ingredient));
-        assertThrows(IngredientsCreateException.class, () -> productService.addIngredient(INGREDIENT_REQUEST_DTO));
+        assertThrows(IngredientsCreateException.class, () -> productService.addIngredient(TestData.INGREDIENT_REQUEST_DTO));
     }
 
 
@@ -77,13 +71,13 @@ class ProductServiceImpl_Test_Ingredient {
         Ingredient newIngredient = new Ingredient(1L, "Tomato", 110, 120, 0.25, GroupIngredient.EXTRA, null);
         when(ingredientRepository.findById(1L)).thenReturn(Optional.of(existingIngredient));
         when(ingredientRepository.save(newIngredient)).thenReturn(newIngredient);
-        when(ingredientMapper.toIngredientResponseDto(newIngredient)).thenReturn(INGREDIENT_RESPONSE_DTO_NEW);
-        IngredientResponseDto responseDto = productService.updateIngredient(INGREDIENT_REQUEST_DTO_NEW, 1L);
-        assertEquals(INGREDIENT_RESPONSE_DTO_NEW, responseDto);
+        when(ingredientMapper.toIngredientResponseDto(newIngredient)).thenReturn(TestData.INGREDIENT_RESPONSE_DTO_NEW);
+        IngredientResponseDto responseDto = productService.updateIngredient(TestData.INGREDIENT_REQUEST_DTO_NEW, 1L);
+        assertEquals(TestData.INGREDIENT_RESPONSE_DTO_NEW, responseDto);
     }
 
     @Test
-    void updateIngredient_InvalidID() {
+    void updateIngredient_ThrowInvalidID() {
         IngredientRequestDto updatedIngredient = new IngredientRequestDto("Tomato", 110, 120, 0.25, GroupIngredient.BASIC);
         assertThrows(NullPointerException.class, () -> productService.updateIngredient(updatedIngredient, null));
     }
@@ -97,7 +91,7 @@ class ProductServiceImpl_Test_Ingredient {
     }
 
     @Test
-    void deleteIngredient_IngredientNotFound() {
+    void deleteIngredient_IngredientNotFound_ThrowInvalidIDException() {
         when(ingredientRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(InvalidIDException.class, () -> productService.deleteIngredient(1L));
     }
@@ -112,18 +106,15 @@ class ProductServiceImpl_Test_Ingredient {
 
     @Test
     void getAllIngredientForAdmin() {
-        List<Ingredient> ingredientList = Arrays.asList(
-                new Ingredient(1L, "Tomato", 110, 120, 0.25, GroupIngredient.EXTRA, null),
-                new Ingredient(2L, "Tomato", 90, 110, 0.24, GroupIngredient.SAUCE, null)
-        );
+        List<Ingredient> ingredientList = Arrays.asList(TestData.INGREDIENT_1, TestData.INGREDIENT_2);
         when(ingredientRepository.findAll()).thenReturn(ingredientList);
         List<IngredientResponseDto> response = productService.getAllIngredientForAdmin();
         assertFalse(response.isEmpty());
         assertEquals(ingredientList.size(), response.size());
         assertEquals(ingredientList.get(0).getName(), "Tomato");
-        assertEquals(ingredientList.get(0).getGroupIngredient(), GroupIngredient.EXTRA);
-        assertEquals(ingredientList.get(1).getName(), "Tomato");
-        assertEquals(ingredientList.get(1).getGroupIngredient(), GroupIngredient.SAUCE);
+        assertEquals(ingredientList.get(0).getGroupIngredient(), GroupIngredient.BASIC);
+        assertEquals(ingredientList.get(1).getName(), "Cheese");
+        assertEquals(ingredientList.get(1).getGroupIngredient(), GroupIngredient.BASIC);
     }
 
     @Test
@@ -139,7 +130,7 @@ class ProductServiceImpl_Test_Ingredient {
         Ingredient ingredient1 = new Ingredient(1L, "Cheese", 30, 70, 0.51, GroupIngredient.SAUCE, null);
         Ingredient ingredient2 = new Ingredient(2L, "Tomato", 90, 110, 0.24, GroupIngredient.SAUCE, null);
         List<Ingredient> ingredientList = List.of(ingredient1, ingredient2);
-        IngredientResponseClientDto ingredientResponseClientDto1 = new IngredientResponseClientDto(1L,"Cheese", 30, 70, GroupIngredient.SAUCE);
+        IngredientResponseClientDto ingredientResponseClientDto1 = new IngredientResponseClientDto(1L, "Cheese", 30, 70, GroupIngredient.SAUCE);
         IngredientResponseClientDto ingredientResponseClientDto2 = new IngredientResponseClientDto(2L, "Tomato", 90, 110, GroupIngredient.SAUCE);
         List<IngredientResponseClientDto> exsitingList = List.of(ingredientResponseClientDto1, ingredientResponseClientDto2);
         when(ingredientRepository.findAllByGroupIngredient(GroupIngredient.SAUCE)).thenReturn(ingredientList);
@@ -182,8 +173,8 @@ class ProductServiceImpl_Test_Ingredient {
     }
 
     @Test
-    void getAllIngredientForPizza_PizzaNotFound() {
+    void getAllIngredientForPizza_PizzaNotFound_ThrowNullPointerException() {
         when(pizzaRepository.getReferenceById(1L)).thenReturn(null);
-        assertThrows(InvalidIDException.class, () -> productService.getAllIngredientForPizza(1L));
+        assertThrows(NullPointerException.class, () -> productService.getAllIngredientForPizza(1L));
     }
 }

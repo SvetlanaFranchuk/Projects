@@ -1,33 +1,22 @@
 package org.example.pizzeria.mapper.product;
 
-import jakarta.annotation.Nullable;
+import org.example.pizzeria.dto.product.dough.DoughCreateRequestDto;
 import org.example.pizzeria.dto.product.dough.DoughResponseClientDto;
 import org.example.pizzeria.dto.product.dough.DoughResponseDto;
 import org.example.pizzeria.entity.product.ingredient.Dough;
 import org.example.pizzeria.entity.product.ingredient.TypeDough;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 
-@Component
-public class DoughMapper {
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+public interface DoughMapper {
 
-public Dough toDough(TypeDough typeDough, int smallWeight,
-                    int smallNutrition, double smallPrice){
-    Dough dough = new Dough();
-    dough.setTypeDough(typeDough);
-    dough.setSmallWeight(smallWeight);
-    dough.setSmallNutrition(smallNutrition);
-    dough.setSmallPrice(smallPrice);
-    return dough;
-}
+    Dough toDough(DoughCreateRequestDto newDough);
+    Dough toDough(DoughResponseClientDto dough);
 
-public DoughResponseDto toDoughResponseDto(Dough dough){
-    return new DoughResponseDto(dough.getTypeDough(), dough.getSmallWeight(),
-            dough.getSmallNutrition(), dough.getSmallPrice());
-}
+    DoughResponseDto toDoughResponseDto(Dough dough);
 
-    public DoughResponseClientDto toDoughResponseClientDto(Dough dough){
-        return new DoughResponseClientDto(dough.getId(), dough.getTypeDough(), dough.getSmallWeight(),
-                dough.getSmallNutrition());
-    }
+    DoughResponseClientDto toDoughResponseClientDto(Dough dough);
 
 }

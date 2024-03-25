@@ -1,6 +1,5 @@
 package org.example.pizzeria.service.user;
 
-import lombok.RequiredArgsConstructor;
 import org.example.pizzeria.dto.benefits.ReviewRequestDto;
 import org.example.pizzeria.dto.benefits.ReviewResponseDto;
 import org.example.pizzeria.dto.user.*;
@@ -20,6 +19,7 @@ import org.example.pizzeria.repository.benefits.FavoritesRepository;
 import org.example.pizzeria.repository.benefits.ReviewRepository;
 import org.example.pizzeria.repository.order.BasketRepository;
 import org.example.pizzeria.repository.user.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +31,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     public UserRepository userRepository;
@@ -42,15 +41,21 @@ public class UserServiceImpl implements UserService {
     public UserMapper userMapper;
     public ReviewMapper reviewMapper;
 
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, BasketRepository basketRepository, FavoritesRepository favoritesRepository, ReviewRepository reviewRepository, UserMapper userMapper, ReviewMapper reviewMapper) {
+        this.userRepository = userRepository;
+        this.basketRepository = basketRepository;
+        this.favoritesRepository = favoritesRepository;
+        this.reviewRepository = reviewRepository;
+        this.userMapper = userMapper;
+        this.reviewMapper = reviewMapper;
+    }
+
     @Override
     @Transactional
     public UserResponseDto save(UserRegisterRequestDto candidate) {
         validateUserNotExist(candidate.userName(), candidate.email());
-        UserApp newUser = userMapper.toUserApp(candidate.userName(), candidate.password(),
-                candidate.email(), candidate.birthDate(), new Address(candidate.addressCity(),
-                        candidate.addressStreetName(), candidate.addressHouseNumber(),
-                        candidate.addressApartmentNumber()), new ContactInformation(candidate.phoneNumber()),
-                false, Role.CLIENT, new Bonus(0, 0.0));
+        UserApp newUser = userMapper.toUserApp(candidate);
         newUser = userRepository.save(newUser);
         Basket basket = new Basket();
         basket.setUserApp(newUser);
@@ -60,59 +65,62 @@ public class UserServiceImpl implements UserService {
         favorites.setUserApp(newUser);
         favoritesRepository.save(favorites);
         newUser.setFavorites(favorites);
+        newUser = userRepository.save(newUser);
         return userMapper.toUserResponseDto(newUser);
-    }
+     }
 
     private void validateUserNotExist(String userName, String email) {
-        List<UserApp> users = userRepository.findAllByUserNameAndEmail(userName, email);
-        if (!users.isEmpty()) {
-            throw new UserCreateError(ErrorMessage.USER_ALREADY_EXIST);
+        Optional<UserApp> userOptional = userRepository.findByUserNameAndEmail(userName, email);
+        if (userOptional.isPresent()) {
+            throw new UserCreateException(ErrorMessage.USER_ALREADY_EXIST);
         }
     }
 
     @Override
     public UserResponseDto getUser(Long id) {
-        return userMapper.toUserResponseDto(userRepository.getReferenceById(id));
+         return userMapper.toUserResponseDto(userRepository.getReferenceById(id));
     }
 
     @Override
     @Transactional
     public UserResponseDto update(Long id, UserRequestDto userRequestDto) {
         UserApp userApp = userRepository.getReferenceById(id);
-        if (userApp == null) {
-            throw new UserNotFoundException(ErrorMessage.USER_NOT_FOUND);
-        }
-        Address address = new Address(userRequestDto.addressCity(), userRequestDto.addressStreetName(),
-                userRequestDto.addressHouseNumber(), userRequestDto.addressApartmentNumber());
-        ContactInformation phoneNumber = new ContactInformation(userRequestDto.phoneNumber());
-        if (!(Objects.equals(userApp.getPassword(), userRequestDto.password())))
-            userApp.setPassword(userRequestDto.password());
-        if (!(Objects.equals(userApp.getEmail(), userRequestDto.email()))) userApp.setEmail(userRequestDto.email());
-        if (!(userApp.getBirthDate() == userRequestDto.birthDate())) userApp.setBirthDate(userRequestDto.birthDate());
-        if (!(Objects.equals(userApp.getAddress(), address))) userApp.setAddress(address);
-        if (!(Objects.equals(userApp.getPhoneNumber(), phoneNumber))) userApp.setPhoneNumber(phoneNumber);
+        setDifferences(userApp, userRequestDto);
         userApp = userRepository.save(userApp);
         return userMapper.toUserResponseDto(userApp);
     }
 
+    private void setDifferences(UserApp userApp, UserRequestDto userRequestDto) {
+        Address address = new Address(userRequestDto.addressCity(), userRequestDto.addressStreetName(),
+                userRequestDto.addressHouseNumber(), userRequestDto.addressApartmentNumber());
+        ContactInformation phoneNumber = new ContactInformation(userRequestDto.phoneNumber());
+        userApp.setPassword(Objects.equals(userApp.getPassword(), userRequestDto.password()) ?
+                userApp.getPassword() : userRequestDto.password());
+        userApp.setEmail(Objects.equals(userApp.getEmail(), userRequestDto.email()) ?
+                userApp.getEmail() : userRequestDto.email());
+        userApp.setBirthDate(userApp.getBirthDate().equals(userRequestDto.birthDate()) ?
+                userApp.getBirthDate() : userRequestDto.birthDate());
+        userApp.setAddress(Objects.equals(userApp.getAddress(), address) ? userApp.getAddress() : address);
+        userApp.setPhoneNumber(Objects.equals(userApp.getPhoneNumber(), phoneNumber) ?
+                userApp.getPhoneNumber() : phoneNumber);
+    }
+
     @Override
     public List<UserResponseDto> getUsersByBirthday(LocalDate date) {
-        if (date == null) throw new DateIsNullException(ErrorMessage.DATA_IS_NULL);
         return userRepository.findUserAppByBirthDate(date).stream()
                 .map(u -> userMapper.toUserResponseDto(u)).toList();
     }
 
     @Override
     public List<UserResponseDto> getUserByClientRole() {
-        return userRepository.findAll().stream()
-                .filter(u -> u.getRole().equals(Role.CLIENT))
+        return userRepository.findAllByRole(Role.CLIENT).stream()
                 .map(u -> userMapper.toUserResponseDto(u)).toList();
     }
 
     @Override
     public List<UserBlockedResponseDto> getUserBlocked() {
-        List<UserApp> userApps = userRepository.findAll().stream()
-                .filter(UserApp::isBlocked).toList();
+        List<UserApp> userApps = userRepository.findAllByIsBlocked(true).stream()
+                .toList();
         return userApps.stream()
                 .map(u -> userMapper.toUserBlockedResponseDto(u.getId(), u.getUserName(), u.isBlocked(),
                         Objects.requireNonNull(reviewRepository.findAllByUserApp(u).stream()
@@ -122,13 +130,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserBlockedResponseDto changeBlockingUser(Long id, boolean isBlocked) {
+    public UserBlockedResponseDto changeUserBlocking (Long id, boolean isBlocked) {
         UserApp userApp = userRepository.getReferenceById(id);
-        if (userApp == null)
-            throw new UserNotFoundException(ErrorMessage.USER_NOT_FOUND);
-        Review review = reviewRepository.findAllByUserApp(userApp).stream()
+        Review review = reviewRepository.findAllByUserApp_Id(id).stream()
                 .max(Comparator.comparing(Review::getReviewDate)).orElseThrow(() ->
-                        new UserReviewNotFoundException(ErrorMessage.USER_REVIEW_NOT_FOUND));
+                        new EntityInPizzeriaNotFoundException("Review", ErrorMessage.ENTITY_NOT_FOUND));
         userApp.setBlocked(isBlocked);
         userApp = userRepository.save(userApp);
         return userMapper.toUserBlockedResponseDto(id, userApp.getUserName(), isBlocked, review.getReviewDate());
@@ -138,8 +144,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserBonusDto getUserBonus(Long userId) {
         UserApp userApp = userRepository.getReferenceById(userId);
-        if (userApp == null)
-            throw new UserNotFoundException(ErrorMessage.USER_NOT_FOUND);
         return userMapper.toUserBonusDto(userApp.getBonus().getCountOrders(),
                 userApp.getBonus().getSumOrders());
     }
@@ -148,8 +152,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserBonusDto updateUserBonus(Long userId, int count, double sum) {
         UserApp userApp = userRepository.getReferenceById(userId);
-        if (userApp == null)
-            throw new UserNotFoundException(ErrorMessage.USER_NOT_FOUND);
         Bonus newBonus = userApp.getBonus();
         newBonus.setCountOrders(newBonus.getCountOrders() + count);
         newBonus.setSumOrders(newBonus.getSumOrders() + sum);
@@ -202,10 +204,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<ReviewResponseDto> getAllReviewByUser(Long userId) {
-        UserApp userApp = userRepository.getReferenceById(userId);
-        if (userApp == null)
-            throw new UserNotFoundException(ErrorMessage.USER_NOT_FOUND);
-        return reviewRepository.findAllByUserApp(userApp).stream()
+        return reviewRepository.findAllByUserApp_Id(userId).stream()
                 .map(r -> reviewMapper.toReviewResponseDto(r)).toList();
     }
 
