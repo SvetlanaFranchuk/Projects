@@ -16,7 +16,6 @@ import org.example.pizzeria.dto.product.ingredient.IngredientResponseDto;
 import org.example.pizzeria.dto.product.pizza.PizzaRequestDto;
 import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
 import org.example.pizzeria.entity.product.ingredient.GroupIngredient;
-import org.example.pizzeria.entity.product.pizza.Pizza;
 import org.example.pizzeria.entity.product.pizza.Styles;
 import org.example.pizzeria.entity.product.pizza.ToppingsFillings;
 import org.example.pizzeria.service.product.ProductServiceImpl;
@@ -47,14 +46,15 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @Operation(summary = "Adding information about dough to reference books. Addition is only possible for a unique combination of test type and price")
+    @Operation(summary = "Adding information about dough to reference books",
+            description = "Addition is only possible for a unique combination of test type and price")
     @PostMapping("/addDough")
     public ResponseEntity<DoughResponseDto> addDough(@RequestBody @Valid DoughCreateRequestDto newDough) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.addDough(newDough));
     }
 
     @Operation(summary = "Update pizza dough parameters: weight and calorie")
-    @PutMapping("/updateDough/{id}")
+    @PatchMapping("/updateDough/{id}")
     public ResponseEntity<DoughResponseDto> updateDough(@RequestBody @Valid DoughUpdateRequestDto doughUpdateRequestDto,
                                                         @Parameter(description = "id dough")
                                                         @PathVariable("id") @Min(0) Integer id) {
@@ -86,14 +86,17 @@ public class ProductController {
         return productService.getAllDoughForClient();
     }
 
+    @Operation(summary = "Adding information about ingredient to reference books")
     @PostMapping("/addIngredient")
     public ResponseEntity<IngredientResponseDto> addIngredient(@RequestBody @Valid IngredientRequestDto newIngredient) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.addIngredient(newIngredient));
-    }//TODO не генеригует ИД???
+    }
 
+    @Operation(summary = "Updating information about ingredient to reference books")
     @PutMapping("/updateIngredient/{id}")
-    public ResponseEntity<IngredientResponseDto> updateDough(@RequestBody @Valid IngredientRequestDto ingredientRequestDto,
-                                                             @PathVariable("id") @Min(0) Long id) {
+    public ResponseEntity<IngredientResponseDto> updateIngredient(@RequestBody @Valid IngredientRequestDto ingredientRequestDto,
+                                                                  @Parameter(description = "id ingredient")
+                                                                  @PathVariable("id") @Min(0) Long id) {
         IngredientResponseDto IngredientResponseDto = productService.updateIngredient(ingredientRequestDto, id);
         if (IngredientResponseDto != null) {
             return ResponseEntity.ok(IngredientResponseDto);
@@ -102,36 +105,47 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "Delaying information about ingredient to reference books")
     @DeleteMapping("/deleteIngredient/{id}")
-    public ResponseEntity<String> deleteIngredient(@PathVariable("id") @Min(0) Long id) {
+    public ResponseEntity<String> deleteIngredient(@Parameter(description = "id ingredient")
+                                                   @PathVariable("id") @Min(0) Long id) {
         productService.deleteIngredient(id);
         return ResponseEntity.ok("Ingredient deleted successfully");
-    } //TODO Ingredient already use in pizzas recipe ?????
+    }
 
+    @Operation(summary = "Getting information about ingredient")
     @GetMapping("/getAllIngredientForAdmin")
     public List<IngredientResponseDto> getAllIngredientForAdmin() {
         return productService.getAllIngredientForAdmin();
     }
 
-    @GetMapping("/getAllIngredientByGroup/{groupIngredient}")
-    public List<IngredientResponseClientDto> getAllIngredientByGroup(@RequestParam GroupIngredient groupIngredient) {
+    @Operation(summary = "Getting information about ingredient by group ingredient")
+    @GetMapping("/getAllIngredientByGroup")
+    public List<IngredientResponseDto> getAllIngredientByGroup(@Parameter(description = "Group ingredient: (BASIC, EXTRA, SAUCE) ")
+                                                               @RequestParam GroupIngredient groupIngredient) {
         return productService.getAllIngredientByGroup(groupIngredient);
     }
 
+    @Operation(summary = "Getting information about ingredient into the pizza")
     @GetMapping("/{idPizza}/ingredients")
-    public List<IngredientResponseClientDto> getAllIngredientsForPizza(@PathVariable("id") @Min(0) Long idPizza) {
+    public List<IngredientResponseClientDto> getAllIngredientsForPizza(@Parameter(description = "pizzas id")
+                                                                       @PathVariable("idPizza") @Min(0) Long idPizza) {
         return productService.getAllIngredientForPizza(idPizza);
     }
 
-    @PostMapping("/addPizza/{userId}")
+    @Operation(summary = "Adding information about new recipe to reference books")
+    @PostMapping("/addPizza")
     public ResponseEntity<PizzaResponseDto> addPizza(@RequestBody @Valid PizzaRequestDto newPizza,
-                                                     @PathVariable("id") @Min(0) Long userId) {
+                                                     @Parameter(description = "user ID")
+                                                     @RequestParam @Min(0) Long userId) {
         PizzaResponseDto addedPizza = productService.addPizza(newPizza, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedPizza);
     }
 
+    @Operation(summary = "Updating information about recipe of pizza to reference books")
     @PutMapping("/updatePizza/{id}")
     public ResponseEntity<PizzaResponseDto> updatePizza(@RequestBody @Valid PizzaRequestDto pizza,
+                                                        @Parameter(description = "pizza ID")
                                                         @PathVariable("id") @Min(0) Long id) {
         PizzaResponseDto updatedPizza = productService.updatePizza(pizza, id);
         if (updatedPizza != null) {
@@ -141,48 +155,68 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "Deleting information about recipe of pizza to reference books")
     @DeleteMapping("/deletePizzaRecipe/{id}")
-    public ResponseEntity<String> deletePizzaRecipe(@PathVariable("id") @Min(0) Long id) {
+    public ResponseEntity<String> deletePizzaRecipe(@Parameter(description = "pizza ID")
+                                                    @PathVariable("id") @Min(0) Long id) {
         productService.deletePizzaRecipe(id);
         return ResponseEntity.ok("Pizza recipe deleted successfully");
     }
 
+    @Operation(summary = "Getting information about all standard recipes of pizzas from the reference books")
     @GetMapping("/getAllPizzaStandardRecipe")
     public List<PizzaResponseDto> getAllPizzaStandardRecipe() {
         return productService.getAllPizzaStandardRecipe();
     }
 
-    @GetMapping("/getAllPizzaStandardRecipeByStyles/{styles}")
-    public List<PizzaResponseDto> getAllPizzaStandardRecipeByStyles(@RequestParam Styles styles) {
+    @Operation(summary = "Getting information about all standard recipes of pizzas by one of styles from the reference books")
+    @GetMapping("/getAllPizzaStandardRecipeByStyles")
+    public List<PizzaResponseDto> getAllPizzaStandardRecipeByStyles(@Parameter(description = "Styles: CLASSIC_ITALIAN, AMERICAN, SPECIALITY")
+                                                                    @RequestParam Styles styles) {
         return productService.getAllPizzaStandardRecipeByStyles(styles);
     }
 
-    @GetMapping("/getAllPizzaStandardRecipeByTopping/{topping}")
-    public List<PizzaResponseDto> getAllPizzaStandardRecipeByTopping(@RequestParam ToppingsFillings toppingsFillings) {
+    @Operation(summary = "Getting information about all standard recipes of pizzas by one of topping from the reference books")
+    @GetMapping("/getAllPizzaStandardRecipeByTopping")
+    public List<PizzaResponseDto> getAllPizzaStandardRecipeByTopping(@Parameter(description = "CLASSICA, PAN_PIZZA, " +
+            "SICILIAN, NEW_YORK_STYLE, NEAPOLITAN, WHOLE_WHEAT_FLOUR, CORNMEAL")
+                                                                     @RequestParam ToppingsFillings toppingsFillings) {
         return productService.getAllPizzaStandardRecipeByTopping(toppingsFillings);
     }
 
-    @GetMapping("/getAllPizzaStandardRecipeByToppingByStyles/{topping}/{styles}")
-    public List<PizzaResponseDto> getAllPizzaStandardRecipeByToppingByStyles(@RequestParam ToppingsFillings toppingsFillings,
+    @Operation(summary = "Getting information about all standard recipes of pizzas by one of topping and styles from the reference books")
+    @GetMapping("/getAllPizzaStandardRecipeByToppingByStyles")
+    public List<PizzaResponseDto> getAllPizzaStandardRecipeByToppingByStyles(@Parameter(description = "CLASSICA, PAN_PIZZA, " +
+            "SICILIAN, NEW_YORK_STYLE, NEAPOLITAN, WHOLE_WHEAT_FLOUR, CORNMEAL")
+                                                                             @RequestParam ToppingsFillings toppingsFillings,
+                                                                             @Parameter(description = "Styles: CLASSIC_ITALIAN, AMERICAN, SPECIALITY")
                                                                              @RequestParam Styles styles) {
         return productService.getAllPizzaStandardRecipeByToppingByStyles(toppingsFillings, styles);
     }
 
-    @PostMapping("/addPizzaToUserFavorite/{userId}")
-    public ResponseEntity<FavoritesResponseDto> addPizzaToUserFavorite(@PathVariable("id") @Min(0) Long userId,
-                                                                       @RequestBody @Valid Pizza pizza) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.addPizzaToUserFavorite(userId, pizza));
+    @Operation(summary = "Adding pizza to users favorites")
+    @PostMapping("/addPizzaToUserFavorite")
+    public ResponseEntity<FavoritesResponseDto> addPizzaToUserFavorite(@Parameter(description = "user ID")
+                                                                       @RequestParam @Min(0) Long userId,
+                                                                       @Parameter(description = "pizza ID")
+                                                                       @RequestParam @Valid Long pizzaId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.addPizzaToUserFavorite(userId, pizzaId));
     }
 
-    @DeleteMapping("/deletePizzaFromUserFavorite/{userId}/{pizzaId}")
-    public ResponseEntity<String> deletePizzaFromUserFavorite(@PathVariable Long userId,
-                                                              @PathVariable Long pizzaId) {
+    @Operation(summary = "Deleting pizza from users favorites")
+    @DeleteMapping("/deletePizzaFromUserFavorite")
+    public ResponseEntity<String> deletePizzaFromUserFavorite(@Parameter(description = "user ID")
+                                                              @RequestParam @Min(0) Long userId,
+                                                              @Parameter(description = "pizza ID")
+                                                              @RequestParam @Valid Long pizzaId) {
         productService.deletePizzaFromUserFavorite(pizzaId, userId);
         return ResponseEntity.ok("Pizza deleted from user's favorites successfully");
     }
 
+    @Operation(summary = "Getting all favorites pizza of users")
     @GetMapping("/getAllFavoritePizzaByUser/{userId}")
-    public ResponseEntity<List<PizzaResponseDto>> getAllFavoritePizzaByUser(@PathVariable Long userId) {
+    public ResponseEntity<List<PizzaResponseDto>> getAllFavoritePizzaByUser(@Parameter(description = "user ID")
+                                                                            @RequestParam @Min(0) Long userId) {
         return ResponseEntity.ok(productService.getAllFavoritePizzaByUser(userId));
     }
 }

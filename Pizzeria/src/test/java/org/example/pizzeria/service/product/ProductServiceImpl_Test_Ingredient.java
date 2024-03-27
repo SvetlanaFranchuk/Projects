@@ -130,14 +130,14 @@ class ProductServiceImpl_Test_Ingredient {
         Ingredient ingredient1 = new Ingredient(1L, "Cheese", 30, 70, 0.51, GroupIngredient.SAUCE, null);
         Ingredient ingredient2 = new Ingredient(2L, "Tomato", 90, 110, 0.24, GroupIngredient.SAUCE, null);
         List<Ingredient> ingredientList = List.of(ingredient1, ingredient2);
-        IngredientResponseClientDto ingredientResponseClientDto1 = new IngredientResponseClientDto(1L, "Cheese", 30, 70, GroupIngredient.SAUCE);
-        IngredientResponseClientDto ingredientResponseClientDto2 = new IngredientResponseClientDto(2L, "Tomato", 90, 110, GroupIngredient.SAUCE);
-        List<IngredientResponseClientDto> exsitingList = List.of(ingredientResponseClientDto1, ingredientResponseClientDto2);
+        IngredientResponseDto ingredientResponseDto1 = new IngredientResponseDto(1L, "Cheese", 30, 70, 0.51, GroupIngredient.SAUCE);
+        IngredientResponseDto ingredientResponseDto2 = new IngredientResponseDto(2L, "Tomato", 90, 110, 0.24, GroupIngredient.SAUCE);
+        List<IngredientResponseDto> exsitingList = List.of(ingredientResponseDto1, ingredientResponseDto2);
         when(ingredientRepository.findAllByGroupIngredient(GroupIngredient.SAUCE)).thenReturn(ingredientList);
-        when(ingredientMapper.toIngredientResponseClientDto(ingredient1)).thenReturn(ingredientResponseClientDto1);
-        when(ingredientMapper.toIngredientResponseClientDto(ingredient2)).thenReturn(ingredientResponseClientDto2);
+        when(ingredientMapper.toIngredientResponseDto(ingredient1)).thenReturn(ingredientResponseDto1);
+        when(ingredientMapper.toIngredientResponseDto(ingredient2)).thenReturn(ingredientResponseDto2);
 
-        List<IngredientResponseClientDto> response = productService.getAllIngredientByGroup(GroupIngredient.SAUCE);
+        List<IngredientResponseDto> response = productService.getAllIngredientByGroup(GroupIngredient.SAUCE);
         assertFalse(response.isEmpty());
         assertEquals(exsitingList, response);
     }
@@ -146,7 +146,7 @@ class ProductServiceImpl_Test_Ingredient {
     void getAllIngredientByGroup_EmptyList() {
         List<Ingredient> emptyList = Collections.emptyList();
         when(ingredientRepository.findAllByGroupIngredient(GroupIngredient.SAUCE)).thenReturn(emptyList);
-        List<IngredientResponseClientDto> response = productService.getAllIngredientByGroup(GroupIngredient.SAUCE);
+        List<IngredientResponseDto> response = productService.getAllIngredientByGroup(GroupIngredient.SAUCE);
         assertTrue(response.isEmpty());
     }
 

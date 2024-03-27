@@ -37,7 +37,7 @@ public interface ProductService {
 
     List<IngredientResponseDto> getAllIngredientForAdmin();
 
-    List<IngredientResponseClientDto> getAllIngredientByGroup(GroupIngredient groupIngredient);
+    List<IngredientResponseDto> getAllIngredientByGroup(GroupIngredient groupIngredient);
 
     List<IngredientResponseClientDto> getAllIngredientForPizza(Long idPizza);
 
@@ -55,7 +55,7 @@ public interface ProductService {
 
     List<PizzaResponseDto> getAllPizzaStandardRecipeByToppingByStyles(ToppingsFillings toppingsFillings, Styles styles);
 
-    FavoritesResponseDto addPizzaToUserFavorite(Long userId, Pizza pizza);
+    FavoritesResponseDto addPizzaToUserFavorite(Long userId, Long pizzaId);
 
     void deletePizzaFromUserFavorite(Long pizzaId, Long userId);
 

@@ -149,11 +149,11 @@ public class TestData {
             List.of(PIZZA, PIZZA));
     public static final PizzaRequestDto PIZZA_REQUEST_DTO = new PizzaRequestDto("Margarita",
             "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
-            TypeBySize.MEDIUM, DOUGH_RESPONSE_CLIENT_DTO, new ArrayList<>(), ingredientResponseClientBasicDtoList,
+            TypeBySize.MEDIUM, 1, new ArrayList<>(), List.of(1L, 2L),
             new ArrayList<>());
     public static final PizzaRequestDto PIZZA_REQUEST_DTO_NEW = new PizzaRequestDto("Margarita",
             "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
-            TypeBySize.LARGE, DOUGH_RESPONSE_CLIENT_DTO, new ArrayList<>(), ingredientResponseClientBasicDtoList,
+            TypeBySize.LARGE, 1, new ArrayList<>(), List.of(1L, 2L),
             new ArrayList<>());
     public static final Pizza PIZZA_NEW = new Pizza(1L, "Margarita",
             "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,

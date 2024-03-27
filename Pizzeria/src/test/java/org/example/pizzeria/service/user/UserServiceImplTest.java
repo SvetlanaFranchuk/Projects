@@ -9,6 +9,8 @@ import org.example.pizzeria.entity.order.Basket;
 import org.example.pizzeria.entity.user.Role;
 import org.example.pizzeria.entity.user.UserApp;
 import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
+import org.example.pizzeria.exception.ErrorMessage;
+import org.example.pizzeria.exception.user.StatusAlreadyExistsException;
 import org.example.pizzeria.exception.user.UserCreateException;
 import org.example.pizzeria.mapper.user.UserMapper;
 import org.example.pizzeria.repository.benefits.FavoritesRepository;
@@ -27,6 +29,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,7 +73,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void save_UserAlreadyExists() {
+    void save_UserAlreadyExists_TrowUserCreateException() {
         when(userRepository.findByUserNameAndEmail(TestData.USER_REGISTER_REQUEST_DTO.userName(),
                 TestData.USER_REGISTER_REQUEST_DTO.email())).thenReturn(Optional.ofNullable(TestData.USER_APP));
 
@@ -91,6 +94,13 @@ class UserServiceImplTest {
         verify(userRepository, times(1)).getReferenceById(userId);
     }
 
+    @Test
+    void getUser_UserNotFound_ThrowEntityInPizzeriaNotFoundException() {
+        Long userId = 1L;
+        when(userRepository.getReferenceById(userId)).thenThrow(NoSuchElementException.class);
+        assertThrows(EntityInPizzeriaNotFoundException.class,
+                () -> userServiceImpl.getUser(userId));
+    }
 
     @Test
     public void update() {
@@ -110,6 +120,13 @@ class UserServiceImplTest {
         verify(userRepository).save(any(UserApp.class));
     }
 
+    @Test
+    void update_UserNotFound_ThrowEntityInPizzeriaNotFoundException() {
+        Long userId = 999L;
+        when(userRepository.getReferenceById(userId)).thenThrow(NoSuchElementException.class);
+        assertThrows(EntityInPizzeriaNotFoundException.class,
+                () -> userServiceImpl.update(999L, TestData.USER_REQUEST_DTO));
+    }
 
     @Test
     void getUsersByBirthday() {
@@ -129,11 +146,14 @@ class UserServiceImplTest {
     }
 
     @Test
-    void getUsersByBirthday_NoUsersFound() {
-        LocalDate birthday = LocalDate.of(1990, 10, 15);
-        when(userRepository.findUserAppByBirthDate(birthday)).thenReturn(Collections.emptyList());
-        List<UserResponseDto> result = userServiceImpl.getUsersByBirthday(birthday);
-        assertEquals(0, result.size());
+    void getUsersByBirthday_NoUsersFound_ThrowEntityInPizzeriaNotFoundException() {
+        LocalDate date = LocalDate.of(2000, 1, 1);
+        when(userRepository.findUserAppByBirthDate(date)).thenReturn(Collections.emptyList());
+        assertThrows(EntityInPizzeriaNotFoundException.class, () -> {
+            userServiceImpl.getUsersByBirthday(date);
+        });
+        verify(userRepository, times(1)).findUserAppByBirthDate(date);
+        verify(userMapper, never()).toUserResponseDto(any());
     }
 
     @Test
@@ -172,7 +192,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void getUserBlockedNoBlockedUsers() {
+    void getUserBlocked_NoBlockedUsers_EmptyList() {
         when(userRepository.findAllByIsBlocked(true)).thenReturn(List.of());
         List<UserBlockedResponseDto> result = userServiceImpl.getUserBlocked();
         assertNotNull(result);
@@ -202,6 +222,19 @@ class UserServiceImplTest {
         when(userRepository.getReferenceById(userId)).thenReturn(user);
         when(reviewRepository.findAllByUserApp_Id(userId)).thenReturn(Collections.emptyList());
         assertThrows(EntityInPizzeriaNotFoundException.class, () -> userServiceImpl.changeUserBlocking(userId, true));
+    }
+
+    @Test
+    void changeUserBlocking_UserAlreadyBlocked() {
+        UserApp userApp = new UserApp();
+        userApp.setBlocked(true);
+        when(userRepository.getReferenceById(1L)).thenReturn(userApp);
+        Review review = new Review();
+        review.setReviewDate(LocalDateTime.now());
+        when(reviewRepository.findAllByUserApp_Id(1L)).thenReturn(Collections.singletonList(review));
+        assertThrows(StatusAlreadyExistsException.class, () -> userServiceImpl.changeUserBlocking(1L, true));
+
+        verify(userRepository, times(1)).getReferenceById(1L);
     }
 }
 

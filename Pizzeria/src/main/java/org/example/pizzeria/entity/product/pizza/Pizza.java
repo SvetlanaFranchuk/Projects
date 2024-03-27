@@ -1,10 +1,7 @@
 package org.example.pizzeria.entity.product.pizza;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.pizzeria.entity.product.ingredient.Dough;
 import org.example.pizzeria.entity.product.ingredient.Ingredient;
 
@@ -14,6 +11,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"dough", "ingredientsList"})
+@EqualsAndHashCode(exclude = {"dough", "ingredientsList"})
 @Builder
 @Entity
 @Table(name = "pizzas",

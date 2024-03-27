@@ -1,5 +1,6 @@
 package org.example.pizzeria.service.product;
 
+import jakarta.persistence.EntityManager;
 import org.example.pizzeria.TestData;
 import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
 import org.example.pizzeria.entity.order.Order;
@@ -10,6 +11,8 @@ import org.example.pizzeria.entity.product.pizza.ToppingsFillings;
 import org.example.pizzeria.exception.ErrorMessage;
 import org.example.pizzeria.exception.InvalidIDException;
 import org.example.pizzeria.exception.product.DeleteProductException;
+import org.example.pizzeria.mapper.product.DoughMapper;
+import org.example.pizzeria.mapper.product.IngredientMapper;
 import org.example.pizzeria.mapper.product.PizzaMapper;
 import org.example.pizzeria.repository.order.OrderDetailsRepository;
 import org.example.pizzeria.repository.product.DoughRepository;
@@ -36,13 +39,19 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImpl_Test_Pizza {
     @Mock
+    private EntityManager entityManager;
+    @Mock
     private UserRepository userRepository;
     @Mock
     private OrderDetailsRepository orderDetailsRepository;
     @Mock
     private IngredientRepository ingredientRepository;
     @Mock
+    private IngredientMapper ingredientMapper;
+    @Mock
     private DoughRepository doughRepository;
+    @Mock
+    private DoughMapper doughMapper;
     @Mock
     private PizzaRepository pizzaRepository;
     @Mock
@@ -62,13 +71,17 @@ class ProductServiceImpl_Test_Pizza {
     @Test
     void addPizza() {
         Long userId = 1L;
-        when(userRepository.getReferenceById(1L)).thenReturn(TestData.USER_APP);
+        when(pizzaMapper.toPizza(TestData.PIZZA_REQUEST_DTO)).thenReturn(TestData.PIZZA);
         when(ingredientRepository.getReferenceById(1L)).thenReturn(TestData.INGREDIENT_1);
         when(ingredientRepository.getReferenceById(2L)).thenReturn(TestData.INGREDIENT_2);
         when(doughRepository.getReferenceById(1)).thenReturn(TestData.DOUGH_1);
-        when(pizzaMapper.toPizza(TestData.PIZZA_REQUEST_DTO)).thenReturn(TestData.PIZZA);
+        when(userRepository.getReferenceById(1L)).thenReturn(TestData.USER_APP);
         when(pizzaRepository.save(TestData.PIZZA)).thenReturn(TestData.PIZZA);
         when(pizzaMapper.toPizzaResponseDto(TestData.PIZZA)).thenReturn(TestData.PIZZA_RESPONSE_DTO);
+        when(doughMapper.toDoughResponseClientDto(TestData.PIZZA.getDough())).thenReturn(TestData.DOUGH_RESPONSE_CLIENT_DTO);
+        when(ingredientMapper.toIngredientResponseClientDto(TestData.INGREDIENT_2)).thenReturn(TestData.INGREDIENT_RESPONSE_CLIENT_DTO_2);
+        when(ingredientMapper.toIngredientResponseClientDto(TestData.INGREDIENT_1)).thenReturn(TestData.INGREDIENT_RESPONSE_CLIENT_DTO_1);
+
 
         PizzaResponseDto result = productService.addPizza(TestData.PIZZA_REQUEST_DTO, userId);
         assertEquals(TestData.PIZZA_RESPONSE_DTO, result);
@@ -86,8 +99,12 @@ class ProductServiceImpl_Test_Pizza {
         when(ingredientRepository.getReferenceById(1L)).thenReturn(TestData.INGREDIENT_1);
         when(ingredientRepository.getReferenceById(2L)).thenReturn(TestData.INGREDIENT_2);
         when(doughRepository.getReferenceById(1)).thenReturn(TestData.DOUGH_1);
+        entityManager.flush();
         when(pizzaRepository.save(TestData.PIZZA_NEW)).thenReturn(TestData.PIZZA_NEW);
         when(pizzaMapper.toPizzaResponseDto(TestData.PIZZA_NEW)).thenReturn(TestData.PIZZA_RESPONSE_DTO_NEW);
+        when(doughMapper.toDoughResponseClientDto(TestData.PIZZA.getDough())).thenReturn(TestData.DOUGH_RESPONSE_CLIENT_DTO);
+        when(ingredientMapper.toIngredientResponseClientDto(TestData.INGREDIENT_1)).thenReturn(TestData.INGREDIENT_RESPONSE_CLIENT_DTO_1);
+        when(ingredientMapper.toIngredientResponseClientDto(TestData.INGREDIENT_2)).thenReturn(TestData.INGREDIENT_RESPONSE_CLIENT_DTO_2);
 
         PizzaResponseDto result = productService.updatePizza(TestData.PIZZA_REQUEST_DTO_NEW, pizzaId);
         assertEquals(TestData.PIZZA_RESPONSE_DTO_NEW, result);
@@ -163,7 +180,7 @@ class ProductServiceImpl_Test_Pizza {
 
     @Test
     void getAllPizzaStandardRecipeByStyles_EmptyList() {
-        when(pizzaRepository.findAllByStandardRecipeAndStyles(true,Styles.CLASSIC_ITALIAN)).thenReturn(Collections.emptyList());
+        when(pizzaRepository.findAllByStandardRecipeAndStyles(true, Styles.CLASSIC_ITALIAN)).thenReturn(Collections.emptyList());
         List<PizzaResponseDto> result = productService.getAllPizzaStandardRecipeByStyles(Styles.CLASSIC_ITALIAN);
         assertNotNull(result);
         assertTrue(result.isEmpty());

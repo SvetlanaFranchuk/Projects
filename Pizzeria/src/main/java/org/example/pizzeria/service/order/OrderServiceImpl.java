@@ -13,8 +13,6 @@ import org.example.pizzeria.exception.order.InvalidOrderStatusException;
 import org.example.pizzeria.mapper.order.BasketMapper;
 import org.example.pizzeria.mapper.order.OrderDetailsMapper;
 import org.example.pizzeria.mapper.order.OrderMapper;
-import org.example.pizzeria.mapper.product.DoughMapper;
-import org.example.pizzeria.mapper.product.IngredientMapper;
 import org.example.pizzeria.mapper.product.PizzaMapper;
 import org.example.pizzeria.repository.order.BasketRepository;
 import org.example.pizzeria.repository.order.OrderDetailsRepository;
@@ -39,22 +37,18 @@ public class OrderServiceImpl implements OrderService {
     private final OrderDetailsRepository orderDetailsRepository;
     private final OrderRepository orderRepository;
     private final PizzaMapper pizzaMapper;
-    private final DoughMapper doughMapper;
-    private final IngredientMapper ingredientMapper;
     private final BasketMapper basketMapper;
     private final OrderMapper orderMapper;
     private final OrderDetailsMapper orderDetailsMapper;
 
    @Autowired
-   public OrderServiceImpl(UserRepository userRepository, BasketRepository basketRepository, PizzaRepository pizzaRepository, OrderDetailsRepository orderDetailsRepository, OrderRepository orderRepository, PizzaMapper pizzaMapper, DoughMapper doughMapper, IngredientMapper ingredientMapper, BasketMapper basketMapper, OrderMapper orderMapper, OrderDetailsMapper orderDetailsMapper) {
+   public OrderServiceImpl(UserRepository userRepository, BasketRepository basketRepository, PizzaRepository pizzaRepository, OrderDetailsRepository orderDetailsRepository, OrderRepository orderRepository, PizzaMapper pizzaMapper, BasketMapper basketMapper, OrderMapper orderMapper, OrderDetailsMapper orderDetailsMapper) {
         this.userRepository = userRepository;
         this.basketRepository = basketRepository;
         this.pizzaRepository = pizzaRepository;
         this.orderDetailsRepository = orderDetailsRepository;
         this.orderRepository = orderRepository;
         this.pizzaMapper = pizzaMapper;
-        this.doughMapper = doughMapper;
-        this.ingredientMapper = ingredientMapper;
         this.basketMapper = basketMapper;
         this.orderMapper = orderMapper;
         this.orderDetailsMapper = orderDetailsMapper;
@@ -111,7 +105,7 @@ public class OrderServiceImpl implements OrderService {
                 throw new NotCorrectArgumentException(ErrorMessage.NOT_CORRECT_ARGUMENT);
             }
             for (int i = 0; i < count; i++) {
-                newListPizzas.add(pizzaRepository.getReferenceById(pizzaResponseDto.id()));
+                newListPizzas.add(pizzaRepository.getReferenceById(pizzaResponseDto.getId()));
             }
         }
         basket.setPizzas(newListPizzas);
@@ -222,7 +216,7 @@ public class OrderServiceImpl implements OrderService {
         for (Map.Entry<PizzaResponseDto, Integer> entry : pizzaToCount.entrySet()) {
             PizzaResponseDto pizzaResponseDto = entry.getKey();
             Integer count = entry.getValue();
-            Pizza pizza = pizzaRepository.findById(pizzaResponseDto.id())
+            Pizza pizza = pizzaRepository.findById(pizzaResponseDto.getId())
                     .orElseThrow(() -> new EntityInPizzeriaNotFoundException("Pizza", ErrorMessage.ENTITY_NOT_FOUND));
             for (int i = 0; i < count; i++) {
                 pizzas.add(pizza);

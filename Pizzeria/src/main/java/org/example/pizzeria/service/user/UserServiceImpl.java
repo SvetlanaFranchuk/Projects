@@ -29,6 +29,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -78,16 +79,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto getUser(Long id) {
-         return userMapper.toUserResponseDto(userRepository.getReferenceById(id));
+         try {
+           return userMapper.toUserResponseDto(userRepository.getReferenceById(id));
+         } catch (RuntimeException e){
+             throw new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND);
+         }
     }
 
     @Override
     @Transactional
     public UserResponseDto update(Long id, UserRequestDto userRequestDto) {
-        UserApp userApp = userRepository.getReferenceById(id);
-        setDifferences(userApp, userRequestDto);
-        userApp = userRepository.save(userApp);
-        return userMapper.toUserResponseDto(userApp);
+        try {
+            UserApp userApp = userRepository.getReferenceById(id);
+            setDifferences(userApp, userRequestDto);
+            userApp = userRepository.save(userApp);
+            return userMapper.toUserResponseDto(userApp);
+        } catch (RuntimeException e) {
+            throw new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND);
+        }
     }
 
     private void setDifferences(UserApp userApp, UserRequestDto userRequestDto) {
@@ -107,8 +116,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponseDto> getUsersByBirthday(LocalDate date) {
-        return userRepository.findUserAppByBirthDate(date).stream()
-                .map(u -> userMapper.toUserResponseDto(u)).toList();
+        List<UserApp> users = userRepository.findUserAppByBirthDate(date);
+        if (users.isEmpty()) {
+            throw new EntityInPizzeriaNotFoundException("Users", ErrorMessage.ENTITY_NOT_FOUND);
+        }
+        return users.stream()
+                .map(userMapper::toUserResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -135,6 +149,9 @@ public class UserServiceImpl implements UserService {
         Review review = reviewRepository.findAllByUserApp_Id(id).stream()
                 .max(Comparator.comparing(Review::getReviewDate)).orElseThrow(() ->
                         new EntityInPizzeriaNotFoundException("Review", ErrorMessage.ENTITY_NOT_FOUND));
+        if (userApp.isBlocked() == isBlocked) {
+            throw new StatusAlreadyExistsException("User is already " + (isBlocked ? "blocked" : "unblocked"));
+        }
         userApp.setBlocked(isBlocked);
         userApp = userRepository.save(userApp);
         return userMapper.toUserBlockedResponseDto(id, userApp.getUserName(), isBlocked, review.getReviewDate());

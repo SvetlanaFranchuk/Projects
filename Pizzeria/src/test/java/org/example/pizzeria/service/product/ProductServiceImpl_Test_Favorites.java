@@ -3,10 +3,10 @@ package org.example.pizzeria.service.product;
 import org.example.pizzeria.TestData;
 import org.example.pizzeria.dto.benefits.FavoritesResponseDto;
 import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
-import org.example.pizzeria.entity.benefits.Favorites;
 import org.example.pizzeria.entity.product.pizza.Pizza;
 import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
 import org.example.pizzeria.exception.product.FavoritesExistException;
+import org.example.pizzeria.exception.product.PizzaAlreadyInFavoritesException;
 import org.example.pizzeria.mapper.benefits.FavoritesMapper;
 import org.example.pizzeria.mapper.product.PizzaMapper;
 import org.example.pizzeria.repository.benefits.FavoritesRepository;
@@ -59,38 +59,26 @@ class ProductServiceImpl_Test_Favorites {
     @Test
     void addPizzaToUserFavorite() {
         Long userId = 1L;
-        List<Pizza> pizzas = new ArrayList<>(TestData.FAVORITES.getPizzas());
-        pizzas.add(TestData.PIZZA_3);
-        TestData.FAVORITES.setPizzas(pizzas);
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(TestData.USER_APP));
-        when(favoritesRepository.findByUserApp(TestData.USER_APP)).thenReturn(Optional.of(TestData.FAVORITES));
-        when(favoritesRepository.save(TestData.FAVORITES)).thenReturn(TestData.FAVORITES);
-        when(favoritesMapper.toFavoriteResponseDto(TestData.FAVORITES)).thenReturn(new FavoritesResponseDto(List.of(
+        FavoritesResponseDto expected = (new FavoritesResponseDto(List.of(
                 TestData.PIZZA_RESPONSE_DTO, TestData.PIZZA_RESPONSE_DTO_2, TestData.PIZZA_RESPONSE_DTO_3)));
-        FavoritesResponseDto result = productService.addPizzaToUserFavorite(userId, TestData.PIZZA_3);
-        assertEquals(new FavoritesResponseDto(List.of(TestData.PIZZA_RESPONSE_DTO, TestData.PIZZA_RESPONSE_DTO_2,
-                TestData.PIZZA_RESPONSE_DTO_3)), result);
+        when(userRepository.getReferenceById(userId)).thenReturn(TestData.USER_APP);
+        when(favoritesRepository.findByUserApp_Id(userId)).thenReturn(Optional.of(TestData.FAVORITES));
+        when(pizzaRepository.getReferenceById(TestData.PIZZA_3.getId())).thenReturn(TestData.PIZZA_3);
+        when(favoritesRepository.save(TestData.FAVORITES)).thenReturn(TestData.FAVORITES);
+        when(favoritesMapper.toFavoriteResponseDto(TestData.FAVORITES)).thenReturn(expected);
+        FavoritesResponseDto result = productService.addPizzaToUserFavorite(userId, TestData.PIZZA_3.getId());
+        assertEquals(expected, result);
     }
 
     @Test
-    void addPizzaToUserFavorite_NewFavoritesCreated_Success() {
-        when(userRepository.findById(2L)).thenReturn(Optional.of(TestData.USER_APP_2));
-        when(favoritesRepository.findByUserApp(TestData.USER_APP_2)).thenReturn(Optional.empty());
-        when(favoritesRepository.save(any(Favorites.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(favoritesMapper.toFavoriteResponseDto(any(Favorites.class))).thenAnswer(invocation -> new FavoritesResponseDto(List.of(TestData.PIZZA_RESPONSE_DTO)));
-        FavoritesResponseDto result = productService.addPizzaToUserFavorite(2L, TestData.PIZZA);
-        assertNotNull(result);
-        assertEquals(1, result.pizzas().size());
-        assertTrue(result.pizzas().contains(TestData.PIZZA_RESPONSE_DTO));
-        verify(favoritesRepository, times(1)).save(any(Favorites.class));
-    }
-
-    @Test
-    void addPizzaToUserFavorite_UserNotFound_ThrowEntityInPizzeriaNotFoundException() {
+    void addPizzaToUserFavorite_PizzaAlreadyInFavorites() {
         Long userId = 1L;
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
-        assertThrows(EntityInPizzeriaNotFoundException.class, () -> productService.addPizzaToUserFavorite(userId, new Pizza()));
+        Long pizzaId = 2L;
+
+        when(userRepository.getReferenceById(userId)).thenReturn(TestData.USER_APP);
+        when(favoritesRepository.findByUserApp_Id(userId)).thenReturn(Optional.of(TestData.FAVORITES));
+        assertThrows(PizzaAlreadyInFavoritesException.class,
+                () -> productService.addPizzaToUserFavorite(userId, pizzaId));
     }
 
     @Test
