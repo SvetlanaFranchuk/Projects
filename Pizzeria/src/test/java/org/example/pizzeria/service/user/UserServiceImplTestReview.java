@@ -3,6 +3,8 @@ package org.example.pizzeria.service.user;
 import org.example.pizzeria.TestData;
 import org.example.pizzeria.dto.benefits.ReviewResponseDto;
 import org.example.pizzeria.entity.benefits.Review;
+import org.example.pizzeria.entity.user.UserApp;
+import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
 import org.example.pizzeria.exception.InvalidIDException;
 import org.example.pizzeria.exception.user.UpdateReviewException;
 import org.example.pizzeria.exception.user.UserBlockedException;
@@ -21,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.example.pizzeria.TestData.REVIEW_REQUEST_DTO_3;
+import static org.example.pizzeria.TestData.USER_APP;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -46,23 +49,39 @@ class UserServiceImplTestReview {
     @Test
     void addReview() {
         Long userId = 1L;
-        Review review = new Review(1L, "Good pizza", 10, LocalDateTime.now(), TestData.USER_APP);
-        when(userRepository.getReferenceById(userId)).thenReturn(TestData.USER_APP);
-        when(reviewMapper.toReview("Good pizza", 10, TestData.USER_APP)).thenReturn(review);
-        when(reviewMapper.toReviewResponseDto(review)).thenReturn(TestData.REVIEW_RESPONSE_DTO);
+        Review review = new Review(1L, "Good pizza", 10, LocalDateTime.now(), null);
+        UserApp userApp = TestData.USER_APP;
+        userApp.setReviews(new HashSet<>());
+        when(userRepository.findById(userId)).thenReturn(Optional.of(userApp));
+        when(reviewMapper.toReview("Good pizza", 10)).thenReturn(review);
+        review.setUserApp(userApp);
         when(reviewRepository.save(review)).thenReturn(review);
+        userApp.addReview(review);
+        when(userRepository.save(userApp)).thenReturn(userApp);
+        when(reviewMapper.toReviewResponseDto(review)).thenReturn(TestData.REVIEW_RESPONSE_DTO);
 
-        ReviewResponseDto result = userServiceImpl.addReview(TestData.REVIEW_REQUEST_DTO);
+        ReviewResponseDto result = userServiceImpl.addReview(TestData.REVIEW_REQUEST_DTO, userId);
+
         assertEquals(TestData.REVIEW_RESPONSE_DTO, result);
     }
 
     @Test
-    void addReviewBlockedUser() {
-        when(userRepository.getReferenceById(2L)).thenReturn(TestData.USER_BLOCKED);
-        assertThrows(UserBlockedException.class, () -> userServiceImpl.addReview(TestData.REVIEW_REQUEST_DTO_2));
-        verify(userRepository, times(1)).getReferenceById(TestData.REVIEW_REQUEST_DTO_2.UserId());
-        verify(reviewRepository, never()).save(any());
-        verify(reviewMapper, never()).toReviewResponseDto(any());
+    void addReview_UserNotFound_ThrowEntityInPizzeriaNotFoundException() {
+        Long userId = 1L;
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+            assertThrows(EntityInPizzeriaNotFoundException.class, () -> {
+            userServiceImpl.addReview(TestData.REVIEW_REQUEST_DTO, userId);
+        });
+    }
+
+    @Test
+    void addReview_UserBlocked_ThrowUserBlockedException() {
+        Long userId = 1L;
+        UserApp userApp = TestData.USER_APP_BLOCKED;
+        when(userRepository.findById(userId)).thenReturn(Optional.of(userApp));
+        assertThrows(UserBlockedException.class, () -> {
+            userServiceImpl.addReview(TestData.REVIEW_REQUEST_DTO, userId);
+        });
     }
 
     @Test
@@ -70,10 +89,10 @@ class UserServiceImplTestReview {
         Long reviewId = 1L;
         Review existingReview = new Review(1L, "Super", 8, LocalDateTime.now(), TestData.USER_APP);
         when(reviewRepository.save(existingReview)).thenReturn(existingReview);
-        when(reviewRepository.getReferenceById(reviewId)).thenReturn(existingReview);
-        when(userRepository.getReferenceById(TestData.USER_APP.getId())).thenReturn(TestData.USER_APP);
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(existingReview));
+        when(userRepository.findById(TestData.USER_APP.getId())).thenReturn(Optional.of(TestData.USER_APP));
         when(reviewMapper.toReviewResponseDto(existingReview)).thenReturn(TestData.REVIEW_RESPONSE_DTO_NEW);
-        ReviewResponseDto updatedReviewResponseDto = userServiceImpl.updateReview(reviewId, TestData.REVIEW_REQUEST_DTO);
+        ReviewResponseDto updatedReviewResponseDto = userServiceImpl.updateReview(reviewId, TestData.REVIEW_REQUEST_DTO, TestData.USER_APP.getId());
 
         assertEquals(TestData.REVIEW_RESPONSE_DTO_NEW, updatedReviewResponseDto);
         assertEquals(TestData.REVIEW_REQUEST_DTO.comment(), existingReview.getComment());
@@ -82,27 +101,51 @@ class UserServiceImplTestReview {
     }
 
     @Test
-    void updateReviewBlockedUser() {
-        when(userRepository.getReferenceById(TestData.REVIEW_REQUEST_DTO_2.UserId())).thenReturn(TestData.USER_BLOCKED);
-
-        assertThrows(UserBlockedException.class, () -> userServiceImpl.updateReview(1L, TestData.REVIEW_REQUEST_DTO_2));
-        verify(userRepository, times(1)).getReferenceById(TestData.REVIEW_REQUEST_DTO_2.UserId());
-        verify(reviewRepository, never()).getReferenceById(any());
-        verify(reviewRepository, never()).save(any());
-        verify(reviewMapper, never()).toReviewResponseDto(any());
+    void updateReview_ReviewNotFound_ThrowEntityInPizzeriaNotFoundException() {
+        Long reviewId = 1L;
+        assertThrows(EntityInPizzeriaNotFoundException.class, () -> {
+            userServiceImpl.updateReview(reviewId, TestData.REVIEW_REQUEST_DTO, TestData.USER_APP.getId());
+        });
     }
 
     @Test
-    void updateReview_InaccessibleReview_ThrowUpdateReviewException() {
-        long userId = 1L;
-        long reviewId = 2L;
-        Review review = new Review(reviewId, "Good", 8, LocalDateTime.now(), TestData.USER_BLOCKED);
-
-        when(userRepository.getReferenceById(userId)).thenReturn(TestData.USER_APP);
-        when(reviewRepository.getReferenceById(reviewId)).thenReturn(review);
-        assertThrows(UpdateReviewException.class, () -> userServiceImpl.updateReview(reviewId, REVIEW_REQUEST_DTO_3));
+    void updateReview_UserNotFound_ThrowEntityInPizzeriaNotFoundException() {
+        Long reviewId = 1L;
+        Review existingReview = new Review(1L, "Super", 8, LocalDateTime.now(), TestData.USER_APP);
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(existingReview));
+        when(userRepository.findById(TestData.USER_APP.getId())).thenReturn(Optional.empty());
+        assertThrows(EntityInPizzeriaNotFoundException.class, () -> {
+            userServiceImpl.updateReview(reviewId, TestData.REVIEW_REQUEST_DTO, TestData.USER_APP.getId());
+        });
     }
 
+    @Test
+    void updateReview_UserBlocked_ThrowUserBlockedException() {
+        Long reviewId = 1L;
+        Review review = new Review(1L, "Super", 8, LocalDateTime.now(), null);
+        review.setUserApp(TestData.USER_APP_BLOCKED);
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
+        UserApp blockedUserApp = mock(UserApp.class);
+        when(userRepository.findById(any())).thenReturn(Optional.of(blockedUserApp));
+        when(blockedUserApp.isBlocked()).thenReturn(true);
+
+        assertThrows(UserBlockedException.class, () -> {
+            userServiceImpl.updateReview(reviewId, TestData.REVIEW_REQUEST_DTO, TestData.USER_APP_BLOCKED.getId());
+        });
+    }
+
+    @Test
+    void updateReview_InvalidUser_ThrowUpdateReviewException() {
+        Long reviewId = 1L;
+        Review review = new Review(1L, "Super", 8, LocalDateTime.now(), null);
+        review.setUserApp(TestData.USER_APP_2);
+        UserApp userApp = TestData.USER_APP;
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
+        when(userRepository.findById(userApp.getId())).thenReturn(Optional.of(userApp));
+        assertThrows(UpdateReviewException.class, () -> {
+            userServiceImpl.updateReview(reviewId, TestData.REVIEW_REQUEST_DTO, userApp.getId());
+        });
+    }
     @Test
     void deleteReview() {
         long reviewId = 2L;

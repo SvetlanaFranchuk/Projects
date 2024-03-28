@@ -31,6 +31,7 @@ import org.example.pizzeria.entity.user.UserApp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class TestData {
@@ -191,9 +192,9 @@ public class TestData {
             CONTACT_INFORMATION);
     public static final UserBlockedResponseDto USER_BLOCKED_RESPONSE_DTO = new UserBlockedResponseDto(2L,
             "TestClient", true, LocalDateTime.now());
-    public static final ReviewRequestDto REVIEW_REQUEST_DTO = new ReviewRequestDto(1L, "Good pizza", 10);
-    public static final ReviewRequestDto REVIEW_REQUEST_DTO_2 = new ReviewRequestDto(2L, "Super", 10);
-    public static final ReviewRequestDto REVIEW_REQUEST_DTO_3 = new ReviewRequestDto(1L, "Super", 10);
+    public static final ReviewRequestDto REVIEW_REQUEST_DTO = new ReviewRequestDto( "Good pizza", 10);
+    public static final ReviewRequestDto REVIEW_REQUEST_DTO_2 = new ReviewRequestDto( "Super", 10);
+    public static final ReviewRequestDto REVIEW_REQUEST_DTO_3 = new ReviewRequestDto("Super", 10);
     public static final ReviewResponseDto REVIEW_RESPONSE_DTO = new ReviewResponseDto("Good pizza",
             10, "IvanAdmin", LocalDateTime.now());
     public static final ReviewResponseDto REVIEW_RESPONSE_DTO_NEW = new ReviewResponseDto("Super",

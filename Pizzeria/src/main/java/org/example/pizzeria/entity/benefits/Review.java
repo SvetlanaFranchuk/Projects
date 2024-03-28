@@ -1,9 +1,7 @@
 package org.example.pizzeria.entity.benefits;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.pizzeria.entity.user.UserApp;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -13,6 +11,8 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = "userApp")
+@EqualsAndHashCode(exclude = "userApp")
 @Entity
 @Table(name = "reviews")
 public class Review {

@@ -11,8 +11,13 @@ import org.example.pizzeria.entity.user.Address;
 import org.example.pizzeria.entity.user.ContactInformation;
 import org.example.pizzeria.entity.user.Role;
 import org.example.pizzeria.entity.user.UserApp;
-import org.example.pizzeria.exception.*;
-import org.example.pizzeria.exception.user.*;
+import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
+import org.example.pizzeria.exception.ErrorMessage;
+import org.example.pizzeria.exception.InvalidIDException;
+import org.example.pizzeria.exception.user.StatusAlreadyExistsException;
+import org.example.pizzeria.exception.user.UpdateReviewException;
+import org.example.pizzeria.exception.user.UserBlockedException;
+import org.example.pizzeria.exception.user.UserCreateException;
 import org.example.pizzeria.mapper.benefits.ReviewMapper;
 import org.example.pizzeria.mapper.user.UserMapper;
 import org.example.pizzeria.repository.benefits.FavoritesRepository;
@@ -68,7 +73,7 @@ public class UserServiceImpl implements UserService {
         newUser.setFavorites(favorites);
         newUser = userRepository.save(newUser);
         return userMapper.toUserResponseDto(newUser);
-     }
+    }
 
     private void validateUserNotExist(String userName, String email) {
         Optional<UserApp> userOptional = userRepository.findByUserNameAndEmail(userName, email);
@@ -79,11 +84,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto getUser(Long id) {
-         try {
-           return userMapper.toUserResponseDto(userRepository.getReferenceById(id));
-         } catch (RuntimeException e){
-             throw new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND);
-         }
+        try {
+            return userMapper.toUserResponseDto(userRepository.getReferenceById(id));
+        } catch (RuntimeException e) {
+            throw new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND);
+        }
     }
 
     @Override
@@ -144,7 +149,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserBlockedResponseDto changeUserBlocking (Long id, boolean isBlocked) {
+    public UserBlockedResponseDto changeUserBlocking(Long id, boolean isBlocked) {
         UserApp userApp = userRepository.getReferenceById(id);
         Review review = reviewRepository.findAllByUserApp_Id(id).stream()
                 .max(Comparator.comparing(Review::getReviewDate)).orElseThrow(() ->
@@ -160,40 +165,57 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserBonusDto getUserBonus(Long userId) {
-        UserApp userApp = userRepository.getReferenceById(userId);
-        return userMapper.toUserBonusDto(userApp.getBonus().getCountOrders(),
-                userApp.getBonus().getSumOrders());
+        try {
+            UserApp userApp = userRepository.getReferenceById(userId);
+            return userMapper.toUserBonusDto(userApp.getBonus().getCountOrders(),
+                    userApp.getBonus().getSumOrders());
+        } catch (RuntimeException e) {
+            throw new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND);
+        }
     }
 
     @Override
     @Transactional
     public UserBonusDto updateUserBonus(Long userId, int count, double sum) {
-        UserApp userApp = userRepository.getReferenceById(userId);
-        Bonus newBonus = userApp.getBonus();
-        newBonus.setCountOrders(newBonus.getCountOrders() + count);
-        newBonus.setSumOrders(newBonus.getSumOrders() + sum);
-        userApp.setBonus(newBonus);
-        userApp = userRepository.save(userApp);
-        return userMapper.toUserBonusDto(userApp.getBonus().getCountOrders(),
-                userApp.getBonus().getSumOrders());
+        try {
+            UserApp userApp = userRepository.getReferenceById(userId);
+            Bonus newBonus = userApp.getBonus();
+            newBonus.setCountOrders(newBonus.getCountOrders() + count);
+            newBonus.setSumOrders(newBonus.getSumOrders() + sum);
+            userApp.setBonus(newBonus);
+            userApp = userRepository.save(userApp);
+            return userMapper.toUserBonusDto(userApp.getBonus().getCountOrders(),
+                    userApp.getBonus().getSumOrders());
+        } catch (RuntimeException e) {
+            throw new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND);
+        }
     }
 
     @Override
     @Transactional
-    public ReviewResponseDto addReview(ReviewRequestDto reviewRequestDto) {
-        if (userRepository.getReferenceById(reviewRequestDto.UserId()).isBlocked())
-            throw new UserBlockedException(ErrorMessage.USER_BLOCKED);
-        return reviewMapper.toReviewResponseDto(reviewRepository.save(reviewMapper.toReview(reviewRequestDto.comment(),
-                reviewRequestDto.grade(), userRepository.getReferenceById(reviewRequestDto.UserId()))));
-    }
-
-    @Override
-    @Transactional
-    public ReviewResponseDto updateReview(Long id, ReviewRequestDto reviewRequestDto) {
-        UserApp userApp = userRepository.getReferenceById(reviewRequestDto.UserId());
+    public ReviewResponseDto addReview(ReviewRequestDto reviewRequestDto, Long userId) {
+        UserApp userApp = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND));
         if (userApp.isBlocked())
             throw new UserBlockedException(ErrorMessage.USER_BLOCKED);
-        Review review = reviewRepository.getReferenceById(id);
+        Review review = reviewMapper.toReview(reviewRequestDto.comment(), reviewRequestDto.grade());
+        review.setUserApp(userApp);
+        review = reviewRepository.save(review);
+        userApp.addReview(review);
+        userRepository.save(userApp);
+        return reviewMapper.toReviewResponseDto(review);
+    }
+
+    @Override
+    @Transactional
+    public ReviewResponseDto updateReview(Long reviewId, ReviewRequestDto reviewRequestDto, Long userId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new EntityInPizzeriaNotFoundException("Review", ErrorMessage.ENTITY_NOT_FOUND));
+        UserApp userApp = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND));
+        if (userApp.isBlocked()) {
+            throw new UserBlockedException(ErrorMessage.USER_BLOCKED);
+        }
         if (!Objects.equals(review.getUserApp().getId(), userApp.getId())) {
             throw new UpdateReviewException(ErrorMessage.CANT_REVIEW_UPDATED);
         }

@@ -116,7 +116,7 @@ class ProductControllerTest_Ingredient {
         mockMvc.perform(delete("/product/deleteIngredient/1234")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(ErrorMessage.INVALID_ID));
+                .andExpect(jsonPath("$.message").value("Ingredient " + ErrorMessage.INVALID_ID));
   }
 
     @Test

@@ -4,6 +4,7 @@ import org.example.pizzeria.TestData;
 import org.example.pizzeria.dto.user.UserBonusDto;
 import org.example.pizzeria.entity.benefits.Bonus;
 import org.example.pizzeria.entity.user.UserApp;
+import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
 import org.example.pizzeria.mapper.user.UserMapper;
 import org.example.pizzeria.repository.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -45,6 +45,13 @@ class UserServiceImplTestUserBonus {
     }
 
     @Test
+    void getUserBonus_UserNotFound_ThrowEntityInPizzeriaNotFoundException(){
+        when(userRepository.getReferenceById(99L)).thenReturn(null);
+        assertThrows(EntityInPizzeriaNotFoundException.class, () ->
+                userServiceImpl.getUserBonus(99L));
+    }
+
+    @Test
     void updateUserBonus() {
         int countToAdd = 20;
         double sumToAdd = 375.0;
@@ -58,6 +65,12 @@ class UserServiceImplTestUserBonus {
         assertNotNull(result);
         assertEquals(expectedBonus.getCountOrders(), result.getCountOrders());
         assertEquals(expectedBonus.getSumOrders(), result.getSumOrders());
+    }
+    @Test
+    void updateUserBonus_UserNotFound_ThrowEntityInPizzeriaNotFoundException(){
+        when(userRepository.getReferenceById(99L)).thenReturn(null);
+        assertThrows(EntityInPizzeriaNotFoundException.class, () ->
+                userServiceImpl.updateUserBonus(99L, 20,375));
     }
 
 }
