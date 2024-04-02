@@ -16,8 +16,8 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"orders", "reviews"})
-@EqualsAndHashCode(exclude = {"orders", "reviews"})
+@ToString(exclude = {"orders", "reviews", "basket", "favorites"})
+@EqualsAndHashCode(exclude = {"orders", "reviews", "basket", "favorites"})
 @Builder
 @Entity
 @Table(name = "users",
@@ -31,7 +31,7 @@ public class UserApp {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "userName")
+    @Column(name = "user_name")
     private String userName;
 
     @Column(name = "password")

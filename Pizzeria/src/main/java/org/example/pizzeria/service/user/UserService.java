@@ -21,15 +21,15 @@ public interface UserService {
 
     List<UserBlockedResponseDto> getUserBlocked();
 
-    UserBlockedResponseDto changeBlockingUser(Long id, boolean isBlocked);
+    UserBlockedResponseDto changeUserBlocking (Long id, boolean isBlocked);
 
     UserBonusDto getUserBonus(Long userId);
 
     UserBonusDto updateUserBonus(Long userId, int count, double sum);
 
-    ReviewResponseDto addReview(ReviewRequestDto reviewRequestDto);
+    ReviewResponseDto addReview(ReviewRequestDto reviewRequestDto, Long userId);
 
-    ReviewResponseDto updateReview(Long id, ReviewRequestDto reviewRequestDto);
+    ReviewResponseDto updateReview(Long id, ReviewRequestDto reviewRequestDto, Long userId);
 
     void deleteReview(Long id);
 

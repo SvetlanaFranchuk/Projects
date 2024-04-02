@@ -12,9 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    List<Order> findAllByUserApp(UserApp userApp);
+    List<Order> findAllByUserApp_Id(Long userAppId);
     List<Order> findAllByStatusOrder(StatusOrder statusOrder);
     List<Order> findAllByOrderDateTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
-
-    Optional<Order> findByIdAndUserApp(Long aLong, UserApp userApp);
 }

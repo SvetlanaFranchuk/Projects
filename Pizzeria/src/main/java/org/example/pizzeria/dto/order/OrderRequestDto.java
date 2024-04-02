@@ -11,8 +11,9 @@ import java.util.Map;
 
 @Schema (description = "Form for creating/updating order")
 public record OrderRequestDto(
-        @NotNull
-        Long id,
+        @Schema(description = "Delivery date and time")
+        @Future
+        LocalDateTime deliveryDateTime,
         @Schema(description = "City")
         @Size(max = 75, message = "City length could be less than 76 symbols")
         String deliveryCity,
@@ -25,14 +26,8 @@ public record OrderRequestDto(
         @Schema(description = "Apartment number")
         @Size(max = 5, message = "Apartment number length could be less than 6 symbols")
         String deliveryApartmentNumber,
-        @Schema(description = "Delivery date and time")
-        @Future
-        LocalDateTime deliveryDateTime,
-        @Schema(description = "List pizzas")
+        @Schema(description = "List pizzas ID and count")
         @NotNull
-        Map<PizzaResponseDto, Integer> pizzaToCount,
-        @Schema(description = "User id")
-        @NotNull
-        Long userAppId
+        Map<Long, Integer> pizzaToCount
 ) {
 }

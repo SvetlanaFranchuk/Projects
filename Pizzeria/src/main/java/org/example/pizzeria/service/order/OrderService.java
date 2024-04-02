@@ -10,8 +10,8 @@ public interface OrderService {
     BasketResponseDto addPizzaToBasket(Long userId, Long pizzaId, int countPizza);
     BasketResponseDto changePizzasInBasket(BasketRequestDto request);
     BasketResponseDto getBasketByUser(Long userId);
-    OrderResponseDto moveDetailsBasketToOrder(BasketRequestDto basketRequestDto);
-    OrderResponseDto updateOrderDetails(OrderRequestDto orderRequestDto);
+    OrderResponseDto moveDetailsBasketToOrder(Long idBasket);
+    OrderResponseDto updateOrderAndOrderDetails(Long id, OrderRequestDto orderRequestDto);
     void deleteOrder(Long id);
     OrderStatusResponseDto updateStatusOrder(Long orderId, StatusOrder statusOrder);
     List<OrderResponseDto> getAllOrdersByUser(Long userId);

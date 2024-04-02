@@ -4,10 +4,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.Setter;
 import org.example.pizzeria.entity.product.ingredient.TypeDough;
 
 @Schema(description = "Form for read information about dough")
 public record DoughResponseDto(
+        @Schema(description = "ID dough")
+        int id,
+
         @Schema(description = "Type of dough")
         @NotNull(message = "Field must be filled in") TypeDough typeDough,
 

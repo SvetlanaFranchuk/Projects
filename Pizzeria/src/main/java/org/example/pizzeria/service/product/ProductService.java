@@ -1,9 +1,10 @@
 package org.example.pizzeria.service.product;
 
 import org.example.pizzeria.dto.benefits.FavoritesResponseDto;
-import org.example.pizzeria.dto.product.dough.DoughRequestDto;
+import org.example.pizzeria.dto.product.dough.DoughCreateRequestDto;
 import org.example.pizzeria.dto.product.dough.DoughResponseClientDto;
 import org.example.pizzeria.dto.product.dough.DoughResponseDto;
+import org.example.pizzeria.dto.product.dough.DoughUpdateRequestDto;
 import org.example.pizzeria.dto.product.ingredient.IngredientRequestDto;
 import org.example.pizzeria.dto.product.ingredient.IngredientResponseClientDto;
 import org.example.pizzeria.dto.product.ingredient.IngredientResponseDto;
@@ -18,9 +19,9 @@ import java.util.List;
 
 public interface ProductService {
 
-    DoughResponseDto addDough(DoughRequestDto newDough);
+    DoughResponseDto addDough(DoughCreateRequestDto newDough);
 
-    DoughResponseDto updateDough(DoughRequestDto dough, Integer id);
+    DoughResponseDto updateDough(DoughUpdateRequestDto dough, Integer id);
 
     void deleteDough(Integer id);
 
@@ -36,7 +37,7 @@ public interface ProductService {
 
     List<IngredientResponseDto> getAllIngredientForAdmin();
 
-    List<IngredientResponseClientDto> getAllIngredientByGroup(GroupIngredient groupIngredient);
+    List<IngredientResponseDto> getAllIngredientByGroup(GroupIngredient groupIngredient);
 
     List<IngredientResponseClientDto> getAllIngredientForPizza(Long idPizza);
 
@@ -46,6 +47,8 @@ public interface ProductService {
 
     void deletePizzaRecipe(Long id);
 
+    PizzaResponseDto getPizza(Long id);
+
     List<PizzaResponseDto> getAllPizzaStandardRecipe();
 
     List<PizzaResponseDto> getAllPizzaStandardRecipeByStyles(Styles styles);
@@ -54,7 +57,7 @@ public interface ProductService {
 
     List<PizzaResponseDto> getAllPizzaStandardRecipeByToppingByStyles(ToppingsFillings toppingsFillings, Styles styles);
 
-    FavoritesResponseDto addPizzaToUserFavorite(Long userId, Pizza pizza);
+    FavoritesResponseDto addPizzaToUserFavorite(Long userId, Long pizzaId);
 
     void deletePizzaFromUserFavorite(Long pizzaId, Long userId);
 

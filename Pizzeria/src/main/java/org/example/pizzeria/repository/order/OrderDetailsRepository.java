@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Repository
 public interface OrderDetailsRepository extends JpaRepository<OrderDetails, Long> {
-     Optional<OrderDetails> findByOrder(Order order);
-     List<OrderDetails> findByDeliveryDateTimeBetween (LocalDateTime startDate, LocalDateTime endDate);
-     List<OrderDetails> findAllByPizzasContaining(Pizza pizza);
+    List<OrderDetails> findAllByPizza(Pizza pizza);
+    List<OrderDetails> findAllByOrder(Order order);
 }

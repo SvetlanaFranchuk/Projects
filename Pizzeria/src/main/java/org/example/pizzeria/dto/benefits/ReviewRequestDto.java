@@ -5,9 +5,6 @@ import jakarta.validation.constraints.*;
 
 @Schema(description = "Form for reviews")
 public record ReviewRequestDto(
-        @Schema(description = "User Id")
-        @PositiveOrZero
-        Long UserId,
         @Schema(description = "Comment")
         @Size(max = 255, message = "Comment length could be less then 256 symbols")
         String comment,

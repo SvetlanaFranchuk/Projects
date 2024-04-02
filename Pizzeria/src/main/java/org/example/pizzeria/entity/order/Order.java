@@ -5,15 +5,18 @@ import lombok.*;
 import org.example.pizzeria.entity.benefits.Review;
 import org.example.pizzeria.entity.user.UserApp;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"orderDetail"})
-@EqualsAndHashCode(exclude = {"orderDetail"})
+@ToString(exclude = {"orderDetails", "userApp"})
+@EqualsAndHashCode(exclude = {"orderDetails", "userApp"})
 @Builder
 @Entity
 @Table(name = "orders")
@@ -23,9 +26,16 @@ public class Order {
     @Column(name = "id")
     private Long id;
 
-    @CreationTimestamp
+    @UpdateTimestamp
     @Column(name = "order_date_time")
     private LocalDateTime orderDateTime;
+
+    @Column(name = "delivery_date_time")
+    private LocalDateTime deliveryDateTime;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type_bonus")
+    private TypeBonus typeBonus;
 
     @Column (name = "sum")
     private double sum;
@@ -37,8 +47,9 @@ public class Order {
     @Embedded
     private DeliveryAddress deliveryAddress;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
-    private OrderDetails orderDetail;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_details_id", referencedColumnName = "id")
+    private OrderDetails orderDetails;
 
     @ManyToOne
     private UserApp userApp;
@@ -47,7 +58,7 @@ public class Order {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Order order = (Order)  o;
+        Order order = (Order) o;
         return Objects.equals(id, order.id);
     }
 
@@ -55,4 +66,5 @@ public class Order {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }

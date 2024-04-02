@@ -9,17 +9,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface PizzaRepository extends JpaRepository<Pizza, Long> {
-    List<Pizza> findAllByStyles(Styles styles);
+    List<Pizza> findAllByStandardRecipeAndStyles(boolean isStandardRecipe, Styles styles);
+    List<Pizza> findAllByStandardRecipe(boolean isStandardRecipe);
 
-    Optional<Pizza> findByTitle(String title);
+    List<Pizza> findAllByStandardRecipeAndToppingsFillings(boolean isStandardRecipe, ToppingsFillings toppingsFillings);
 
-    List<Pizza> findAllByToppingsFillings(ToppingsFillings toppingsFillings);
+    List<Pizza> findAllByStandardRecipeAndToppingsFillingsAndStyles(boolean isStandardRecipe, ToppingsFillings toppingsFillings, Styles styles);
 
-    List<Pizza> findAllByToppingsFillingsAndStyles(ToppingsFillings toppingsFillings, Styles styles);
     List<Pizza> findAllByDoughIs(Dough dough);
 
     List<Pizza> findAllByIngredientsListIsContaining(Ingredient ingredient);

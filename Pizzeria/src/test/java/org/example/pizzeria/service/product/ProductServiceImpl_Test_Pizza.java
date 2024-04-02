@@ -1,22 +1,13 @@
 package org.example.pizzeria.service.product;
 
-import org.example.pizzeria.dto.product.dough.DoughResponseClientDto;
-import org.example.pizzeria.dto.product.ingredient.IngredientResponseClientDto;
-import org.example.pizzeria.dto.product.pizza.PizzaRequestDto;
+import jakarta.persistence.EntityManager;
+import org.example.pizzeria.TestData;
 import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
-import org.example.pizzeria.entity.benefits.Bonus;
 import org.example.pizzeria.entity.order.Order;
 import org.example.pizzeria.entity.order.OrderDetails;
-import org.example.pizzeria.entity.product.ingredient.Dough;
-import org.example.pizzeria.entity.product.ingredient.GroupIngredient;
-import org.example.pizzeria.entity.product.ingredient.Ingredient;
-import org.example.pizzeria.entity.product.ingredient.TypeDough;
 import org.example.pizzeria.entity.product.pizza.Pizza;
 import org.example.pizzeria.entity.product.pizza.Styles;
 import org.example.pizzeria.entity.product.pizza.ToppingsFillings;
-import org.example.pizzeria.entity.product.pizza.TypeBySize;
-import org.example.pizzeria.entity.user.Role;
-import org.example.pizzeria.entity.user.UserApp;
 import org.example.pizzeria.exception.ErrorMessage;
 import org.example.pizzeria.exception.InvalidIDException;
 import org.example.pizzeria.exception.product.DeleteProductException;
@@ -36,61 +27,18 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImpl_Test_Pizza {
-    private static final DoughResponseClientDto DOUGH_RESPONSE_CLIENT_DTO = new DoughResponseClientDto(1,
-            TypeDough.CLASSICA, 100, 120);
-    private static final Dough DOUGH = new Dough(1, TypeDough.CLASSICA, 100, 120, 0.23);
-    private static final IngredientResponseClientDto INGREDIENT_RESPONSE_CLIENT_DTO_1 = new IngredientResponseClientDto(1L,
-            "Tomato", 100, 90, GroupIngredient.BASIC);
-    private static final IngredientResponseClientDto INGREDIENT_RESPONSE_CLIENT_DTO_2 = new IngredientResponseClientDto(2L,
-            "Cheese", 20, 80, GroupIngredient.BASIC);
-    private static final Ingredient INGREDIENT_1 = new Ingredient(1L, "Tomato", 100, 90, 0.2, GroupIngredient.BASIC, null);
-    private static final Ingredient INGREDIENT_2 = new Ingredient(2L, "Cheese", 20, 80, 0.4, GroupIngredient.BASIC, null);
-
-    private static List<IngredientResponseClientDto> ingredientResponseClientBasicDtoList = List.of(INGREDIENT_RESPONSE_CLIENT_DTO_1, INGREDIENT_RESPONSE_CLIENT_DTO_2);
-    private static final PizzaRequestDto PIZZA_REQUEST_DTO = new PizzaRequestDto("Margarita",
-            "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
-            TypeBySize.MEDIUM, DOUGH_RESPONSE_CLIENT_DTO, new ArrayList<>(), ingredientResponseClientBasicDtoList,
-            new ArrayList<>());
-    private static final PizzaRequestDto PIZZA_REQUEST_DTO_NEW = new PizzaRequestDto("Margarita",
-            "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
-            TypeBySize.LARGE, DOUGH_RESPONSE_CLIENT_DTO, new ArrayList<>(), ingredientResponseClientBasicDtoList,
-            new ArrayList<>());
-    private static final Pizza PIZZA = new Pizza(1L, "Margarita",
-            "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
-            TypeBySize.MEDIUM, true, (0.2 + 0.4 + 0.23) * 1.3, 377, DOUGH, List.of(INGREDIENT_1, INGREDIENT_2));
-    private static final Pizza PIZZA_NEW = new Pizza(1L, "Margarita",
-            "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
-            TypeBySize.LARGE, true, (0.2 + 0.4 + 0.23) * 1.7, 493, DOUGH, List.of(INGREDIENT_1, INGREDIENT_2));
-
-    private static final PizzaResponseDto PIZZA_RESPONSE_DTO = new PizzaResponseDto(1L, "Margarita",
-            "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
-            TypeBySize.MEDIUM, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList, (0.2 + 0.4 + 0.23) * 1.3, 377);
-    private static final PizzaResponseDto PIZZA_RESPONSE_DTO_NEW = new PizzaResponseDto(1L, "Margarita",
-            "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
-            TypeBySize.LARGE, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList, (0.2 + 0.4 + 0.23) * 1.7, 493);
-    private static final UserApp USER_APP = UserApp.builder()
-            .id(1L)
-            .userName("IvanAdmin")
-            .password("12345")
-            .email("iv.admin@pizzeria.com")
-            .birthDate(LocalDate.of(2000, 1, 15))
-            .dateRegistration(LocalDate.now())
-            .isBlocked(false)
-            .role(Role.CLIENT)
-            .bonus(new Bonus(0, 0.0))
-            .build();
+    @Mock
+    private EntityManager entityManager;
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -98,13 +46,13 @@ class ProductServiceImpl_Test_Pizza {
     @Mock
     private IngredientRepository ingredientRepository;
     @Mock
-    private DoughRepository doughRepository;
-    @Mock
-    private PizzaRepository pizzaRepository;
-    @Mock
     private IngredientMapper ingredientMapper;
     @Mock
+    private DoughRepository doughRepository;
+    @Mock
     private DoughMapper doughMapper;
+    @Mock
+    private PizzaRepository pizzaRepository;
     @Mock
     private PizzaMapper pizzaMapper;
     @InjectMocks
@@ -122,114 +70,95 @@ class ProductServiceImpl_Test_Pizza {
     @Test
     void addPizza() {
         Long userId = 1L;
-        when(userRepository.findById(1L)).thenReturn(Optional.of(USER_APP));
-        List<Ingredient> ingredients = List.of(INGREDIENT_1, INGREDIENT_2);
-        when(ingredientRepository.getReferenceById(1L)).thenReturn(INGREDIENT_1);
-        when(ingredientRepository.getReferenceById(2L)).thenReturn(INGREDIENT_2);
-        when(doughRepository.getReferenceById(1)).thenReturn(DOUGH);
-        when(pizzaMapper.toPizza(PIZZA_REQUEST_DTO.title(),
-                PIZZA_REQUEST_DTO.description(), PIZZA_REQUEST_DTO.styles(), PIZZA_REQUEST_DTO.toppingsFillings(),
-                PIZZA_REQUEST_DTO.size(), !USER_APP.getRole().equals(Role.CLIENT),
-                (0.2 + 0.4 + 0.23) * 1.3, 377, DOUGH, ingredients)).thenReturn(PIZZA);
-        when(pizzaRepository.save(PIZZA)).thenReturn(PIZZA);
-        when(doughMapper.toDoughResponseClientDto(DOUGH)).thenReturn(DOUGH_RESPONSE_CLIENT_DTO);
-        when(ingredientMapper.toIngredientResponseClientDto(INGREDIENT_1)).thenReturn(INGREDIENT_RESPONSE_CLIENT_DTO_1);
-        when(ingredientMapper.toIngredientResponseClientDto(INGREDIENT_2)).thenReturn(INGREDIENT_RESPONSE_CLIENT_DTO_2);
-        when(pizzaMapper.toPizzaResponseDto(PIZZA, DOUGH_RESPONSE_CLIENT_DTO,
-                List.of(INGREDIENT_RESPONSE_CLIENT_DTO_1, INGREDIENT_RESPONSE_CLIENT_DTO_2)))
-                .thenReturn(PIZZA_RESPONSE_DTO);
+        when(pizzaMapper.toPizza(TestData.PIZZA_REQUEST_DTO)).thenReturn(TestData.PIZZA);
+        when(ingredientRepository.getReferenceById(1L)).thenReturn(TestData.INGREDIENT_1);
+        when(ingredientRepository.getReferenceById(2L)).thenReturn(TestData.INGREDIENT_2);
+        when(doughRepository.getReferenceById(1)).thenReturn(TestData.DOUGH_1);
+        when(userRepository.getReferenceById(1L)).thenReturn(TestData.USER_APP);
+        when(pizzaRepository.save(TestData.PIZZA)).thenReturn(TestData.PIZZA);
+        when(pizzaMapper.toPizzaResponseDto(TestData.PIZZA)).thenReturn(TestData.PIZZA_RESPONSE_DTO);
+        when(doughMapper.toDoughResponseClientDto(TestData.PIZZA.getDough())).thenReturn(TestData.DOUGH_RESPONSE_CLIENT_DTO);
+        when(ingredientMapper.toIngredientResponseClientDto(TestData.INGREDIENT_2)).thenReturn(TestData.INGREDIENT_RESPONSE_CLIENT_DTO_2);
+        when(ingredientMapper.toIngredientResponseClientDto(TestData.INGREDIENT_1)).thenReturn(TestData.INGREDIENT_RESPONSE_CLIENT_DTO_1);
 
-        PizzaResponseDto result = productService.addPizza(PIZZA_REQUEST_DTO, userId);
-        assertEquals(PIZZA_RESPONSE_DTO, result);
+
+        PizzaResponseDto result = productService.addPizza(TestData.PIZZA_REQUEST_DTO, userId);
+        assertEquals(TestData.PIZZA_RESPONSE_DTO, result);
     }
 
     @Test
-    void addPizza_InvalidUserId() {
-        assertThrows(NullPointerException.class, () -> productService.addPizza(PIZZA_REQUEST_DTO, null));
+    void addPizza_InvalidUserId_ThrowNullPointerException() {
+        assertThrows(NullPointerException.class, () -> productService.addPizza(TestData.PIZZA_REQUEST_DTO, null));
     }
 
     @Test
     void updatePizza() {
         Long pizzaId = 1L;
-        when(pizzaRepository.findById(pizzaId)).thenReturn(Optional.of(PIZZA));
-        when(ingredientRepository.getReferenceById(1L)).thenReturn(INGREDIENT_1);
-        when(ingredientRepository.getReferenceById(2L)).thenReturn(INGREDIENT_2);
-        when(doughRepository.getReferenceById(1)).thenReturn(DOUGH);
-        when(pizzaRepository.save(PIZZA_NEW)).thenReturn(PIZZA_NEW);
-        when(doughMapper.toDoughResponseClientDto(DOUGH)).thenReturn(DOUGH_RESPONSE_CLIENT_DTO);
-        when(ingredientMapper.toIngredientResponseClientDto(INGREDIENT_1)).thenReturn(INGREDIENT_RESPONSE_CLIENT_DTO_1);
-        when(ingredientMapper.toIngredientResponseClientDto(INGREDIENT_2)).thenReturn(INGREDIENT_RESPONSE_CLIENT_DTO_2);
-        when(pizzaMapper.toPizzaResponseDto(PIZZA_NEW, DOUGH_RESPONSE_CLIENT_DTO,
-                List.of(INGREDIENT_RESPONSE_CLIENT_DTO_1, INGREDIENT_RESPONSE_CLIENT_DTO_2)))
-                .thenReturn(PIZZA_RESPONSE_DTO_NEW);
+        when(pizzaRepository.findById(pizzaId)).thenReturn(Optional.of(TestData.PIZZA));
+        when(ingredientRepository.getReferenceById(1L)).thenReturn(TestData.INGREDIENT_1);
+        when(ingredientRepository.getReferenceById(2L)).thenReturn(TestData.INGREDIENT_2);
+        when(doughRepository.getReferenceById(1)).thenReturn(TestData.DOUGH_1);
+        entityManager.flush();
+        when(pizzaRepository.save(TestData.PIZZA_NEW)).thenReturn(TestData.PIZZA_NEW);
+        when(pizzaMapper.toPizzaResponseDto(TestData.PIZZA_NEW)).thenReturn(TestData.PIZZA_RESPONSE_DTO_NEW);
+        when(doughMapper.toDoughResponseClientDto(TestData.PIZZA.getDough())).thenReturn(TestData.DOUGH_RESPONSE_CLIENT_DTO);
+        when(ingredientMapper.toIngredientResponseClientDto(TestData.INGREDIENT_1)).thenReturn(TestData.INGREDIENT_RESPONSE_CLIENT_DTO_1);
+        when(ingredientMapper.toIngredientResponseClientDto(TestData.INGREDIENT_2)).thenReturn(TestData.INGREDIENT_RESPONSE_CLIENT_DTO_2);
 
-        PizzaResponseDto result = productService.updatePizza(PIZZA_REQUEST_DTO_NEW, pizzaId);
-        assertEquals(PIZZA_RESPONSE_DTO_NEW, result);
+        PizzaResponseDto result = productService.updatePizza(TestData.PIZZA_REQUEST_DTO_NEW, pizzaId);
+        assertEquals(TestData.PIZZA_RESPONSE_DTO_NEW, result);
     }
 
     @Test
-    void updatePizza_PizzaNotFound() {
+    void updatePizza_PizzaNotFound_ThrowInvalidIDException() {
         Long pizzaId = 123L;
         when(pizzaRepository.findById(pizzaId)).thenReturn(Optional.empty());
-        assertThrows(InvalidIDException.class, () -> productService.updatePizza(PIZZA_REQUEST_DTO, pizzaId));
+        assertThrows(InvalidIDException.class, () -> productService.updatePizza(TestData.PIZZA_REQUEST_DTO, pizzaId));
     }
 
     @Test
     void deletePizzaRecipe() {
         Long pizzaId = 1L;
-        when(pizzaRepository.findById(pizzaId)).thenReturn(Optional.of(PIZZA));
-        when(orderDetailsRepository.findAllByPizzasContaining(PIZZA)).thenReturn(Collections.emptyList());
+        when(pizzaRepository.findById(pizzaId)).thenReturn(Optional.of(TestData.PIZZA));
+        when(orderDetailsRepository.findAllByPizza(TestData.PIZZA)).thenReturn(Collections.emptyList());
         productService.deletePizzaRecipe(pizzaId);
-        verify(pizzaRepository, times(1)).delete(PIZZA);
+        verify(pizzaRepository, times(1)).delete(TestData.PIZZA);
     }
 
     @Test
-    void deletePizzaRecipe_RecipeAlreadyOrdered() {
-        when(pizzaRepository.findById(1L)).thenReturn(Optional.of(PIZZA));
-        List<OrderDetails> detailsList = List.of(new OrderDetails(1L,
-                LocalDateTime.of(2024, 4, 18, 6, 45), null,
-                new Order(), List.of(PIZZA)));
-        when(orderDetailsRepository.findAllByPizzasContaining(PIZZA)).thenReturn(detailsList);
+    void deletePizzaRecipe_RecipeAlreadyOrdered_ThrowDeleteProductException() {
+        when(pizzaRepository.findById(1L)).thenReturn(Optional.of(TestData.PIZZA));
+        List<OrderDetails> detailsList = List.of(new OrderDetails(1L, TestData.PIZZA, 1,  new Order()));
+        when(orderDetailsRepository.findAllByPizza(TestData.PIZZA)).thenReturn(detailsList);
 
-        DeleteProductException exception = assertThrows(DeleteProductException.class, () -> {
-            productService.deletePizzaRecipe(1L);
-        });
+        DeleteProductException exception = assertThrows(DeleteProductException.class, () -> productService.deletePizzaRecipe(1L));
         assertEquals(ErrorMessage.RECIPE_ALREADY_ORDERED, exception.getMessage());
-        verify(pizzaRepository, never()).delete(PIZZA);
+        verify(pizzaRepository, never()).delete(TestData.PIZZA);
     }
 
     @Test
-    void deletePizzaRecipe_InvalidID() {
+    void deletePizzaRecipe_InvalidID_ThrowInvalidIDException() {
         Long invalidId = 100L;
         when(pizzaRepository.findById(invalidId)).thenReturn(Optional.empty());
-        InvalidIDException exception = assertThrows(InvalidIDException.class, () -> {
-            productService.deletePizzaRecipe(invalidId);
-        });
+        InvalidIDException exception = assertThrows(InvalidIDException.class, () -> productService.deletePizzaRecipe(invalidId));
         assertEquals(ErrorMessage.INVALID_ID, exception.getMessage());
         verify(pizzaRepository, never()).delete(any());
     }
 
     @Test
     void getAllPizzaStandardRecipe() {
-        List<Pizza> pizzas = List.of(PIZZA).stream()
-                .filter(Pizza::isStandardRecipe)
-                .toList();
-        List<PizzaResponseDto> expectedResponse = List.of(PIZZA_RESPONSE_DTO);
+        List<Pizza> pizzas = List.of(TestData.PIZZA);
+        List<PizzaResponseDto> expectedResponse = List.of(TestData.PIZZA_RESPONSE_DTO);
 
-        when(pizzaRepository.findAll()).thenReturn(pizzas);
-        when(doughMapper.toDoughResponseClientDto(PIZZA.getDough())).thenReturn(DOUGH_RESPONSE_CLIENT_DTO);
-        when(ingredientMapper.toIngredientResponseClientDto(INGREDIENT_1)).thenReturn(INGREDIENT_RESPONSE_CLIENT_DTO_1);
-        when(ingredientMapper.toIngredientResponseClientDto(INGREDIENT_2)).thenReturn(INGREDIENT_RESPONSE_CLIENT_DTO_2);
-        when(pizzaMapper.toPizzaResponseDto(PIZZA, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList))
-                .thenReturn(PIZZA_RESPONSE_DTO);
-
+        when(pizzaRepository.findAllByStandardRecipe(true)).thenReturn(pizzas);
+        when(pizzaMapper.toPizzaResponseDto(TestData.PIZZA)).thenReturn(TestData.PIZZA_RESPONSE_DTO);
         List<PizzaResponseDto> result = productService.getAllPizzaStandardRecipe();
         assertEquals(expectedResponse, result);
     }
 
     @Test
     void getAllPizzaStandard_EmptyList() {
-        when(pizzaRepository.findAll()).thenReturn(Collections.emptyList());
+        when(pizzaRepository.findAllByStandardRecipe(true)).thenReturn(Collections.emptyList());
         List<PizzaResponseDto> result = productService.getAllPizzaStandardRecipe();
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -237,27 +166,18 @@ class ProductServiceImpl_Test_Pizza {
 
     @Test
     void getAllPizzaStandardRecipeByStyles() {
-        List<PizzaResponseDto> expectedResponse = List.of(PIZZA_RESPONSE_DTO);
+        List<PizzaResponseDto> expectedResponse = List.of(TestData.PIZZA_RESPONSE_DTO);
+        List<Pizza> pizzas = List.of(TestData.PIZZA);
 
-        List<Pizza> pizzas = List.of(PIZZA).stream()
-                .filter(pizza -> pizza.isStandardRecipe() &&
-                        pizza.getStyles().equals(Styles.CLASSIC_ITALIAN))
-                .toList();
-
-        when(pizzaRepository.findAll()).thenReturn(pizzas);
-        when(doughMapper.toDoughResponseClientDto(PIZZA.getDough())).thenReturn(DOUGH_RESPONSE_CLIENT_DTO);
-        when(ingredientMapper.toIngredientResponseClientDto(INGREDIENT_1)).thenReturn(INGREDIENT_RESPONSE_CLIENT_DTO_1);
-        when(ingredientMapper.toIngredientResponseClientDto(INGREDIENT_2)).thenReturn(INGREDIENT_RESPONSE_CLIENT_DTO_2);
-        when(pizzaMapper.toPizzaResponseDto(PIZZA, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList))
-                .thenReturn(PIZZA_RESPONSE_DTO);
-
+        when(pizzaRepository.findAllByStandardRecipeAndStyles(true, Styles.CLASSIC_ITALIAN)).thenReturn(pizzas);
+        when(pizzaMapper.toPizzaResponseDto(TestData.PIZZA)).thenReturn(TestData.PIZZA_RESPONSE_DTO);
         List<PizzaResponseDto> result = productService.getAllPizzaStandardRecipeByStyles(Styles.CLASSIC_ITALIAN);
         assertEquals(expectedResponse, result);
     }
 
     @Test
     void getAllPizzaStandardRecipeByStyles_EmptyList() {
-        when(pizzaRepository.findAll()).thenReturn(Collections.emptyList());
+        when(pizzaRepository.findAllByStandardRecipeAndStyles(true, Styles.CLASSIC_ITALIAN)).thenReturn(Collections.emptyList());
         List<PizzaResponseDto> result = productService.getAllPizzaStandardRecipeByStyles(Styles.CLASSIC_ITALIAN);
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -265,27 +185,21 @@ class ProductServiceImpl_Test_Pizza {
 
     @Test
     void getAllPizzaStandardRecipeByTopping() {
-        List<PizzaResponseDto> expectedResponse = List.of(PIZZA_RESPONSE_DTO);
-
-        List<Pizza> pizzas = List.of(PIZZA).stream()
+        List<PizzaResponseDto> expectedResponse = List.of(TestData.PIZZA_RESPONSE_DTO);
+        List<Pizza> pizzas = Stream.of(TestData.PIZZA)
                 .filter(pizza -> pizza.isStandardRecipe() &&
                         pizza.getToppingsFillings().equals(ToppingsFillings.CHEESE))
                 .toList();
 
-        when(pizzaRepository.findAll()).thenReturn(pizzas);
-        when(doughMapper.toDoughResponseClientDto(PIZZA.getDough())).thenReturn(DOUGH_RESPONSE_CLIENT_DTO);
-        when(ingredientMapper.toIngredientResponseClientDto(INGREDIENT_1)).thenReturn(INGREDIENT_RESPONSE_CLIENT_DTO_1);
-        when(ingredientMapper.toIngredientResponseClientDto(INGREDIENT_2)).thenReturn(INGREDIENT_RESPONSE_CLIENT_DTO_2);
-        when(pizzaMapper.toPizzaResponseDto(PIZZA, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList))
-                .thenReturn(PIZZA_RESPONSE_DTO);
-
+        when(pizzaRepository.findAllByStandardRecipeAndToppingsFillings(true, ToppingsFillings.CHEESE)).thenReturn(pizzas);
+        when(pizzaMapper.toPizzaResponseDto(TestData.PIZZA)).thenReturn(TestData.PIZZA_RESPONSE_DTO);
         List<PizzaResponseDto> result = productService.getAllPizzaStandardRecipeByTopping(ToppingsFillings.CHEESE);
         assertEquals(expectedResponse, result);
     }
 
     @Test
     void getAllPizzaStandardRecipeByTopping_EmptyList() {
-        when(pizzaRepository.findAll()).thenReturn(Collections.emptyList());
+        when(pizzaRepository.findAllByStandardRecipeAndToppingsFillings(true, ToppingsFillings.CHEESE)).thenReturn(Collections.emptyList());
         List<PizzaResponseDto> result = productService.getAllPizzaStandardRecipeByTopping(ToppingsFillings.CHEESE);
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -293,30 +207,37 @@ class ProductServiceImpl_Test_Pizza {
 
     @Test
     void getAllPizzaStandardRecipeByToppingByStyles() {
-        List<PizzaResponseDto> expectedResponse = List.of(PIZZA_RESPONSE_DTO);
+        List<PizzaResponseDto> expectedResponse = List.of(TestData.PIZZA_RESPONSE_DTO);
+        List<Pizza> pizzas = List.of(TestData.PIZZA);
 
-        List<Pizza> pizzas = List.of(PIZZA).stream()
-                .filter(pizza -> pizza.isStandardRecipe() &&
-                        pizza.getToppingsFillings().equals(ToppingsFillings.CHEESE) &&
-                        pizza.getStyles().equals(Styles.CLASSIC_ITALIAN))
-                .toList();
-
-        when(pizzaRepository.findAll()).thenReturn(pizzas);
-        when(doughMapper.toDoughResponseClientDto(PIZZA.getDough())).thenReturn(DOUGH_RESPONSE_CLIENT_DTO);
-        when(ingredientMapper.toIngredientResponseClientDto(INGREDIENT_1)).thenReturn(INGREDIENT_RESPONSE_CLIENT_DTO_1);
-        when(ingredientMapper.toIngredientResponseClientDto(INGREDIENT_2)).thenReturn(INGREDIENT_RESPONSE_CLIENT_DTO_2);
-        when(pizzaMapper.toPizzaResponseDto(PIZZA, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList))
-                .thenReturn(PIZZA_RESPONSE_DTO);
-
+        when(pizzaRepository.findAllByStandardRecipeAndToppingsFillingsAndStyles(true, ToppingsFillings.CHEESE, Styles.CLASSIC_ITALIAN)).thenReturn(pizzas);
+        when(pizzaMapper.toPizzaResponseDto(TestData.PIZZA)).thenReturn(TestData.PIZZA_RESPONSE_DTO);
         List<PizzaResponseDto> result = productService.getAllPizzaStandardRecipeByToppingByStyles(ToppingsFillings.CHEESE, Styles.CLASSIC_ITALIAN);
         assertEquals(expectedResponse, result);
     }
 
     @Test
     void getAllPizzaStandardRecipeByToppingByStyles_EmptyList() {
-        when(pizzaRepository.findAll()).thenReturn(Collections.emptyList());
+        when(pizzaRepository.findAllByStandardRecipeAndToppingsFillingsAndStyles(true, ToppingsFillings.CHEESE, Styles.CLASSIC_ITALIAN)).thenReturn(Collections.emptyList());
         List<PizzaResponseDto> result = productService.getAllPizzaStandardRecipeByToppingByStyles(ToppingsFillings.CHEESE, Styles.CLASSIC_ITALIAN);
         assertNotNull(result);
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getPizza() {
+        Long pizzaId = 1L;
+        when(pizzaRepository.getReferenceById(pizzaId)).thenReturn(TestData.PIZZA);
+        when(pizzaMapper.toPizzaResponseDto(TestData.PIZZA)).thenReturn(TestData.PIZZA_RESPONSE_DTO);
+        PizzaResponseDto result = productService.getPizza(pizzaId);
+        assertEquals(TestData.PIZZA_RESPONSE_DTO, result);
+    }
+
+    @Test
+    public void testGetPizza_NonExistingId_ReturnsNull() {
+        Long pizzaId = 999L;
+        when(pizzaRepository.getReferenceById(pizzaId)).thenReturn(null);
+        PizzaResponseDto result = productService.getPizza(pizzaId);
+        assertNull(result);
     }
 }

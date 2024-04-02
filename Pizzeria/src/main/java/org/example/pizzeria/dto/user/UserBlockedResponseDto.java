@@ -7,10 +7,12 @@ import jakarta.validation.constraints.Size;
 import jdk.jfr.BooleanFlag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Form for blocking user")
 public class UserBlockedResponseDto {

@@ -1,10 +1,9 @@
 package org.example.pizzeria.entity.product.pizza;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.example.pizzeria.entity.order.Basket;
+import org.example.pizzeria.entity.order.OrderDetails;
 import org.example.pizzeria.entity.product.ingredient.Dough;
 import org.example.pizzeria.entity.product.ingredient.Ingredient;
 
@@ -14,6 +13,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"dough", "ingredientsList"})
+@EqualsAndHashCode(exclude = {"dough", "ingredientsList"})
 @Builder
 @Entity
 @Table(name = "pizzas",
@@ -45,7 +46,7 @@ public class Pizza {
     private TypeBySize size;
 
     @Column(name = "is_standard_recipe")
-    private boolean isStandardRecipe;
+    private boolean standardRecipe;
 
     @Column(name = "amount")
     private Double amount;
@@ -58,7 +59,5 @@ public class Pizza {
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "pizzaSet")
     private List<Ingredient> ingredientsList = new ArrayList<>();
-
-
 
 }

@@ -1,12 +1,8 @@
 package org.example.pizzeria.dto.product.pizza;
 
-import aj.org.objectweb.asm.ByteVector;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.example.pizzeria.dto.product.dough.DoughResponseClientDto;
-import org.example.pizzeria.dto.product.ingredient.IngredientResponseClientDto;
-import org.example.pizzeria.entity.product.ingredient.Dough;
 import org.example.pizzeria.entity.product.pizza.Styles;
 import org.example.pizzeria.entity.product.pizza.ToppingsFillings;
 import org.example.pizzeria.entity.product.pizza.TypeBySize;
@@ -33,14 +29,14 @@ public record PizzaRequestDto(
         @Schema(description = "Size")
         @NotNull(message = "Field must be filled in") TypeBySize size,
 
-        @Schema(description = "Dough")
-        @NotNull(message = "Field must be filled in") DoughResponseClientDto dough,
+        @Schema(description = "Dough id")
+        @NotNull(message = "Field must be filled in") int doughId,
 
-        @Schema(description = "List of sauce")
-        List<IngredientResponseClientDto> ingredientsSauceList,
-        @Schema(description = "List of basic topping")
-        List<IngredientResponseClientDto> ingredientsBasicList,
-        @Schema(description = "List of extra topping")
-        List<IngredientResponseClientDto> ingredientsExtraList
+        @Schema(description = "Sauce number ID sheet")
+        List<Long> ingredientsSauceListId,
+        @Schema(description = "Basic topping number ID sheet")
+        List<Long> ingredientsBasicListId,
+        @Schema(description = "Extra topping number ID sheet")
+        List<Long> ingredientsExtraListId
 ) {
 }

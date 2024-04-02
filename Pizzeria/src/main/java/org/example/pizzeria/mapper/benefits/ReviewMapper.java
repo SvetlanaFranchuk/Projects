@@ -11,7 +11,8 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface ReviewMapper {
     @Mapping(target = "reviewDate", expression = "java(java.time.LocalDateTime.now())")
-    Review toReview(String comment, Integer grade, UserApp userApp);
+    @Mapping(target = "userApp", ignore = true)
+    Review toReview(String comment, Integer grade);
 
     @Mapping(target = "userName", source = "userApp.userName")
     ReviewResponseDto toReviewResponseDto(Review review);

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
 import org.example.pizzeria.entity.order.StatusOrder;
+import org.example.pizzeria.entity.order.TypeBonus;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -33,6 +34,9 @@ public record OrderResponseDto(
         @Schema(description = "Status order")
         @NotNull
         StatusOrder statusOrder,
+        @Schema(description = "Type Bonus")
+        @NotNull
+        TypeBonus typeBonus,
         @Schema(description = "Order date and time")
         @PastOrPresent
         LocalDateTime orderDateTime,

@@ -1,9 +1,7 @@
 package org.example.pizzeria.entity.order;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.pizzeria.entity.product.pizza.Pizza;
 import org.example.pizzeria.entity.user.UserApp;
 
@@ -13,6 +11,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"userApp", "pizzas"})
+@EqualsAndHashCode(exclude = {"userApp", "pizzas"})
 @Entity
 @Table(name = "baskets")
 public class Basket {
@@ -24,14 +24,14 @@ public class Basket {
     @OneToOne
     private UserApp userApp;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "basket_pizza",
+            joinColumns = @JoinColumn(name = "basket_id"),
+            inverseJoinColumns = @JoinColumn(name = "pizza_id"))
     private List<Pizza> pizzas = new ArrayList<>();
 
-    public void addPizza(Pizza pizza){
-        pizzas.add(pizza);
+    public void clear() {
+        pizzas.clear();
     }
 
-    public void removePizza(Pizza pizza){
-        pizzas.remove(pizza);
-    }
 }

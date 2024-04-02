@@ -9,6 +9,8 @@ import org.example.pizzeria.entity.product.ingredient.GroupIngredient;
 
 @Schema(description = "Form for reading information about ingredient")
 public record IngredientResponseDto(
+        @Schema(description = "Id ingredient")
+        Long id,
         @Schema(description = "Name of ingredient")
         @NotNull(message = "Field must be filled in")
         @Size(min = 5, max = 75, message = "Name length of ingredient should be from 5 to 75 symbols")

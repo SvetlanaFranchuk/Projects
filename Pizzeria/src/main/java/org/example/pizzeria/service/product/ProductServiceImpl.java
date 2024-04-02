@@ -1,10 +1,12 @@
 package org.example.pizzeria.service.product;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import org.example.pizzeria.dto.benefits.FavoritesResponseDto;
-import org.example.pizzeria.dto.product.dough.DoughRequestDto;
+import org.example.pizzeria.dto.product.dough.DoughCreateRequestDto;
 import org.example.pizzeria.dto.product.dough.DoughResponseClientDto;
 import org.example.pizzeria.dto.product.dough.DoughResponseDto;
+import org.example.pizzeria.dto.product.dough.DoughUpdateRequestDto;
 import org.example.pizzeria.dto.product.ingredient.IngredientRequestDto;
 import org.example.pizzeria.dto.product.ingredient.IngredientResponseClientDto;
 import org.example.pizzeria.dto.product.ingredient.IngredientResponseDto;
@@ -21,13 +23,10 @@ import org.example.pizzeria.entity.product.pizza.Styles;
 import org.example.pizzeria.entity.product.pizza.ToppingsFillings;
 import org.example.pizzeria.entity.user.Role;
 import org.example.pizzeria.entity.user.UserApp;
+import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
 import org.example.pizzeria.exception.ErrorMessage;
 import org.example.pizzeria.exception.InvalidIDException;
-import org.example.pizzeria.exception.product.DeleteProductException;
-import org.example.pizzeria.exception.product.DoughCreateException;
-import org.example.pizzeria.exception.product.FavoritesExistException;
-import org.example.pizzeria.exception.product.IngredientsCreateException;
-import org.example.pizzeria.exception.user.UserNotFoundException;
+import org.example.pizzeria.exception.product.*;
 import org.example.pizzeria.mapper.benefits.FavoritesMapper;
 import org.example.pizzeria.mapper.product.DoughMapper;
 import org.example.pizzeria.mapper.product.IngredientMapper;
@@ -38,18 +37,17 @@ import org.example.pizzeria.repository.product.DoughRepository;
 import org.example.pizzeria.repository.product.IngredientRepository;
 import org.example.pizzeria.repository.product.PizzaRepository;
 import org.example.pizzeria.repository.user.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
-
+public EntityManager entityManager;
     public DoughRepository doughRepository;
     public DoughMapper doughMapper;
     public IngredientRepository ingredientRepository;
@@ -62,12 +60,30 @@ public class ProductServiceImpl implements ProductService {
 
     public UserRepository userRepository;
 
+    @Autowired
+    public ProductServiceImpl(DoughRepository doughRepository, DoughMapper doughMapper,
+                              IngredientRepository ingredientRepository, IngredientMapper ingredientMapper,
+                              PizzaRepository pizzaRepository, PizzaMapper pizzaMapper,
+                              OrderDetailsRepository detailsRepository, FavoritesRepository favoritesRepository,
+                              FavoritesMapper favoritesMapper, UserRepository userRepository, EntityManager entityManager) {
+        this.doughRepository = doughRepository;
+        this.doughMapper = doughMapper;
+        this.ingredientRepository = ingredientRepository;
+        this.ingredientMapper = ingredientMapper;
+        this.pizzaRepository = pizzaRepository;
+        this.pizzaMapper = pizzaMapper;
+        this.detailsRepository = detailsRepository;
+        this.favoritesRepository = favoritesRepository;
+        this.favoritesMapper = favoritesMapper;
+        this.userRepository = userRepository;
+        this.entityManager = entityManager;
+    }
+
     @Override
     @Transactional
-    public DoughResponseDto addDough(DoughRequestDto newDough) {
+    public DoughResponseDto addDough(DoughCreateRequestDto newDough) {
         validateDoughExist(newDough.typeDough(), newDough.smallPrice());
-        return doughMapper.toDoughResponseDto(doughRepository.save(doughMapper.toDough(newDough.typeDough(),
-                newDough.smallWeight(), newDough.smallNutrition(), newDough.smallPrice())));
+        return doughMapper.toDoughResponseDto(doughRepository.save(doughMapper.toDough(newDough)));
     }
 
     private void validateDoughExist(TypeDough typeDough, double price) {
@@ -79,16 +95,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public DoughResponseDto updateDough(DoughRequestDto dough, Integer id) {
+    public DoughResponseDto updateDough(DoughUpdateRequestDto dough, Integer id) {
         if (id == null) {
             throw new InvalidIDException(ErrorMessage.INVALID_ID);
         }
         Optional<Dough> oldRecipeDough = doughRepository.findById(id);
         return oldRecipeDough.map(d -> {
-            d.setTypeDough(dough.typeDough());
             d.setSmallWeight(dough.smallWeight());
             d.setSmallNutrition(dough.smallNutrition());
-            d.setSmallPrice(dough.smallPrice());
             doughRepository.save(d);
             return doughMapper.toDoughResponseDto(d);
         }).orElse(null);
@@ -107,7 +121,7 @@ public class ProductServiceImpl implements ProductService {
                 doughRepository.delete(dough.get());
             else throw new DeleteProductException(ErrorMessage.DOUGH_ALREADY_USE_IN_PIZZA);
         } else
-            throw new InvalidIDException(ErrorMessage.INVALID_ID);
+            throw new EntityInPizzeriaNotFoundException("Dough", ErrorMessage.ENTITY_NOT_FOUND);
     }
 
     @Override
@@ -128,9 +142,10 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public IngredientResponseDto addIngredient(IngredientRequestDto newIngredient) {
         validateIngredientExist(newIngredient.name(), newIngredient.price());
-        return ingredientMapper.toIngredientResponseDto(ingredientRepository.save(ingredientMapper.toIngredient(newIngredient.name(),
+        Ingredient ingredient = ingredientMapper.toIngredient(newIngredient.name(),
                 newIngredient.weight(), newIngredient.nutrition(),
-                newIngredient.price(), newIngredient.groupIngredient(), null)));
+                newIngredient.price(), newIngredient.groupIngredient(), new HashSet<>());
+        return ingredientMapper.toIngredientResponseDto(ingredientRepository.save(ingredient));
     }
 
     private void validateIngredientExist(String name, double price) {
@@ -181,10 +196,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<IngredientResponseClientDto> getAllIngredientByGroup(GroupIngredient groupIngredient) {
+    public List<IngredientResponseDto> getAllIngredientByGroup(GroupIngredient groupIngredient) {
         List<Ingredient> ingredients = ingredientRepository.findAllByGroupIngredient(groupIngredient);
         return ingredients.stream()
-                .map(ingredient -> ingredientMapper.toIngredientResponseClientDto(ingredient)).toList();
+                .map(ingredient -> ingredientMapper.toIngredientResponseDto(ingredient)).toList();
     }
 
     @Override
@@ -192,14 +207,14 @@ public class ProductServiceImpl implements ProductService {
         if (idPizza == null) {
             throw new NullPointerException("ID cannot be null");
         }
-        Pizza pizza = pizzaRepository.getReferenceById(idPizza);
-        if (pizza == null) {
-            throw new InvalidIDException(ErrorMessage.INVALID_ID);
-        }
-        List<Ingredient> ingredients = pizza.getIngredientsList();
-        return ingredients.stream()
-                .map(ingredient -> ingredientMapper.toIngredientResponseClientDto(ingredient)).toList();
-    }
+        try {
+            Pizza pizza = pizzaRepository.getReferenceById(idPizza);
+            List<Ingredient> ingredients = pizza.getIngredientsList();
+            return ingredients.stream()
+                    .map(ingredient -> ingredientMapper.toIngredientResponseClientDto(ingredient)).toList();
+        } catch (EntityNotFoundException ex) {
+             throw new EntityInPizzeriaNotFoundException("Pizza", ErrorMessage.ENTITY_NOT_FOUND);
+        }}
 
     @Override
     @Transactional
@@ -207,26 +222,40 @@ public class ProductServiceImpl implements ProductService {
         if (userId == null) {
             throw new NullPointerException("ID cannot be null");
         }
-        Optional<UserApp> userApp = userRepository.findById(userId);
-        List<Ingredient> ingredients = new ArrayList<>();
-        addIngredientsToList(ingredients, newPizza.ingredientsSauceList());
-        addIngredientsToList(ingredients, newPizza.ingredientsBasicList());
-        addIngredientsToList(ingredients, newPizza.ingredientsExtraList());
-        Dough dough = doughRepository.getReferenceById(newPizza.dough().id());
-        Pizza pizza = pizzaMapper.toPizza(newPizza.title(),
-                newPizza.description(), newPizza.styles(), newPizza.toppingsFillings(),
-                newPizza.size(), !userApp.get().getRole().equals(Role.CLIENT),
-                getAmountPizza(ingredients, dough, newPizza.size().getCoefficient()),
-                getNutritionPizza(ingredients, dough, newPizza.size().getCoefficient()),
-                dough, ingredients);
-        return pizzaMapper.toPizzaResponseDto(pizzaRepository.save(pizza),
-                doughMapper.toDoughResponseClientDto(pizza.getDough()),
-                ingredients.stream().map(i -> ingredientMapper.toIngredientResponseClientDto(i)).toList());
+        Pizza pizza = pizzaMapper.toPizza(newPizza);
+        putIngredientToPizza(pizza, newPizza);
+        pizza.setStandardRecipe(!userRepository.getReferenceById(userId).getRole().equals(Role.CLIENT));
+        pizza = pizzaRepository.save(pizza);
+
+        PizzaResponseDto result = pizzaMapper.toPizzaResponseDto(pizza);
+        result.setDough(doughMapper.toDoughResponseClientDto(pizza.getDough()));
+        result.setIngredientsList(pizza.getIngredientsList().stream()
+                .map(i->ingredientMapper.toIngredientResponseClientDto(i))
+                .toList());
+        return result;
     }
 
+    private void putIngredientToPizza(Pizza pizza, PizzaRequestDto newPizza){
+        List<Ingredient> ingredients = new ArrayList<>();
+        addIngredientsToList(ingredients, newPizza.ingredientsSauceListId());
+        addIngredientsToList(ingredients, newPizza.ingredientsBasicListId());
+        addIngredientsToList(ingredients, newPizza.ingredientsExtraListId());
+
+        Dough dough = doughRepository.getReferenceById(newPizza.doughId());
+        pizza.setDough(dough);
+        pizza.setAmount(getAmountPizza(ingredients, dough, newPizza.size().getCoefficient()));
+        pizza.setNutrition(getNutritionPizza(ingredients, dough, newPizza.size().getCoefficient()));
+        pizza.setIngredientsList(ingredients);
+        for (Ingredient ingredient : ingredients) {
+            if (ingredient.getPizzaSet() == null) {
+                ingredient.setPizzaSet(new HashSet<>());
+            }
+            ingredient.getPizzaSet().add(pizza);
+        }
+    }
     private double getAmountPizza(List<Ingredient> ingredients, Dough dough, double coefficient) {
         double amount = 0;
-        for (Ingredient ingredient : ingredients) {
+         for (Ingredient ingredient : ingredients) {
             amount += ingredient.getPrice();
         }
         amount += dough.getSmallPrice();
@@ -242,51 +271,47 @@ public class ProductServiceImpl implements ProductService {
         return Math.toIntExact(Math.round(nutrition * coefficient));
     }
 
-    private void addIngredientsToList(List<Ingredient> ingredients, List<IngredientResponseClientDto> ingredientDtoList) {
-        if (!ingredientDtoList.isEmpty()) {
-            ingredients.addAll(ingredientDtoList.stream()
-                    .filter(Objects::nonNull)
-                    .map(i -> ingredientRepository.getReferenceById(i.id()))
-                    .toList());
+    private void addIngredientsToList(List<Ingredient> ingredients, List<Long> ingredientListId) {
+        if (!ingredientListId.isEmpty()) {
+            List<Ingredient> referencedIngredients = ingredientListId.stream()
+                    .map(i -> ingredientRepository.getReferenceById(i))
+                    .toList();
+            ingredients.addAll(referencedIngredients);
         }
     }
 
     @Override
     @Transactional
-    public PizzaResponseDto updatePizza(PizzaRequestDto pizza, Long id) {
-        if (id == null) {
-            throw new NullPointerException("ID cannot be null");
+    public PizzaResponseDto updatePizza(PizzaRequestDto pizzaDto, Long id) {
+        id = Optional.ofNullable(id)
+                .orElseThrow(() -> new NullPointerException("ID cannot be null"));
+        Pizza existingPizza = pizzaRepository.findById(id)
+                .orElseThrow(() -> new InvalidIDException(ErrorMessage.INVALID_ID));
+        List<Ingredient> existingIngredients = existingPizza.getIngredientsList();
+        if (existingIngredients != null && !existingIngredients.isEmpty()) {
+            for (Ingredient ingredient : existingIngredients) {
+                if (ingredient.getPizzaSet() != null) {
+                    ingredient.getPizzaSet().remove(existingPizza);
+                }
+            }
         }
-        Optional<Pizza> oldPizzaRecipe = pizzaRepository.findById(id);
-        if (oldPizzaRecipe.isPresent()) {
-            List<Ingredient> ingredients = new ArrayList<>();
-            addIngredientsToList(ingredients, pizza.ingredientsSauceList());
-            addIngredientsToList(ingredients, pizza.ingredientsBasicList());
-            addIngredientsToList(ingredients, pizza.ingredientsExtraList());
-            Dough dough = doughRepository.getReferenceById(pizza.dough().id());
+        existingPizza.setIngredientsList(new ArrayList<>());
+        entityManager.flush();
+        existingPizza.setTitle(pizzaDto.title());
+        existingPizza.setDescription(pizzaDto.description());
+        existingPizza.setStyles(pizzaDto.styles());
+        existingPizza.setToppingsFillings(pizzaDto.toppingsFillings());
+        existingPizza.setSize(pizzaDto.size());
 
-            oldPizzaRecipe.ifPresent(p -> {
-                p.setTitle(pizza.title());
-                p.setDescription(pizza.description());
-                p.setStyles(pizza.styles());
-                p.setToppingsFillings(pizza.toppingsFillings());
-                p.setSize(pizza.size());
-                p.setDough(dough);
-                p.setIngredientsList(ingredients);
-                p.setAmount(getAmountPizza(ingredients, dough, pizza.size().getCoefficient()));
-                p.setNutrition(getNutritionPizza(ingredients, dough, pizza.size().getCoefficient()));
+        putIngredientToPizza(existingPizza, pizzaDto);
 
-                pizzaRepository.save(p);
-            });
-            return oldPizzaRecipe.map(p ->
-                    pizzaMapper.toPizzaResponseDto(p,
-                            doughMapper.toDoughResponseClientDto(dough),
-                            ingredients.stream().map(ingredientMapper::toIngredientResponseClientDto).toList())
-            ).orElse(null);
-
-        } else {
-            throw new InvalidIDException(ErrorMessage.INVALID_ID);
-        }
+        Pizza updatedPizza = pizzaRepository.save(existingPizza);
+        PizzaResponseDto result = pizzaMapper.toPizzaResponseDto(updatedPizza);
+        result.setDough(doughMapper.toDoughResponseClientDto(updatedPizza.getDough()));
+        result.setIngredientsList(updatedPizza.getIngredientsList().stream()
+                .map(ingredientMapper::toIngredientResponseClientDto)
+                .collect(Collectors.toList()));
+        return result;
     }
 
     @Override
@@ -297,7 +322,7 @@ public class ProductServiceImpl implements ProductService {
         }
         Optional<Pizza> pizza = pizzaRepository.findById(id);
         if (pizza.isPresent()) {
-            List<OrderDetails> detailsList = detailsRepository.findAllByPizzasContaining(pizza.get());
+            List<OrderDetails> detailsList = detailsRepository.findAllByPizza(pizza.get());
             if (detailsList.isEmpty())
                 pizzaRepository.delete(pizza.get());
             else throw new DeleteProductException(ErrorMessage.RECIPE_ALREADY_ORDERED);
@@ -306,72 +331,63 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<PizzaResponseDto> getAllPizzaStandardRecipe() {
-        List<Pizza> pizzas = pizzaRepository.findAll();
+        List<Pizza> pizzas = pizzaRepository.findAllByStandardRecipe(true);
         return pizzas.stream()
-                .filter(Pizza::isStandardRecipe)
-                .map(p -> pizzaMapper.toPizzaResponseDto(p, doughMapper.toDoughResponseClientDto(p.getDough()),
-                        p.getIngredientsList().stream().map(i -> ingredientMapper.toIngredientResponseClientDto(i)).toList()))
+                .map(p -> pizzaMapper.toPizzaResponseDto(p))
                 .toList();
     }
 
     @Override
     public List<PizzaResponseDto> getAllPizzaStandardRecipeByStyles(Styles styles) {
-        List<Pizza> pizzas = pizzaRepository.findAll();
+        List<Pizza> pizzas = pizzaRepository.findAllByStandardRecipeAndStyles(true, styles);
         return pizzas.stream()
-                .filter(pizza -> pizza.isStandardRecipe() &&
-                        pizza.getStyles().equals(styles))
-                .map(p -> pizzaMapper.toPizzaResponseDto(p, doughMapper.toDoughResponseClientDto(p.getDough()),
-                        p.getIngredientsList().stream().map(i -> ingredientMapper.toIngredientResponseClientDto(i)).toList()))
+                .map(p -> pizzaMapper.toPizzaResponseDto(p))
                 .toList();
     }
 
     @Override
     public List<PizzaResponseDto> getAllPizzaStandardRecipeByTopping(ToppingsFillings toppingsFillings) {
-        List<Pizza> pizzas = pizzaRepository.findAll();
+        List<Pizza> pizzas = pizzaRepository.findAllByStandardRecipeAndToppingsFillings(true, toppingsFillings);
         return pizzas.stream()
-                .filter(pizza -> pizza.isStandardRecipe() &&
-                        pizza.getToppingsFillings().equals(toppingsFillings))
-                .map(p -> pizzaMapper.toPizzaResponseDto(p, doughMapper.toDoughResponseClientDto(p.getDough()),
-                        p.getIngredientsList().stream().map(i -> ingredientMapper.toIngredientResponseClientDto(i)).toList()))
+                .map(p -> pizzaMapper.toPizzaResponseDto(p))
                 .toList();
     }
 
     @Override
     public List<PizzaResponseDto> getAllPizzaStandardRecipeByToppingByStyles(ToppingsFillings toppingsFillings,
                                                                              Styles styles) {
-        List<Pizza> pizzas = pizzaRepository.findAll();
+        List<Pizza> pizzas = pizzaRepository.findAllByStandardRecipeAndToppingsFillingsAndStyles(true, toppingsFillings, styles);
         return pizzas.stream()
-                .filter(pizza -> pizza.isStandardRecipe() &&
-                        pizza.getToppingsFillings().equals(toppingsFillings) &&
-                        pizza.getStyles().equals(styles))
-                .map(p -> pizzaMapper.toPizzaResponseDto(p, doughMapper.toDoughResponseClientDto(p.getDough()),
-                        p.getIngredientsList().stream().map(i -> ingredientMapper.toIngredientResponseClientDto(i)).toList()))
+                .map(p -> pizzaMapper.toPizzaResponseDto(p))
                 .toList();
     }
 
     @Override
     @Transactional
-    public FavoritesResponseDto addPizzaToUserFavorite(Long userId, Pizza pizza) {
-        Optional<UserApp> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            Optional<Favorites> favorites = favoritesRepository.findByUserApp(user.get());
-            Favorites favoriteEntity;
-            if (favorites.isPresent()) {
-                favoriteEntity = favorites.get();
-            } else {
-                favoriteEntity = new Favorites();
-                favoriteEntity.setUserApp(user.get());
-                favoriteEntity.setPizzas(new ArrayList<>());
-            }
-            List<Pizza> pizzas = new ArrayList<>(favoriteEntity.getPizzas());
-            pizzas.add(pizza);
-            favoriteEntity.setPizzas(pizzas);
-            favoritesRepository.save(favoriteEntity);
-
-            return favoritesMapper.toFavoriteResponseDto(favoriteEntity);
+    public FavoritesResponseDto addPizzaToUserFavorite(Long userId, Long pizzaId) {
+        UserApp user = userRepository.getReferenceById(userId);
+        Optional<Favorites> favorites = favoritesRepository.findByUserApp_Id(userId);
+        Favorites favoriteEntity;
+        if (favorites.isPresent()) {
+            favoriteEntity = favorites.get();
         } else {
-            throw new UserNotFoundException(ErrorMessage.USER_NOT_FOUND);
+            favoriteEntity = new Favorites();
+            favoriteEntity.setUserApp(user);
+            favoriteEntity.setPizzas(new ArrayList<>());
         }
+
+        List<Pizza> pizzas = new ArrayList<>(favoriteEntity.getPizzas());
+        for (Pizza pizza : pizzas) {
+            if (pizza.getId().equals(pizzaId)) {
+                throw new PizzaAlreadyInFavoritesException(ErrorMessage.PIZZA_ALREADY_IN_FAVORITES);
+            }
+        }
+
+        Pizza pizzaToAdd = pizzaRepository.getReferenceById(pizzaId);
+        pizzas.add(pizzaToAdd);
+        favoriteEntity.setPizzas(pizzas);
+        favoritesRepository.save(favoriteEntity);
+        return favoritesMapper.toFavoriteResponseDto(favoriteEntity);
     }
 
     @Override
@@ -386,24 +402,20 @@ public class ProductServiceImpl implements ProductService {
             favoriteEntity.setPizzas(pizzas);
             favoritesRepository.save(favoriteEntity);
         } else {
-            throw new UserNotFoundException(ErrorMessage.USER_NOT_FOUND);
+            throw new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND);
         }
     }
 
     @Override
     public List<PizzaResponseDto> getAllFavoritePizzaByUser(Long userId) {
-        Optional<UserApp> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            Favorites favorites = favoritesRepository.findByUserApp(user.get())
-                    .orElseThrow(() -> new FavoritesExistException(ErrorMessage.FAVORITES_IS_EMPTY));
-            return favorites.getPizzas().stream()
-                    .map(p -> pizzaMapper.toPizzaResponseDto(p,
-                            doughMapper.toDoughResponseClientDto(p.getDough()),
-                            p.getIngredientsList().stream()
-                                    .map(i -> ingredientMapper.toIngredientResponseClientDto(i)).toList())).toList();
-        } else {
-            throw new UserNotFoundException(ErrorMessage.USER_NOT_FOUND);
-        }
+        Favorites favorites = favoritesRepository.findByUserApp_Id(userId)
+                .orElseThrow(() -> new FavoritesExistException(ErrorMessage.FAVORITES_IS_EMPTY));
+        return favorites.getPizzas().stream()
+                .map(p -> pizzaMapper.toPizzaResponseDto(p)).toList();
     }
 
+    @Override
+    public PizzaResponseDto getPizza(Long id){
+        return pizzaMapper.toPizzaResponseDto(pizzaRepository.getReferenceById(id));
+    }
 }
