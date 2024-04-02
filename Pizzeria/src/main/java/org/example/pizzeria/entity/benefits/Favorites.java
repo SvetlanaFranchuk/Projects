@@ -1,9 +1,7 @@
 package org.example.pizzeria.entity.benefits;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.pizzeria.entity.product.pizza.Pizza;
 import org.example.pizzeria.entity.user.UserApp;
 
@@ -12,6 +10,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"userApp"})
+@EqualsAndHashCode(exclude = {"userApp"})
+
 @Entity
 @Table(name = "favorites")
 public class Favorites {

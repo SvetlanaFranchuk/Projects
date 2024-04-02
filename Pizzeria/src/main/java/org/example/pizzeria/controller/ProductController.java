@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import org.example.pizzeria.dto.benefits.FavoritesResponseDto;
 import org.example.pizzeria.dto.product.dough.DoughCreateRequestDto;
 import org.example.pizzeria.dto.product.dough.DoughResponseClientDto;
@@ -18,6 +19,7 @@ import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
 import org.example.pizzeria.entity.product.ingredient.GroupIngredient;
 import org.example.pizzeria.entity.product.pizza.Styles;
 import org.example.pizzeria.entity.product.pizza.ToppingsFillings;
+import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
 import org.example.pizzeria.service.product.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -218,5 +220,16 @@ public class ProductController {
     public ResponseEntity<List<PizzaResponseDto>> getAllFavoritePizzaByUser(@Parameter(description = "user ID")
                                                                             @RequestParam @Min(0) Long userId) {
         return ResponseEntity.ok(productService.getAllFavoritePizzaByUser(userId));
+    }
+
+    @Operation(summary = "Getting information about pizza")
+    @GetMapping("/getPizza/{id}")
+    public ResponseEntity<PizzaResponseDto> getPizza(@PathVariable @Positive Long id) {
+        try {
+            PizzaResponseDto pizzaResponseDto = productService.getPizza(id);
+            return ResponseEntity.ok(pizzaResponseDto);
+        } catch (EntityInPizzeriaNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

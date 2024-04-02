@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @Operation(summary = "New User Registration",
-            description = "The new user has the Client role by default")
+            description =  "The new user has the Client role by default")
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> registerUser(@RequestBody @Valid UserRegisterRequestDto userRegisterRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(userRegisterRequestDto));

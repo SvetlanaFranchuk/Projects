@@ -32,11 +32,11 @@ public record PizzaRequestDto(
         @Schema(description = "Dough id")
         @NotNull(message = "Field must be filled in") int doughId,
 
-        @Schema(description = "List of sauce")
+        @Schema(description = "Sauce number ID sheet")
         List<Long> ingredientsSauceListId,
-        @Schema(description = "List of basic topping")
+        @Schema(description = "Basic topping number ID sheet")
         List<Long> ingredientsBasicListId,
-        @Schema(description = "List of extra topping")
+        @Schema(description = "Extra topping number ID sheet")
         List<Long> ingredientsExtraListId
 ) {
 }

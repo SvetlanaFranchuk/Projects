@@ -10,6 +10,7 @@ import org.example.pizzeria.entity.user.ContactInformation;
 import org.example.pizzeria.entity.user.UserApp;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Component
@@ -27,12 +28,12 @@ public class UserMapper {
                 .isBlocked(false)
                 .role(org.example.pizzeria.entity.user.Role.CLIENT)
                 .bonus(new Bonus(0, 0.0))
-                .dateRegistration(java.time.LocalDate.now())
+                .dateRegistration(LocalDate.now())
                 .build();
     }
 
     public UserResponseDto toUserResponseDto(UserApp userApp) {
-        return new UserResponseDto(userApp.getUserName(), userApp.getEmail(), userApp.getBirthDate(),
+        return new UserResponseDto(userApp.getId(), userApp.getUserName(), userApp.getEmail(), userApp.getBirthDate(),
                 userApp.getAddress(), userApp.getPhoneNumber());
     }
 

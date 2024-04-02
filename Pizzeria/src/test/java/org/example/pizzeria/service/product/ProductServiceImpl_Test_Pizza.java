@@ -27,7 +27,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -121,7 +120,7 @@ class ProductServiceImpl_Test_Pizza {
     void deletePizzaRecipe() {
         Long pizzaId = 1L;
         when(pizzaRepository.findById(pizzaId)).thenReturn(Optional.of(TestData.PIZZA));
-        when(orderDetailsRepository.findAllByPizzasContaining(TestData.PIZZA)).thenReturn(Collections.emptyList());
+        when(orderDetailsRepository.findAllByPizza(TestData.PIZZA)).thenReturn(Collections.emptyList());
         productService.deletePizzaRecipe(pizzaId);
         verify(pizzaRepository, times(1)).delete(TestData.PIZZA);
     }
@@ -129,10 +128,8 @@ class ProductServiceImpl_Test_Pizza {
     @Test
     void deletePizzaRecipe_RecipeAlreadyOrdered_ThrowDeleteProductException() {
         when(pizzaRepository.findById(1L)).thenReturn(Optional.of(TestData.PIZZA));
-        List<OrderDetails> detailsList = List.of(new OrderDetails(1L,
-                LocalDateTime.of(2024, 4, 18, 6, 45), null,
-                new Order(), List.of(TestData.PIZZA)));
-        when(orderDetailsRepository.findAllByPizzasContaining(TestData.PIZZA)).thenReturn(detailsList);
+        List<OrderDetails> detailsList = List.of(new OrderDetails(1L, TestData.PIZZA, 1,  new Order()));
+        when(orderDetailsRepository.findAllByPizza(TestData.PIZZA)).thenReturn(detailsList);
 
         DeleteProductException exception = assertThrows(DeleteProductException.class, () -> productService.deletePizzaRecipe(1L));
         assertEquals(ErrorMessage.RECIPE_ALREADY_ORDERED, exception.getMessage());
@@ -225,5 +222,22 @@ class ProductServiceImpl_Test_Pizza {
         List<PizzaResponseDto> result = productService.getAllPizzaStandardRecipeByToppingByStyles(ToppingsFillings.CHEESE, Styles.CLASSIC_ITALIAN);
         assertNotNull(result);
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void getPizza() {
+        Long pizzaId = 1L;
+        when(pizzaRepository.getReferenceById(pizzaId)).thenReturn(TestData.PIZZA);
+        when(pizzaMapper.toPizzaResponseDto(TestData.PIZZA)).thenReturn(TestData.PIZZA_RESPONSE_DTO);
+        PizzaResponseDto result = productService.getPizza(pizzaId);
+        assertEquals(TestData.PIZZA_RESPONSE_DTO, result);
+    }
+
+    @Test
+    public void testGetPizza_NonExistingId_ReturnsNull() {
+        Long pizzaId = 999L;
+        when(pizzaRepository.getReferenceById(pizzaId)).thenReturn(null);
+        PizzaResponseDto result = productService.getPizza(pizzaId);
+        assertNull(result);
     }
 }

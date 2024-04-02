@@ -8,13 +8,14 @@ import org.example.pizzeria.entity.user.Address;
 import org.example.pizzeria.entity.user.ContactInformation;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 
 @Data
 @AllArgsConstructor
 @Schema(description = "User form")
 public class UserResponseDto {
+    @Schema(description = "user id")
+    private Long id;
     @Schema(description = "user name")
     private  @Size(min = 5, max = 25, message = "User name length could be from 5 to 25 symbols") String userName;
     @Schema(description = "e-mail")

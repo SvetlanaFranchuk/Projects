@@ -2,6 +2,7 @@ package org.example.pizzeria;
 
 import org.example.pizzeria.dto.benefits.ReviewRequestDto;
 import org.example.pizzeria.dto.benefits.ReviewResponseDto;
+import org.example.pizzeria.dto.order.OrderResponseDto;
 import org.example.pizzeria.dto.product.dough.DoughCreateRequestDto;
 import org.example.pizzeria.dto.product.dough.DoughResponseClientDto;
 import org.example.pizzeria.dto.product.dough.DoughResponseDto;
@@ -31,8 +32,9 @@ import org.example.pizzeria.entity.user.UserApp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TestData {
     public static final Bonus BONUS = new Bonus(10, 125.0);
@@ -104,17 +106,6 @@ public class TestData {
             .role(Role.ADMIN)
             .bonus(BONUS_NEW)
             .build();
-    public static final UserApp USER_BLOCKED = UserApp.builder()
-            .id(2L)
-            .userName("TestClient")
-            .password("12345")
-            .email("client1@pizzeria.com")
-            .birthDate(LocalDate.of(2002, 3, 15))
-            .dateRegistration(LocalDate.now())
-            .isBlocked(true)
-            .role(Role.CLIENT)
-            .build();
-
     public static final Basket BASKET = new Basket(1L, USER_APP, null);
 
     public static final Dough DOUGH_1 = new Dough(1, TypeDough.CLASSICA, 100, 120, 0.23);
@@ -143,11 +134,33 @@ public class TestData {
             TypeBySize.MEDIUM, true, (0.2 + 0.4 + 0.23) * 1.3, 377, DOUGH_1, List.of(INGREDIENT_1, INGREDIENT_2));
     public static final PizzaResponseDto PIZZA_RESPONSE_DTO = new PizzaResponseDto(1L, "Margarita",
             "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
-            TypeBySize.MEDIUM, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList, (0.2 + 0.4 + 0.23) * 1.3, 377);
-    public static final Order ORDER = new Order(1L, LocalDateTime.now(), (0.2 + 0.4 + 0.23) * 1.3 * 2, StatusOrder.NEW,
-            DELIVERY_ADDRESS, null, USER_APP);
-    public static final OrderDetails ORDER_DETAILS = new OrderDetails(1L, LocalDateTime.now().plusHours(1), null, ORDER,
-            List.of(PIZZA, PIZZA));
+            TypeBySize.MEDIUM, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList,
+            (0.2 + 0.4 + 0.23) * 1.3, 377, true);
+
+    public static final Order ORDER = new Order(1L,  null, null, null, 0.00,
+            StatusOrder.NEW, DELIVERY_ADDRESS, null,USER_APP);
+    public static final double EXPECTED_SUM = (0.2 + 0.4 + 0.23) * 1.3 * 2;
+    public static final LocalDateTime NOW = LocalDateTime.now();
+    public static final LocalDateTime EXPECTED_DATE_TIME = NOW.plusHours(1);
+    public static final Map<PizzaResponseDto, Integer> PIZZA_TO_COUNT = new HashMap<>();
+    static {
+        PIZZA_TO_COUNT.put(TestData.PIZZA_RESPONSE_DTO, 2);
+    }
+    public static final OrderResponseDto ORDER_RESPONSE_DTO = new OrderResponseDto(1L,
+            TestData.DELIVERY_ADDRESS.getCity(),
+            TestData.DELIVERY_ADDRESS.getStreetName(),
+            TestData.DELIVERY_ADDRESS.getHouseNumber(),
+            TestData.DELIVERY_ADDRESS.getApartmentNumber(),
+            NOW,
+            EXPECTED_SUM,
+            StatusOrder.NEW,
+            null,
+            EXPECTED_DATE_TIME,
+            PIZZA_TO_COUNT,
+            USER_APP.getId());
+
+
+    public static final OrderDetails ORDER_DETAILS = new OrderDetails(1L, PIZZA, 2, null);
     public static final PizzaRequestDto PIZZA_REQUEST_DTO = new PizzaRequestDto("Margarita",
             "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
             TypeBySize.MEDIUM, 1, new ArrayList<>(), List.of(1L, 2L),
@@ -162,7 +175,8 @@ public class TestData {
 
     public static final PizzaResponseDto PIZZA_RESPONSE_DTO_NEW = new PizzaResponseDto(1L, "Margarita",
             "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
-            TypeBySize.LARGE, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList, (0.2 + 0.4 + 0.23) * 1.7, 493);
+            TypeBySize.LARGE, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList,
+            (0.2 + 0.4 + 0.23) * 1.7, 493, true);
     public static final Pizza PIZZA_2 = new Pizza(2L, "Carbonara",
             "Description for pizza Carbonara", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
             TypeBySize.LARGE, true, (0.2 + 0.4 + 0.23) * 1.7, 493, DOUGH_1, List.of(INGREDIENT_1, INGREDIENT_2));
@@ -171,29 +185,29 @@ public class TestData {
             TypeBySize.LARGE, true, (0.2 + 0.4 + 0.23) * 1.7, 493, DOUGH_1, List.of(INGREDIENT_1, INGREDIENT_2));
     public static final PizzaResponseDto PIZZA_RESPONSE_DTO_2 = new PizzaResponseDto(2L, "Carbonara",
             "Description for pizza Carbonara", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
-            TypeBySize.LARGE, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList, (0.2 + 0.4 + 0.23) * 1.7, 493);
+            TypeBySize.LARGE, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList,
+            (0.2 + 0.4 + 0.23) * 1.7, 493, true);
     public static final PizzaResponseDto PIZZA_RESPONSE_DTO_3 = new PizzaResponseDto(3L, "Test3Carbonara",
             "Description for pizza Carbonara", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
-            TypeBySize.LARGE, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList, (0.2 + 0.4 + 0.23) * 1.7, 493);
+            TypeBySize.LARGE, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList,
+            (0.2 + 0.4 + 0.23) * 1.7, 493, true);
 
     public static final Favorites FAVORITES = new Favorites(1L, List.of(PIZZA, PIZZA_2), USER_APP);
 
     public static final UserRegisterRequestDto USER_REGISTER_REQUEST_DTO = new UserRegisterRequestDto("IvanAdmin",
             "Qwerty", "iv.admin@pizzeria.com", LocalDate.of(2000, 1, 15),
             "", "", "", "", "+490246562332");
-    public static final UserRequestDto USER_REQUEST_DTO = new UserRequestDto("IvanAdmin",
-            "Qwerty", "iv.admin@pizzeria.com", LocalDate.of(2000, 1, 15),
+    public static final UserRequestDto USER_REQUEST_DTO = new UserRequestDto("Qwerty", "iv.admin@pizzeria.com", LocalDate.of(2000, 1, 15),
             "", "test", "10", "", "+480246562332");
-    public static final UserResponseDto USER_RESPONSE_DTO = new UserResponseDto("IvanAdmin",
+    public static final UserResponseDto USER_RESPONSE_DTO = new UserResponseDto(1L, "IvanAdmin",
             "iv.admin@pizzeria.com", LocalDate.of(2000, 1, 15), ADDRESS,
             CONTACT_INFORMATION);
-    public static final UserResponseDto USER_RESPONSE_DTO_2 = new UserResponseDto("TestClient",
+    public static final UserResponseDto USER_RESPONSE_DTO_2 = new UserResponseDto(2L, "TestClient",
             "clientTest@pizzeria.com", LocalDate.of(2001, 10, 15), ADDRESS,
             CONTACT_INFORMATION);
     public static final UserBlockedResponseDto USER_BLOCKED_RESPONSE_DTO = new UserBlockedResponseDto(2L,
             "TestClient", true, LocalDateTime.now());
     public static final ReviewRequestDto REVIEW_REQUEST_DTO = new ReviewRequestDto( "Good pizza", 10);
-    public static final ReviewRequestDto REVIEW_REQUEST_DTO_2 = new ReviewRequestDto( "Super", 10);
     public static final ReviewRequestDto REVIEW_REQUEST_DTO_3 = new ReviewRequestDto("Super", 10);
     public static final ReviewResponseDto REVIEW_RESPONSE_DTO = new ReviewResponseDto("Good pizza",
             10, "IvanAdmin", LocalDateTime.now());
@@ -201,5 +215,6 @@ public class TestData {
             8, "IvanAdmin", LocalDateTime.now());
     public static final UserBonusDto USER_BONUS_DTO = new UserBonusDto(10, 125.0);
     public static final UserBonusDto USER_NEW_BONUS_DTO = new UserBonusDto(30, 500.0);
+
 
 }

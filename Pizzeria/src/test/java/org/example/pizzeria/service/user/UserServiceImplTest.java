@@ -9,7 +9,6 @@ import org.example.pizzeria.entity.order.Basket;
 import org.example.pizzeria.entity.user.Role;
 import org.example.pizzeria.entity.user.UserApp;
 import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
-import org.example.pizzeria.exception.ErrorMessage;
 import org.example.pizzeria.exception.user.StatusAlreadyExistsException;
 import org.example.pizzeria.exception.user.UserCreateException;
 import org.example.pizzeria.mapper.user.UserMapper;
@@ -136,7 +135,7 @@ class UserServiceImplTest {
         when(userRepository.findUserAppByBirthDate(date)).thenReturn(users);
         when(userMapper.toUserResponseDto(any())).thenAnswer(invocation -> {
             UserApp user = invocation.getArgument(0);
-            return new UserResponseDto(user.getUserName(), user.getEmail(), user.getBirthDate(),
+            return new UserResponseDto(user.getId(), user.getUserName(), user.getEmail(), user.getBirthDate(),
                     user.getAddress(), user.getPhoneNumber());
         });
         List<UserResponseDto> responseDtoList = userServiceImpl.getUsersByBirthday(date);
@@ -149,9 +148,7 @@ class UserServiceImplTest {
     void getUsersByBirthday_NoUsersFound_ThrowEntityInPizzeriaNotFoundException() {
         LocalDate date = LocalDate.of(2000, 1, 1);
         when(userRepository.findUserAppByBirthDate(date)).thenReturn(Collections.emptyList());
-        assertThrows(EntityInPizzeriaNotFoundException.class, () -> {
-            userServiceImpl.getUsersByBirthday(date);
-        });
+        assertThrows(EntityInPizzeriaNotFoundException.class, () -> userServiceImpl.getUsersByBirthday(date));
         verify(userRepository, times(1)).findUserAppByBirthDate(date);
         verify(userMapper, never()).toUserResponseDto(any());
     }

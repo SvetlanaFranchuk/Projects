@@ -47,6 +47,8 @@ public interface ProductService {
 
     void deletePizzaRecipe(Long id);
 
+    PizzaResponseDto getPizza(Long id);
+
     List<PizzaResponseDto> getAllPizzaStandardRecipe();
 
     List<PizzaResponseDto> getAllPizzaStandardRecipeByStyles(Styles styles);

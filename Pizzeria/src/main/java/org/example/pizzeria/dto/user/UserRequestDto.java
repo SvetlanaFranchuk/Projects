@@ -10,9 +10,6 @@ import java.time.LocalDate;
 
 @Schema(description = "User profile form")
 public record UserRequestDto(
-        @Schema(description = "user name")
-        @Size(min = 5, max = 25, message = "User name length could be from 5 to 25 symbols")
-        String userName,
         @Schema(description = "password")
         @Size(min = 5, max = 15, message = "Password length could be from 5 to 15 symbols")
         String password,

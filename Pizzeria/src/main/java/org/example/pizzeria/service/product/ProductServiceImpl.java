@@ -322,7 +322,7 @@ public EntityManager entityManager;
         }
         Optional<Pizza> pizza = pizzaRepository.findById(id);
         if (pizza.isPresent()) {
-            List<OrderDetails> detailsList = detailsRepository.findAllByPizzasContaining(pizza.get());
+            List<OrderDetails> detailsList = detailsRepository.findAllByPizza(pizza.get());
             if (detailsList.isEmpty())
                 pizzaRepository.delete(pizza.get());
             else throw new DeleteProductException(ErrorMessage.RECIPE_ALREADY_ORDERED);
@@ -414,4 +414,8 @@ public EntityManager entityManager;
                 .map(p -> pizzaMapper.toPizzaResponseDto(p)).toList();
     }
 
+    @Override
+    public PizzaResponseDto getPizza(Long id){
+        return pizzaMapper.toPizzaResponseDto(pizzaRepository.getReferenceById(id));
+    }
 }

@@ -14,6 +14,7 @@ public class ErrorMessage {
     public static final String FAVORITES_IS_EMPTY = "Favorites list is empty";
     public static final String NOT_CORRECT_ARGUMENT = "Invalid input parameters";
     public static final String INVALID_STATUS_ORDER_FOR_DELETE = "Order status is not 'NEW', cannot be deleted";
+    public static final String INVALID_STATUS_ORDER_FOR_UPDATE = "Order status is not 'NEW', cannot be updated";
     public static final String PIZZA_ALREADY_IN_FAVORITES = "Pizza is already in favorites";
 
 

@@ -1,6 +1,5 @@
 package org.example.pizzeria.mapper.product;
 
-import org.example.pizzeria.dto.product.ingredient.IngredientResponseClientDto;
 import org.example.pizzeria.dto.product.pizza.PizzaRequestDto;
 import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
 import org.example.pizzeria.entity.product.pizza.Pizza;

@@ -1,23 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 41baa354-e10e-4015-a50b-f837e0e38a8c
-      author: Svitlana_Franchuk
-      changes:
-        - createTable:
-            columns:
-              - column:
-                  name: id
-                  type: bigserial
-                  constraints:
-                    primaryKey: true
-              - column:
-                  name: user_app_id
-                  type: bigint
-                  constraints:
-                    unique: true
-            tableName: baskets
-  - changeSet:
-      id: 98452468-9b09-4c7b-a351-815b9be8dd04
+      id: 41baa354-e10e-4015-a50b-f837e0e39a8r
       author: Svitlana_Franchuk
       changes:
         - createTable:
@@ -28,12 +11,29 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: pizzas_id
+                  name: pizza_id
                   type: bigint
                   constraints:
                     nullable: false
+            tableName: basket_pizza
+  - changeSet:
+      id: 41baa354-e10e-4015-a50b-f837e0e38a8c
+      author: Svitlana_Franchuk
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_app_id
+                  type: bigint
+                  constraints:
                     unique: true
-            tableName: baskets_pizzas
+            tableName: baskets
   - changeSet:
       id: b464465c-8742-4970-ac7a-183d2a88395f
       author: Svitlana_Franchuk
@@ -45,6 +45,7 @@ databaseChangeLog:
                   type: bigserial
                   constraints:
                     primaryKey: true
+                    nullable: false
               - column:
                   name: small_nutrition
                   type: integer
@@ -110,6 +111,30 @@ databaseChangeLog:
                     check: "group_ingredient in ('SAUCE','BASIC','EXTRA')"
             tableName: ingredients
   - changeSet:
+      id: bb7034bc-551e-451b-a66f-45b4c3abb7d0
+      author: Svitlana_Franchuk
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: order_id
+                  type: bigint
+                  constraints:
+                    unique: true
+              - column:
+                  name: pizza_id
+                  type: bigint
+              - column:
+                  name: quantity
+                  type: integer
+            tableName: order_details
+  - changeSet:
       id: 324c081c-e062-4ec4-98dd-f1727c4c3c9d
       author: Svitlana_Franchuk
       changes:
@@ -128,7 +153,10 @@ databaseChangeLog:
                   name: order_date_time
                   type: timestamp(6)
               - column:
-                  name: order_detail_id
+                  name: delivery_date_time
+                  type: timestamp(6)
+              - column:
+                  name: order_details_id
                   type: bigint
                   constraints:
                     unique: true
@@ -148,55 +176,16 @@ databaseChangeLog:
                   name: apartment_number
                   type: varchar(5)
               - column:
+                  name: type_bonus
+                  type: varchar(25)
+                  constraints:
+                    check: "type_bonus in ('DISCOUNT_50','DISCOUNT_100','FREE_DELIVERY')"
+              - column:
                   name: status_order
                   type: varchar(255)
                   constraints:
                     check: "status_order in ('NEW','CANCELED','PAID')"
             tableName: orders
-  - changeSet:
-      id: bb7034bc-551e-451b-a66f-45b4c3abb7d0
-      author: Svitlana_Franchuk
-      changes:
-        - createTable:
-            columns:
-              - column:
-                  name: delivery_date_time
-                  type: timestamp(6)
-              - column:
-                  name: id
-                  type: bigserial
-                  constraints:
-                    nullable: false
-                    primaryKey: true
-              - column:
-                  name: order_id
-                  type: bigint
-                  constraints:
-                    unique: true
-              - column:
-                  name: type_bonus
-                  type: varchar(25)
-                  constraints:
-                    check: "type_bonus in ('DISCOUNT_50','DISCOUNT_100','FREE_DELIVERY')"
-            tableName: orders_details
-  - changeSet:
-      id: 91ea9b55-1e8e-4a42-906e-c61cd6551491
-      author: Svitlana_Franchuk
-      changes:
-        - createTable:
-            columns:
-              - column:
-                  name: order_details_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-              - column:
-                  name: pizzas_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-                    unique: true
-            tableName: orders_details_pizzas
   - changeSet:
       id: 608ee38a-48a9-4f23-8afe-a735ed27592c
       author: Svitlana_Franchuk
@@ -437,149 +426,122 @@ databaseChangeLog:
       author: Svitlana_Franchuk
       changes:
         - addForeignKeyConstraint:
+            baseTableName: basket_pizza
+            constraintName: FKstipjpru8rgycjxys0rncio1m
+            referencedTableName: pizzas
+            baseColumnNames: pizza_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: basket_pizza
+            constraintName: FKq9iar5tt0p09skgnv8ay108y9
+            referencedTableName: baskets
+            baseColumnNames: basket_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
             baseTableName: baskets
             constraintName: FKkwjowamu8fgrxqfvj8weim1yj
             referencedTableName: users
             baseColumnNames: user_app_id
             referencedColumnNames: id
-            onDelete: CASCADE
-        - addForeignKeyConstraint:
-            baseTableName: baskets_pizzas
-            constraintName: FKp9ocl9oor9e3y967fmg73gvch
-            referencedTableName: pizzas
-            baseColumnNames: pizzas_id
-            referencedColumnNames: id
-            onDelete: CASCADE
-        - addForeignKeyConstraint:
-            baseTableName: baskets_pizzas
-            constraintName: FKh18cwatywx3hpak943bn1y31t
-            referencedTableName: baskets
-            baseColumnNames: basket_id
-            referencedColumnNames: id
-            onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: favorites
             constraintName: FKl2rfhirxnb7m0jcdfs36gcfu2
             referencedTableName: users
             baseColumnNames: user_app_id
             referencedColumnNames: id
-            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: order_details
+            constraintName: FKjyu2qbqt8gnvno9oe9j2s2ldk
+            referencedTableName: orders
+            baseColumnNames: order_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: order_details
+            constraintName: FKr0qt00gddu56sn19sdqvm3e8p
+            referencedTableName: pizzas
+            baseColumnNames: pizza_id
+            referencedColumnNames: id
         - addForeignKeyConstraint:
             baseTableName: orders
-            constraintName: FK25ohvuqq424axb4m9e1384alt
-            referencedTableName: orders_details
-            baseColumnNames: order_detail_id
+            constraintName: FK18up738eyx1ppn73qgvl5pdmv
+            referencedTableName: order_details
+            baseColumnNames: order_details_id
             referencedColumnNames: id
-            onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: orders
             constraintName: FKmhr0kj8lvnex7fw94300b9ay1
             referencedTableName: users
             baseColumnNames: user_app_id
             referencedColumnNames: id
-            onDelete: CASCADE
-        - addForeignKeyConstraint:
-            baseTableName: orders_details
-            constraintName: FK5o977kj2vptwo70fu7w7so9fe
-            referencedTableName: orders
-            baseColumnNames: order_id
-            referencedColumnNames: id
-            onDelete: CASCADE
-        - addForeignKeyConstraint:
-            baseTableName: orders_details_pizzas
-            constraintName: FKk3oh2jupdnovovdj46eadhsp3
-            referencedTableName: pizzas
-            baseColumnNames: pizzas_id
-            referencedColumnNames: id
-            onDelete: CASCADE
-        - addForeignKeyConstraint:
-            baseTableName: orders_details_pizzas
-            constraintName: FK9ewv6055ln8oay5t0mqwudta5
-            referencedTableName: orders_details
-            baseColumnNames: order_details_id
-            referencedColumnNames: id
-            onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: pizzas
             constraintName: FKjywmbtdx3n21yfiwnoiojta39
             referencedTableName: doughs
             baseColumnNames: dough_id
             referencedColumnNames: id
-            onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: pizzas_favorites
             constraintName: FKh3ckodpf6j290ehc1gvv644ly
             referencedTableName: pizzas
             baseColumnNames: pizzas_id
             referencedColumnNames: id
-            onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: pizzas_favorites
             constraintName: FKh8u8q7cwt3evefep080i4kwcn
             referencedTableName: favorites
             baseColumnNames: favorites_id
             referencedColumnNames: id
-            onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: pizzas_ingredients
             constraintName: FKql1q3n3i1m94it69jc7c1840w
             referencedTableName: pizzas
             baseColumnNames: pizza_id
             referencedColumnNames: id
-            onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: pizzas_ingredients
             constraintName: FKjwn4lvj8ajaggx1nxospim99u
             referencedTableName: ingredients
             baseColumnNames: ingredient_id
             referencedColumnNames: id
-            onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: reviews
             constraintName: FKihcyr6ifu1qifsrxv4doq0ggf
             referencedTableName: users
             baseColumnNames: user_app_id
             referencedColumnNames: id
-            onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: users
             constraintName: FKommxbvym8k63qbwomj0ikj8us
             referencedTableName: baskets
             baseColumnNames: basket_id
             referencedColumnNames: id
-            onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: users
             constraintName: FKgiweg5smdughcwbydgckx27m
             referencedTableName: favorites
             baseColumnNames: favorites_id
             referencedColumnNames: id
-            onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: users_orders
             constraintName: FK2lnf5jw8p8q0ytkr8dp0mlx6
             referencedTableName: orders
             baseColumnNames: orders_id
             referencedColumnNames: id
-            onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: users_orders
             constraintName: FKpffgt2ude7evl48l1643snd8k
             referencedTableName: users
             baseColumnNames: user_app_id
             referencedColumnNames: id
-            onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: users_reviews
             constraintName: FKsrruhgv1krftmcioqdn9mplck
             referencedTableName: reviews
             baseColumnNames: reviews_id
             referencedColumnNames: id
-            onDelete: CASCADE
         - addForeignKeyConstraint:
             baseTableName: users_reviews
             constraintName: FKaf9kahnpnqwnigynwi7hefrwn
             referencedTableName: users
             baseColumnNames: user_app_id
             referencedColumnNames: id
-            onDelete: CASCADE

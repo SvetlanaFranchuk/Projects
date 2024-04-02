@@ -2,6 +2,8 @@ package org.example.pizzeria.entity.product.pizza;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.pizzeria.entity.order.Basket;
+import org.example.pizzeria.entity.order.OrderDetails;
 import org.example.pizzeria.entity.product.ingredient.Dough;
 import org.example.pizzeria.entity.product.ingredient.Ingredient;
 
@@ -57,7 +59,5 @@ public class Pizza {
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "pizzaSet")
     private List<Ingredient> ingredientsList = new ArrayList<>();
-
-
 
 }

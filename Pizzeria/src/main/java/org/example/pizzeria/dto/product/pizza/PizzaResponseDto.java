@@ -39,5 +39,7 @@ public class PizzaResponseDto {
     private @NotNull(message = "Field must be filled in") @Positive double amount;
     @Schema(description = "Nutrition of pizza")
     private @NotNull(message = "Field must be filled in") @Positive int nutrition;
+    @Schema(description = "Sign of a standard recipe")
+    private boolean standardRecipe;
 
 }
