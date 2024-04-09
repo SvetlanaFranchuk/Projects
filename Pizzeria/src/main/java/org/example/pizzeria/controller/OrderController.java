@@ -6,17 +6,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.example.pizzeria.dto.order.*;
+import org.example.pizzeria.dto.product.pizza.PizzaToBasketRequestDto;
 import org.example.pizzeria.entity.order.StatusOrder;
-import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
-import org.example.pizzeria.exception.ErrorMessage;
-import org.example.pizzeria.exception.NotCorrectArgumentException;
-import org.example.pizzeria.exception.order.InvalidOrderStatusException;
 import org.example.pizzeria.service.order.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,32 +40,24 @@ public class OrderController {
     }
 
     @Operation(summary = "Adding pizza to basket")
-    @PostMapping("/addPizzaToBasket/{userId}/{pizzaId}/{countPizza}")
-    public ResponseEntity<BasketResponseDto> addPizzaToBasket(@Parameter(description = "user ID") @PathVariable @Positive Long userId,
-                                                              @Parameter(description = "pizza ID") @PathVariable @Positive Long pizzaId,
-                                                              @Parameter(description = "count of pizzas") @PathVariable @Positive int countPizza) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.addPizzaToBasket(userId, pizzaId, countPizza));
+    @PostMapping("/addPizzaToBasket/{userId}")
+    public ResponseEntity<BasketResponseDto> addPizzaToBasket(@Parameter(description = "user ID")
+                                                                  @PathVariable @Positive Long userId,
+                                                              @RequestBody @Valid PizzaToBasketRequestDto pizzaToBasketRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.addPizzaToBasket(userId, pizzaToBasketRequestDto));
     }
 
     @Operation(summary = "Getting information about users basket")
     @GetMapping("/getBasketByUser/{userId}")
     public ResponseEntity<BasketResponseDto> getBasketByUser(@Parameter(description = "user ID")
                                                              @PathVariable @Positive Long userId) {
-        BasketResponseDto basketResponseDto = orderService.getBasketByUser(userId);
-        if (basketResponseDto != null)
-            return ResponseEntity.ok(basketResponseDto);
-        else
-            return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok(orderService.getBasketByUser(userId));
     }
 
     @Operation(summary = "Changing count of pizza in basket")
     @PatchMapping("/changePizzasInBasket")
     public ResponseEntity<BasketResponseDto> changePizzasInBasket(@RequestBody @Valid BasketRequestDto requestDto) {
-        BasketResponseDto basketResponseDto = orderService.changePizzasInBasket(requestDto);
-        if (basketResponseDto != null)
-            return ResponseEntity.ok(basketResponseDto);
-        else
-            return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok(orderService.changePizzasInBasket(requestDto));
     }
 
     @Operation(summary = "Moving details from basket to order")
@@ -81,40 +72,25 @@ public class OrderController {
     public ResponseEntity<OrderResponseDto> updateOrderAndOrderDetails(@Parameter(description = "order ID")
                                                                        @PathVariable @Positive Long id,
                                                                        @RequestBody @Valid OrderRequestDto orderRequestDto) {
-        try {
-            OrderResponseDto responseDto = orderService.updateOrderAndOrderDetails(id, orderRequestDto);
-            return ResponseEntity.ok(responseDto);
-        } catch (EntityInPizzeriaNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(orderService.updateOrderAndOrderDetails(id, orderRequestDto));
     }
 
     @Operation(summary = "Deleting order")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteOrder(@Parameter(description = "order ID")
                                               @PathVariable Long id) {
-        try {
-            orderService.deleteOrder(id);
-            return ResponseEntity.ok("Order deleted successfully");
-        } catch (EntityInPizzeriaNotFoundException e) {
-            return ResponseEntity.badRequest().body("Order" + ErrorMessage.ENTITY_NOT_FOUND);
-        } catch (InvalidOrderStatusException e) {
-            return ResponseEntity.badRequest().body(ErrorMessage.INVALID_STATUS_ORDER_FOR_DELETE);
-        }
+        orderService.deleteOrder(id);
+        return ResponseEntity.ok("Order deleted successfully");
     }
 
     @Operation(summary = "Updating status of order")
     @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OrderStatusResponseDto> updateOrderStatus(@Parameter(description = "order ID")
                                                                     @PathVariable Long id,
                                                                     @Parameter(description = "Status order: NEW, PAID, CANCELED")
                                                                     @RequestParam StatusOrder status) {
-        try {
-            OrderStatusResponseDto updatedOrderStatus = orderService.updateStatusOrder(id, status);
-            return ResponseEntity.ok(updatedOrderStatus);
-        } catch (EntityInPizzeriaNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(orderService.updateStatusOrder(id, status));
     }
 
 
@@ -122,27 +98,20 @@ public class OrderController {
     @GetMapping("/getAllByUser/{userId}")
     public ResponseEntity<List<OrderResponseDto>> getAllOrdersByUser(@Parameter(description = "user ID")
                                                                      @PathVariable Long userId) {
-        List<OrderResponseDto> orderResponseDtoList = orderService.getAllOrdersByUser(userId);
-        return ResponseEntity.ok(orderResponseDtoList);
+        return ResponseEntity.ok(orderService.getAllOrdersByUser(userId));
     }
 
     @Operation(summary = "Getting information about order")
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderResponseDto> getOrderById(@Parameter(description = "order ID") @PathVariable Long orderId) {
-        OrderResponseDto orderResponseDto = orderService.getOrderByUser(orderId);
-        return ResponseEntity.ok(orderResponseDto);
+        return ResponseEntity.ok(orderService.getOrderByUser(orderId));
     }
 
     @Operation(summary = "Getting list of orders by status")
     @GetMapping("/status")
     public ResponseEntity<List<OrderStatusResponseDto>> getOrdersByStatus(@Parameter(description = "Status order: NEW, PAID, CANCELED")
                                                                           @RequestParam StatusOrder status) {
-        List<OrderStatusResponseDto> orderStatusResponseDtoList = orderService.getOrderByStatus(status);
-        if (orderStatusResponseDtoList.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        } else {
-            return ResponseEntity.ok(orderStatusResponseDtoList);
-        }
+        return ResponseEntity.ok(orderService.getOrderByStatus(status));
     }
 
     @Operation(summary = "Getting list of orders by period")
@@ -152,12 +121,6 @@ public class OrderController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @Parameter(description = "End date")
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-
-        if (startDate.isAfter(endDate)) {
-            throw new NotCorrectArgumentException(ErrorMessage.NOT_CORRECT_ARGUMENT);
-        }
-
-        List<OrderStatusResponseDto> orderStatusResponseDtoList = orderService.getAllOrdersByPeriod(startDate, endDate);
-        return ResponseEntity.ok(orderStatusResponseDtoList);
+        return ResponseEntity.ok(orderService.getAllOrdersByPeriod(startDate, endDate));
     }
 }

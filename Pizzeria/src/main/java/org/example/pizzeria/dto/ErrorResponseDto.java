@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class ErrorResponseDto {
-    String message;
+
+public record ErrorResponseDto (String message){
+    public ErrorResponseDto(String message) {
+        this.message = message;
+    }
 }

@@ -2,19 +2,27 @@ package org.example.pizzeria.controller.product;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.pizzeria.TestData;
+import org.example.pizzeria.controller.ExceptionHandlerController;
 import org.example.pizzeria.controller.ProductController;
 import org.example.pizzeria.dto.product.pizza.PizzaRequestDto;
 import org.example.pizzeria.entity.product.pizza.Styles;
 import org.example.pizzeria.entity.product.pizza.ToppingsFillings;
 import org.example.pizzeria.exception.ErrorMessage;
 import org.example.pizzeria.exception.InvalidIDException;
+import org.example.pizzeria.filter.JwtAuthenticationFilter;
+import org.example.pizzeria.service.auth.JwtService;
 import org.example.pizzeria.service.product.ProductServiceImpl;
+import org.example.pizzeria.service.user.UserServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,13 +34,31 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProductController.class)
+@ContextConfiguration(classes = {JwtAuthenticationFilter.class, JwtService.class})
 class ProductControllerTest_Pizza {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
     @MockBean
+    private UserServiceImpl userService;
+
+    @MockBean
+    private JwtService jwtService;
+
+    @MockBean
     private ProductServiceImpl productService;
+
+    private String jwtToken;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(new ProductController(productService))
+                .setControllerAdvice(new ExceptionHandlerController())
+                .build();
+        jwtToken = "generated_jwt_token";
+        when(jwtService.generateToken(any())).thenReturn(jwtToken);
+    }
 
     @Test
     void addPizza() throws Exception {
@@ -41,7 +67,8 @@ class ProductControllerTest_Pizza {
         mockMvc.perform(post("/product/addPizza")
                         .param("userId", "1")
                         .content(objectMapper.writeValueAsString(TestData.PIZZA_REQUEST_DTO))
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.title").value(TestData.PIZZA_RESPONSE_DTO.getTitle()))
@@ -56,7 +83,8 @@ class ProductControllerTest_Pizza {
     public void testAddPizza_NoUserId() throws Exception {
         mockMvc.perform(post("/product/addPizza")
                         .content("{}")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isBadRequest());
     }
 
@@ -69,7 +97,8 @@ class ProductControllerTest_Pizza {
 
         mockMvc.perform(put("/product/updatePizza/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
+                        .content(requestJson)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.title").value(TestData.PIZZA_RESPONSE_DTO_NEW.getTitle()))
@@ -84,14 +113,17 @@ class ProductControllerTest_Pizza {
 
         mockMvc.perform(put("/product/updatePizza/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestJson))
-                .andExpect(status().isNotFound());
+                        .content(requestJson)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").doesNotExist());
     }
 
     @Test
     void deletePizzaRecipe() throws Exception {
         doNothing().when(productService).deletePizzaRecipe(anyLong());
-        mockMvc.perform(delete("/product/deletePizzaRecipe/{id}", 1L))
+        mockMvc.perform(delete("/product/deletePizzaRecipe/{id}", 1L)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Pizza recipe deleted successfully"));
     }
@@ -100,7 +132,8 @@ class ProductControllerTest_Pizza {
     public void deletePizzaRecipe_BadId() throws Exception {
         doThrow(new InvalidIDException(ErrorMessage.INVALID_ID)).when(productService).deletePizzaRecipe(anyLong());
 
-        mockMvc.perform(delete("/product/deletePizzaRecipe/{id}", 1L))
+        mockMvc.perform(delete("/product/deletePizzaRecipe/999")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(ErrorMessage.INVALID_ID));
     }
@@ -110,7 +143,8 @@ class ProductControllerTest_Pizza {
         when(productService.getAllPizzaStandardRecipe()).thenReturn(List.of(TestData.PIZZA_RESPONSE_DTO));
 
         mockMvc.perform(get("/product/getAllPizzaStandardRecipe")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].title").value(TestData.PIZZA_RESPONSE_DTO.getTitle()));
@@ -119,7 +153,8 @@ class ProductControllerTest_Pizza {
     @Test
     public void getAllPizzaStandardRecipe_EmptyList() throws Exception {
         when(productService.getAllPizzaStandardRecipe()).thenReturn(Collections.emptyList());
-        mockMvc.perform(get("/product/getAllPizzaStandardRecipe"))
+        mockMvc.perform(get("/product/getAllPizzaStandardRecipe")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
     }
@@ -129,7 +164,8 @@ class ProductControllerTest_Pizza {
         when(productService.getAllPizzaStandardRecipeByStyles(Styles.CLASSIC_ITALIAN)).thenReturn(List.of(TestData.PIZZA_RESPONSE_DTO));
         mockMvc.perform(get("/product/getAllPizzaStandardRecipeByStyles")
                         .param("styles", "CLASSIC_ITALIAN")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].title").value(TestData.PIZZA_RESPONSE_DTO.getTitle()))
@@ -141,7 +177,8 @@ class ProductControllerTest_Pizza {
         when(productService.getAllPizzaStandardRecipeByStyles(Styles.CLASSIC_ITALIAN)).thenReturn(Collections.emptyList());
         mockMvc.perform(get("/product/getAllPizzaStandardRecipeByStyles")
                         .param("styles", "CLASSIC_ITALIAN")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
     }
@@ -152,7 +189,8 @@ class ProductControllerTest_Pizza {
 
         mockMvc.perform(get("/product/getAllPizzaStandardRecipeByTopping")
                         .param("toppingsFillings", "CHEESE")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].title").value(TestData.PIZZA_RESPONSE_DTO.getTitle()))
@@ -164,7 +202,8 @@ class ProductControllerTest_Pizza {
         when(productService.getAllPizzaStandardRecipeByTopping(ToppingsFillings.CHEESE)).thenReturn(Collections.emptyList());
         mockMvc.perform(get("/product/getAllPizzaStandardRecipeByTopping")
                         .param("toppingsFillings", "CHEESE")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
     }
@@ -177,7 +216,8 @@ class ProductControllerTest_Pizza {
         mockMvc.perform(get("/product/getAllPizzaStandardRecipeByToppingByStyles")
                         .param("toppingsFillings", "CHEESE")
                         .param("styles", "CLASSIC_ITALIAN")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$[0].title").value(TestData.PIZZA_RESPONSE_DTO.getTitle()))
@@ -190,7 +230,8 @@ class ProductControllerTest_Pizza {
         mockMvc.perform(get("/product/getAllPizzaStandardRecipeByToppingByStyles")
                         .param("toppingsFillings", "CHEESE")
                         .param("styles", "CLASSIC_ITALIAN")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
     }

@@ -1,22 +1,30 @@
 package org.example.pizzeria.controller.product;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.pizzeria.TestData;
+import org.example.pizzeria.controller.ExceptionHandlerController;
 import org.example.pizzeria.controller.ProductController;
 import org.example.pizzeria.dto.benefits.FavoritesResponseDto;
 import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
 import org.example.pizzeria.exception.product.PizzaAlreadyInFavoritesException;
+import org.example.pizzeria.filter.JwtAuthenticationFilter;
+import org.example.pizzeria.service.auth.JwtService;
 import org.example.pizzeria.service.product.ProductServiceImpl;
+import org.example.pizzeria.service.user.UserServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -24,11 +32,30 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProductController.class)
+@ContextConfiguration(classes = {JwtAuthenticationFilter.class, JwtService.class})
 class ProductControllerTest_Favorites {
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private UserServiceImpl userService;
+
+    @MockBean
+    private JwtService jwtService;
+
     @MockBean
     private ProductServiceImpl productService;
+
+    private String jwtToken;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(new ProductController(productService))
+                .setControllerAdvice(new ExceptionHandlerController())
+                .build();
+        jwtToken = "generated_jwt_token";
+        when(jwtService.generateToken(any())).thenReturn(jwtToken);
+    }
 
     @Test
     void addPizzaToUserFavorite() throws Exception {
@@ -41,7 +68,8 @@ class ProductControllerTest_Favorites {
         mockMvc.perform(post("/product/addPizzaToUserFavorite")
                         .param("userId", String.valueOf(userId))
                         .param("pizzaId", String.valueOf(pizzaId))
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isCreated());
     }
 
@@ -55,7 +83,8 @@ class ProductControllerTest_Favorites {
         mockMvc.perform(post("/product/addPizzaToUserFavorite")
                         .param("userId", String.valueOf(userId))
                         .param("pizzaId", String.valueOf(pizzaId))
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isBadRequest());
     }
 
@@ -67,7 +96,8 @@ class ProductControllerTest_Favorites {
         mockMvc.perform(delete("/product/deletePizzaFromUserFavorite")
                         .param("userId", String.valueOf(userId))
                         .param("pizzaId", String.valueOf(pizzaId))
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk());
     }
 
@@ -80,8 +110,9 @@ class ProductControllerTest_Favorites {
         mockMvc.perform(delete("/product/deletePizzaFromUserFavorite")
                         .param("userId", String.valueOf(userId))
                         .param("pizzaId", String.valueOf(pizzaId))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -90,7 +121,8 @@ class ProductControllerTest_Favorites {
         when(productService.getAllFavoritePizzaByUser(userId)).thenReturn(List.of(TestData.PIZZA_RESPONSE_DTO));
 
         mockMvc.perform(get("/product/getAllFavoritePizzaByUser/{userId}", userId)
-                        .param("userId", String.valueOf(userId)))
+                        .param("userId", String.valueOf(userId))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
@@ -104,7 +136,8 @@ class ProductControllerTest_Favorites {
         when(productService.getAllFavoritePizzaByUser(userId)).thenReturn(Collections.emptyList());
         mockMvc.perform(get("/product/getAllFavoritePizzaByUser/{userId}", userId)
                         .param("userId", String.valueOf(userId))
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
     }

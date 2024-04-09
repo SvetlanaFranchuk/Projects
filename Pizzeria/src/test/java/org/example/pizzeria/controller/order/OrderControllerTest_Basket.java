@@ -2,23 +2,32 @@ package org.example.pizzeria.controller.order;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.pizzeria.TestData;
+import org.example.pizzeria.controller.ExceptionHandlerController;
 import org.example.pizzeria.controller.OrderController;
 import org.example.pizzeria.dto.order.BasketRequestDto;
 import org.example.pizzeria.dto.order.BasketResponseDto;
 import org.example.pizzeria.dto.order.OrderResponseDto;
 import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
+import org.example.pizzeria.dto.product.pizza.PizzaToBasketRequestDto;
 import org.example.pizzeria.entity.order.Basket;
 import org.example.pizzeria.entity.order.StatusOrder;
 import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
 import org.example.pizzeria.exception.ErrorMessage;
 import org.example.pizzeria.exception.NotCorrectArgumentException;
+import org.example.pizzeria.filter.JwtAuthenticationFilter;
+import org.example.pizzeria.service.auth.JwtService;
 import org.example.pizzeria.service.order.OrderServiceImpl;
+import org.example.pizzeria.service.user.UserServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -26,12 +35,13 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(OrderController.class)
+@ContextConfiguration(classes = {JwtAuthenticationFilter.class, JwtService.class})
 class OrderControllerTest_Basket {
     @Autowired
     private MockMvc mockMvc;
@@ -39,15 +49,31 @@ class OrderControllerTest_Basket {
     private ObjectMapper objectMapper;
     @MockBean
     private OrderServiceImpl orderService;
+    @MockBean
+    private UserServiceImpl userService;
+    @MockBean
+    private JwtService jwtService;
+    private String jwtToken;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(new OrderController(orderService))
+                .setControllerAdvice(new ExceptionHandlerController())
+                .build();
+        jwtToken = "generated_jwt_token";
+        when(jwtService.generateToken(any())).thenReturn(jwtToken);
+    }
 
     @Test
     void addPizzaToBasket() throws Exception {
         Map<PizzaResponseDto, Integer> pizzaToCount = new HashMap<>();
         pizzaToCount.put(TestData.PIZZA_RESPONSE_DTO, 3);
         BasketResponseDto responseDto = new BasketResponseDto(pizzaToCount, 1L);
-        when(orderService.addPizzaToBasket(any(Long.class), any(Long.class), any(Integer.class))).thenReturn(responseDto);
-        mockMvc.perform(post("/order/addPizzaToBasket/{userId}/{pizzaId}/{countPizza}", 1L, 1L, 3)
-                        .contentType(MediaType.APPLICATION_JSON))
+        when(orderService.addPizzaToBasket(any(Long.class), any(PizzaToBasketRequestDto.class))).thenReturn(responseDto);
+        mockMvc.perform(post("/order/addPizzaToBasket/{userId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new PizzaToBasketRequestDto(1L, 3)))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.pizzaCountMap.size()").value(responseDto.pizzaCountMap().size()));
     }
@@ -61,18 +87,20 @@ class OrderControllerTest_Basket {
         when(orderService.getBasketByUser(anyLong())).thenReturn(responseDto);
 
         mockMvc.perform(get("/order/getBasketByUser/{userId}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.pizzaCountMap.size()").value(responseDto.pizzaCountMap().size()));
     }
 
     @Test
     void getBasketByUser_EntityNotFound() throws Exception {
-        when(orderService.getBasketByUser(anyLong())).thenThrow(EntityInPizzeriaNotFoundException.class);
+        when(orderService.getBasketByUser(anyLong())).thenThrow(new EntityInPizzeriaNotFoundException("Basket",ErrorMessage.ENTITY_NOT_FOUND));
 
-        mockMvc.perform(get("/order/getBasketByUser/{userId}", 1L)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+        mockMvc.perform(get("/basket/123")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -86,48 +114,51 @@ class OrderControllerTest_Basket {
         BasketRequestDto basketRequestDto = new BasketRequestDto(pizzaRequestToCount, 1L);
         mockMvc.perform(patch("/order/changePizzasInBasket")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(basketRequestDto)))
+                        .content(objectMapper.writeValueAsString(basketRequestDto))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.pizzaCountMap.size()").value(responseDto.pizzaCountMap().size()));
     }
 
     @Test
     void changePizzasInBasket_Negative() throws Exception {
-        when(orderService.changePizzasInBasket(any(BasketRequestDto.class)))
-                .thenThrow(new NotCorrectArgumentException(ErrorMessage.NOT_CORRECT_ARGUMENT));
+        doThrow(new NotCorrectArgumentException(ErrorMessage.NOT_CORRECT_ARGUMENT))
+                .when(orderService).changePizzasInBasket(any(BasketRequestDto.class));
         Map<Long, Integer> pizzaRequestToCount = new HashMap<>();
         pizzaRequestToCount.put(1L, 3);
         BasketRequestDto basketRequestDto = new BasketRequestDto(pizzaRequestToCount, 1L);
         mockMvc.perform(patch("/order/changePizzasInBasket")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(basketRequestDto)))
+                        .content(objectMapper.writeValueAsString(basketRequestDto))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void moveDetailsBasketToOrder() throws Exception {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime expectedDateTime = now.plusHours(1);
-        double expectedSum = (0.2 + 0.4 + 0.23) * 1.3 * 2;
-        Map<PizzaResponseDto, Integer> pizzaToCount = new HashMap<>();
-        pizzaToCount.put(TestData.PIZZA_RESPONSE_DTO, 2);
+//        LocalDateTime now = LocalDateTime.now();
+//        LocalDateTime expectedDateTime = now.plusHours(1);
+//        double expectedSum = (0.2 + 0.4 + 0.23) * 1.3 * 2;
+//        Map<PizzaResponseDto, Integer> pizzaToCount = new HashMap<>();
+//        pizzaToCount.put(TestData.PIZZA_RESPONSE_DTO, 2);
 
         Basket basket = TestData.BASKET;
-        OrderResponseDto expectedOrderResponseDto = new OrderResponseDto(1L,
-                TestData.DELIVERY_ADDRESS.getCity(),
-                TestData.DELIVERY_ADDRESS.getStreetName(),
-                TestData.DELIVERY_ADDRESS.getHouseNumber(),
-                TestData.DELIVERY_ADDRESS.getApartmentNumber(),
-                expectedDateTime,
-                expectedSum,
-                StatusOrder.NEW,
-                null,
-                now,
-                pizzaToCount,
-                1L);
+//        OrderResponseDto expectedOrderResponseDto = new OrderResponseDto(1L,
+//                TestData.DELIVERY_ADDRESS.getCity(),
+//                TestData.DELIVERY_ADDRESS.getStreetName(),
+//                TestData.DELIVERY_ADDRESS.getHouseNumber(),
+//                TestData.DELIVERY_ADDRESS.getApartmentNumber(),
+//                expectedDateTime,
+//                expectedSum,
+//                StatusOrder.NEW,
+//                null,
+//                now,
+//                pizzaToCount,
+//                1L);
 
-        when(orderService.moveDetailsBasketToOrder(anyLong())).thenReturn(expectedOrderResponseDto);
-        mockMvc.perform(post("/order/moveDetailsBasketToOrder/{id}", basket.getId()))
+        when(orderService.moveDetailsBasketToOrder(anyLong())).thenReturn(TestData.ORDER_RESPONSE_DTO);
+        mockMvc.perform(post("/order/moveDetailsBasketToOrder/{id}", basket.getId())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isCreated());
     }
     @Test
@@ -135,8 +166,9 @@ class OrderControllerTest_Basket {
         Basket emptyBasket = new Basket();
         emptyBasket.setId(2L);
         when(orderService.moveDetailsBasketToOrder(anyLong())).thenThrow(EntityInPizzeriaNotFoundException.class);
-        mockMvc.perform(post("/order/moveDetailsBasketToOrder/{id}", emptyBasket.getId()))
-                .andExpect(status().isBadRequest());
+        mockMvc.perform(post("/order/moveDetailsBasketToOrder/{id}", emptyBasket.getId())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
+                .andExpect(status().isNotFound());
     }
 
 

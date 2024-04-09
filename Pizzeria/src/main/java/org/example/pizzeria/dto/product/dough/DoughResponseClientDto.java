@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.Getter;
 import org.example.pizzeria.entity.product.ingredient.TypeDough;
 
 @Schema(description = "form for displaying information about the dough to the client")

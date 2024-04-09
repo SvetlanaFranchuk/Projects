@@ -224,7 +224,7 @@ public EntityManager entityManager;
         }
         Pizza pizza = pizzaMapper.toPizza(newPizza);
         putIngredientToPizza(pizza, newPizza);
-        pizza.setStandardRecipe(!userRepository.getReferenceById(userId).getRole().equals(Role.CLIENT));
+        pizza.setStandardRecipe(!userRepository.getReferenceById(userId).getRole().equals(Role.ROLE_CLIENT));
         pizza = pizzaRepository.save(pizza);
 
         PizzaResponseDto result = pizzaMapper.toPizzaResponseDto(pizza);
@@ -259,7 +259,7 @@ public EntityManager entityManager;
             amount += ingredient.getPrice();
         }
         amount += dough.getSmallPrice();
-        return amount * coefficient;
+        return amount * coefficient * 1.3;
     }
 
     private int getNutritionPizza(List<Ingredient> ingredients, Dough dough, double coefficient) {

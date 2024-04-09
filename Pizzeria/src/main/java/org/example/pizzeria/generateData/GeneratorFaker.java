@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GeneratorFaker {
+    //TODO удалить из основного проекта
     private static final Faker faker = new Faker();
     private static final Random rnd = new Random();
 

@@ -14,7 +14,7 @@ public interface ReviewMapper {
     @Mapping(target = "userApp", ignore = true)
     Review toReview(String comment, Integer grade);
 
-    @Mapping(target = "userName", source = "userApp.userName")
+    @Mapping(target = "userName", source = "userApp.username")
     ReviewResponseDto toReviewResponseDto(Review review);
 
 }

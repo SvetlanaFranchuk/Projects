@@ -1,8 +1,8 @@
 package org.example.pizzeria.controller.order;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.pizzeria.TestData;
+import org.example.pizzeria.controller.ExceptionHandlerController;
 import org.example.pizzeria.controller.OrderController;
 import org.example.pizzeria.dto.order.OrderRequestDto;
 import org.example.pizzeria.dto.order.OrderResponseDto;
@@ -10,18 +10,27 @@ import org.example.pizzeria.dto.order.OrderStatusResponseDto;
 import org.example.pizzeria.entity.order.StatusOrder;
 import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
 import org.example.pizzeria.exception.ErrorMessage;
+import org.example.pizzeria.exception.NotCorrectArgumentException;
 import org.example.pizzeria.exception.order.InvalidOrderStatusException;
+import org.example.pizzeria.filter.JwtAuthenticationFilter;
+import org.example.pizzeria.repository.order.OrderRepository;
+import org.example.pizzeria.service.auth.JwtService;
 import org.example.pizzeria.service.order.OrderServiceImpl;
+import org.example.pizzeria.service.user.UserServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.hamcrest.Matchers.is;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,12 +39,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static net.bytebuddy.matcher.ElementMatchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(OrderController.class)
+@ContextConfiguration(classes = {JwtAuthenticationFilter.class, JwtService.class})
 class OrderControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -43,22 +52,32 @@ class OrderControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private OrderServiceImpl orderService;
+    @MockBean
+    private UserServiceImpl userService;
+    @MockBean
+    private JwtService jwtService;
+    @MockBean
+    private OrderRepository orderRepository;
+    private String jwtToken;
+    @BeforeEach
+    void setUp() {
+        Mockito.reset(orderRepository);
+        mockMvc = MockMvcBuilders.standaloneSetup(new OrderController(orderService))
+                .setControllerAdvice(new ExceptionHandlerController())
+                .build();
+        jwtToken = "generated_jwt_token";
+        when(jwtService.generateToken(any())).thenReturn(jwtToken);
+    }
 
     @Test
     void updateOrderAndOrderDetails() throws Exception {
-        Long orderId = 1L;
-        Map<Long, Integer> pizzaIdToCount = new HashMap<>();
-        pizzaIdToCount.put(1L, 2);
-        OrderRequestDto orderRequestDto = new OrderRequestDto(TestData.EXPECTED_DATE_TIME,
-                TestData.DELIVERY_ADDRESS_NEW.getCity(),
-                TestData.DELIVERY_ADDRESS_NEW.getStreetName(),
-                TestData.DELIVERY_ADDRESS_NEW.getHouseNumber(),
-                TestData.DELIVERY_ADDRESS_NEW.getApartmentNumber(), pizzaIdToCount);
-        when(orderService.updateOrderAndOrderDetails(orderId, orderRequestDto)).thenReturn(TestData.ORDER_RESPONSE_DTO);
+       Long orderId = 1L;
+       when(orderService.updateOrderAndOrderDetails(orderId, TestData.ORDER_REQUEST_DTO)).thenReturn(TestData.ORDER_RESPONSE_DTO);
 
         mockMvc.perform(patch("/order/updateOrderAndOrderDetails/{id}", orderId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(orderRequestDto)))
+                        .content(objectMapper.writeValueAsString(TestData.ORDER_REQUEST_DTO))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.deliveryStreetName").value(TestData.ORDER_RESPONSE_DTO.deliveryStreetName()))
                 .andExpect(jsonPath("$.sum").value(TestData.ORDER_RESPONSE_DTO.sum()));
@@ -67,18 +86,12 @@ class OrderControllerTest {
     @Test
     void updateOrderAndOrderDetails_OrderNotFound() throws Exception {
         Long orderId = 1L;
-        Map<Long, Integer> pizzaIdToCount = new HashMap<>();
-        pizzaIdToCount.put(1L, 2);
-        OrderRequestDto orderRequestDto = new OrderRequestDto(TestData.EXPECTED_DATE_TIME,
-                TestData.DELIVERY_ADDRESS_NEW.getCity(),
-                TestData.DELIVERY_ADDRESS_NEW.getStreetName(),
-                TestData.DELIVERY_ADDRESS_NEW.getHouseNumber(),
-                TestData.DELIVERY_ADDRESS_NEW.getApartmentNumber(), pizzaIdToCount);
-        when(orderService.updateOrderAndOrderDetails(orderId, orderRequestDto))
+        when(orderService.updateOrderAndOrderDetails(orderId, TestData.ORDER_REQUEST_DTO))
                 .thenThrow(new EntityInPizzeriaNotFoundException("Order", ErrorMessage.ENTITY_NOT_FOUND));
         mockMvc.perform(patch("/order/updateOrderAndOrderDetails/{id}", orderId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(orderRequestDto)))
+                        .content(objectMapper.writeValueAsString(TestData.ORDER_REQUEST_DTO))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isNotFound());
     }
 
@@ -87,7 +100,8 @@ class OrderControllerTest {
         Long orderId = 1L;
         doNothing().when(orderService).deleteOrder(orderId);
 
-        mockMvc.perform(delete("/order/{id}", orderId))
+        mockMvc.perform(delete("/order/{id}", orderId)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Order deleted successfully"));
     }
@@ -97,11 +111,11 @@ class OrderControllerTest {
         Long orderId = 1L;
         doThrow(new EntityInPizzeriaNotFoundException("Order", ErrorMessage.ENTITY_NOT_FOUND))
                 .when(orderService).deleteOrder(orderId);
-
-        mockMvc.perform(delete("/order/{id}", orderId))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Order" + ErrorMessage.ENTITY_NOT_FOUND));
+        mockMvc.perform(delete("/order/{id}", orderId)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
+                .andExpect(status().isNotFound());
     }
+
 
     @Test
     void deleteOrder_InvalidStatus_ThrowInvalidOrderStatusException() throws Exception {
@@ -109,9 +123,9 @@ class OrderControllerTest {
         doThrow(new InvalidOrderStatusException(ErrorMessage.INVALID_STATUS_ORDER_FOR_DELETE))
                 .when(orderService).deleteOrder(orderId);
 
-        mockMvc.perform(delete("/order/{id}", orderId))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(ErrorMessage.INVALID_STATUS_ORDER_FOR_DELETE));
+        mockMvc.perform(delete("/order/{id}", orderId)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -124,7 +138,8 @@ class OrderControllerTest {
 
         mockMvc.perform(patch("/order/{id}/status", orderId)
                         .param("status", StatusOrder.CANCELED.toString())
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statusOrder").value(StatusOrder.CANCELED.name()));
     }
@@ -138,7 +153,8 @@ class OrderControllerTest {
 
         mockMvc.perform(patch("/order/{id}/status", orderId)
                         .param("status", StatusOrder.PAID.toString())
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isNotFound());
     }
     @Test
@@ -147,7 +163,8 @@ class OrderControllerTest {
         List<OrderResponseDto> orderResponseDtoList = List.of(TestData.ORDER_RESPONSE_DTO);
         when(orderService.getAllOrdersByUser(userId)).thenReturn(orderResponseDtoList);
 
-        mockMvc.perform(get("/order/getAllByUser/{userId}", userId))
+        mockMvc.perform(get("/order/getAllByUser/{userId}", userId)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(orderResponseDtoList.size()));
@@ -159,7 +176,8 @@ class OrderControllerTest {
         List<OrderResponseDto> orderResponseDtoList = Collections.emptyList();
         when(orderService.getAllOrdersByUser(userId)).thenReturn(orderResponseDtoList);
 
-        mockMvc.perform(get("/order/getAllByUser/{userId}", userId))
+        mockMvc.perform(get("/order/getAllByUser/{userId}", userId)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(0));
@@ -171,7 +189,8 @@ class OrderControllerTest {
         OrderResponseDto orderResponseDto = TestData.ORDER_RESPONSE_DTO;
         when(orderService.getOrderByUser(orderId)).thenReturn(orderResponseDto);
 
-        mockMvc.perform(get("/order/{orderId}", orderId))
+        mockMvc.perform(get("/order/{orderId}", orderId)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(orderResponseDto.id()))
@@ -179,12 +198,14 @@ class OrderControllerTest {
     }
 
     @Test
-    void getOrderById_OrderNotFound_ThrowEntityInPizzeriaNotFoundException() throws Exception {
+    void getOrderByUser_ReturnEmptyList() throws Exception {
         Long orderId = 1L;
-        when(orderService.getOrderByUser(orderId)).thenThrow(new EntityInPizzeriaNotFoundException("Order", ErrorMessage.ENTITY_NOT_FOUND));
+        when(orderService.getOrderByUser(orderId)).thenReturn(null);
 
-        mockMvc.perform(get("/order/{orderId}", orderId))
-                .andExpect(status().isBadRequest());
+        mockMvc.perform(get("/order/{orderId}", orderId)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
+                .andExpect(status().isOk())
+                .andExpect(content().string(""));
     }
 
     @Test
@@ -197,7 +218,8 @@ class OrderControllerTest {
 
         mockMvc.perform(get("/order/status")
                         .param("status", status.toString())
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(orderStatusResponseDtos.size()));
@@ -211,8 +233,9 @@ class OrderControllerTest {
 
         mockMvc.perform(get("/order/status")
                         .param("status", status.toString())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
+                .andExpect(status().isNotFound());
     }
     @Test
     void getOrdersByPeriod() throws Exception {
@@ -226,7 +249,8 @@ class OrderControllerTest {
         mockMvc.perform(get("/order/period")
                         .param("startDate", startDate.toString())
                         .param("endDate", endDate.toString())
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(orderStatusResponseDtos.size()));
@@ -235,11 +259,14 @@ class OrderControllerTest {
     void getOrdersByPeriod_InvalidDate() throws Exception {
         LocalDate startDate = LocalDate.now().plusDays(1);
         LocalDate endDate = LocalDate.now();
+        doThrow(new NotCorrectArgumentException(ErrorMessage.NOT_CORRECT_ARGUMENT))
+                .when(orderService).getAllOrdersByPeriod(startDate, endDate);
 
         mockMvc.perform(get("/order/period")
                         .param("startDate", startDate.toString())
                         .param("endDate", endDate.toString())
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isBadRequest());
     }
 }

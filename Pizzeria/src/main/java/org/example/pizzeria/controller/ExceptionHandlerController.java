@@ -2,14 +2,12 @@ package org.example.pizzeria.controller;
 
 import org.example.pizzeria.dto.ErrorResponseDto;
 import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
+import org.example.pizzeria.exception.ErrorMessage;
 import org.example.pizzeria.exception.InvalidIDException;
 import org.example.pizzeria.exception.NotCorrectArgumentException;
 import org.example.pizzeria.exception.order.InvalidOrderStatusException;
 import org.example.pizzeria.exception.product.*;
-import org.example.pizzeria.exception.user.StatusAlreadyExistsException;
-import org.example.pizzeria.exception.user.UpdateReviewException;
-import org.example.pizzeria.exception.user.UserBlockedException;
-import org.example.pizzeria.exception.user.UserCreateException;
+import org.example.pizzeria.exception.user.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -25,6 +23,12 @@ import java.util.Map;
 @RestControllerAdvice
 public class ExceptionHandlerController {
 
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<ErrorResponseDto> handleUnauthorizedException(UnauthorizedException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponseDto(ex.getMessage()));
+    }
+
     @ExceptionHandler(InvalidOrderStatusException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorResponseDto> handleInvalidOrderStatusException(InvalidOrderStatusException ex) {
@@ -39,13 +43,13 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(DoughCreateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponseDto> handleDoughCreateException(DoughCreateException ex) {
+    protected ResponseEntity<ErrorResponseDto> handleDoughCreateException(DoughCreateException ex) {
         return ResponseEntity.badRequest().body(new ErrorResponseDto(ex.getMessage()));
     }
 
     @ExceptionHandler(FavoritesExistException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponseDto> handleFavoritesNotFoundException(FavoritesExistException ex) {
+    public ResponseEntity<ErrorResponseDto> handleFavoritesExistException(FavoritesExistException ex) {
         return ResponseEntity.badRequest().body(new ErrorResponseDto(ex.getMessage()));
     }
 
@@ -69,7 +73,7 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(UserCreateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ErrorResponseDto> handleUserCreateError(UserCreateException ex) {
+    public ResponseEntity<ErrorResponseDto> handleUserCreateException(UserCreateException ex) {
         return ResponseEntity.badRequest().body(new ErrorResponseDto(ex.getMessage()));
     }
 
@@ -92,9 +96,10 @@ public class ExceptionHandlerController {
     }
 
     @ExceptionHandler(EntityInPizzeriaNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorResponseDto> handleEntityNotFoundException(EntityInPizzeriaNotFoundException ex) {
-        return ResponseEntity.badRequest().body(new ErrorResponseDto(ex.getEntityName() + " " + ex.getMessage()));
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponseDto);
     }
 
     @ExceptionHandler(PizzaAlreadyInFavoritesException.class)
