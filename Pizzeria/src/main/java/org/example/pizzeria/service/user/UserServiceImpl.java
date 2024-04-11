@@ -2,7 +2,11 @@ package org.example.pizzeria.service.user;
 
 import org.example.pizzeria.dto.benefits.ReviewRequestDto;
 import org.example.pizzeria.dto.benefits.ReviewResponseDto;
-import org.example.pizzeria.dto.user.*;
+import org.example.pizzeria.dto.user.UserBlockedResponseDto;
+import org.example.pizzeria.dto.user.UserBonusDto;
+import org.example.pizzeria.dto.user.UserRequestDto;
+import org.example.pizzeria.dto.user.UserResponseDto;
+import org.example.pizzeria.dto.user.auth.UserRegisterRequestDto;
 import org.example.pizzeria.entity.benefits.Bonus;
 import org.example.pizzeria.entity.benefits.Favorites;
 import org.example.pizzeria.entity.benefits.Review;
@@ -25,6 +29,8 @@ import org.example.pizzeria.repository.benefits.ReviewRepository;
 import org.example.pizzeria.repository.order.BasketRepository;
 import org.example.pizzeria.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,9 +65,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserResponseDto save(UserRegisterRequestDto candidate) {
+    public UserResponseDto save(UserRegisterRequestDto candidate, String password) {
         validateUserNotExist(candidate.userName(), candidate.email());
-        UserApp newUser = userMapper.toUserApp(candidate);
+        UserApp newUser = userMapper.toUserApp(candidate, password);
         newUser = userRepository.save(newUser);
         Basket basket = new Basket();
         basket.setUserApp(newUser);
@@ -80,6 +86,22 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isPresent()) {
             throw new UserCreateException(ErrorMessage.USER_ALREADY_EXIST);
         }
+    }
+    @Override
+    public UserApp getByUserName(String userName) {
+        return userRepository.findByUserName(userName)
+                .orElseThrow(()-> new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND));
+    }
+
+    @Override
+    public UserDetailsService userDetailsService() {
+        return this::getByUserName;
+    }
+
+    @Override
+    public UserApp getCurrentUser() {
+        var username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return getByUserName(username);
     }
 
     @Override
@@ -121,7 +143,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponseDto> getUsersByBirthday(LocalDate date) {
-        List<UserApp> users = userRepository.findUserAppByBirthDate(date);
+        List<UserApp> users = userRepository.findAllByBirthDate(date);
         if (users.isEmpty()) {
             throw new EntityInPizzeriaNotFoundException("Users", ErrorMessage.ENTITY_NOT_FOUND);
         }
@@ -132,7 +154,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponseDto> getUserByClientRole() {
-        return userRepository.findAllByRole(Role.CLIENT).stream()
+        return userRepository.findAllByRole(Role.ROLE_CLIENT).stream()
                 .map(u -> userMapper.toUserResponseDto(u)).toList();
     }
 
@@ -141,7 +163,7 @@ public class UserServiceImpl implements UserService {
         List<UserApp> userApps = userRepository.findAllByIsBlocked(true).stream()
                 .toList();
         return userApps.stream()
-                .map(u -> userMapper.toUserBlockedResponseDto(u.getId(), u.getUserName(), u.isBlocked(),
+                .map(u -> userMapper.toUserBlockedResponseDto(u.getId(), u.getUsername(), u.isBlocked(),
                         Objects.requireNonNull(reviewRepository.findAllByUserApp(u).stream()
                                         .max(Comparator.comparing(Review::getReviewDate)).orElse(null))
                                 .getReviewDate())).toList();
@@ -159,7 +181,7 @@ public class UserServiceImpl implements UserService {
         }
         userApp.setBlocked(isBlocked);
         userApp = userRepository.save(userApp);
-        return userMapper.toUserBlockedResponseDto(id, userApp.getUserName(), isBlocked, review.getReviewDate());
+        return userMapper.toUserBlockedResponseDto(id, userApp.getUsername(), isBlocked, review.getReviewDate());
     }
 
 

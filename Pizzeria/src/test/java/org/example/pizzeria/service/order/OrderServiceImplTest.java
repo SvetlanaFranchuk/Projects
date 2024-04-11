@@ -3,6 +3,7 @@ package org.example.pizzeria.service.order;
 import org.example.pizzeria.TestData;
 import org.example.pizzeria.dto.order.*;
 import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
+import org.example.pizzeria.dto.product.pizza.PizzaToBasketRequestDto;
 import org.example.pizzeria.entity.order.Basket;
 import org.example.pizzeria.entity.order.Order;
 import org.example.pizzeria.entity.order.OrderDetails;
@@ -85,7 +86,7 @@ class OrderServiceImplTest {
         when(pizzaMapper.mapPizzasToPizzaResponseDtos(anyList())).thenReturn(Collections.emptyList());
         when(basketMapper.toBasketResponseDto(anyMap(), eq(userId))).thenReturn(expectedBasketResponseDto);
 
-        BasketResponseDto result = orderService.addPizzaToBasket(userId, pizzaId, countPizza);
+        BasketResponseDto result = orderService.addPizzaToBasket(userId, new PizzaToBasketRequestDto(pizzaId, countPizza));
         assertEquals(expectedBasketResponseDto, result);
     }
 
@@ -94,7 +95,7 @@ class OrderServiceImplTest {
         Long userId = 123L;
         Long pizzaId = 12L;
         int countPizza = -1;
-        assertThrows(NotCorrectArgumentException.class, () -> orderService.addPizzaToBasket(userId, pizzaId, countPizza));
+        assertThrows(NotCorrectArgumentException.class, () -> orderService.addPizzaToBasket(userId, new PizzaToBasketRequestDto(pizzaId, countPizza)));
     }
 
     @Test

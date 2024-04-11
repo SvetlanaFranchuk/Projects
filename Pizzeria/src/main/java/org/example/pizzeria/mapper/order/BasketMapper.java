@@ -13,7 +13,5 @@ import java.util.Map;
 
 @Mapper(componentModel = "spring")
 public interface BasketMapper {
-    Basket toBasket(UserApp userApp, List<Pizza> pizzas);
-
-    BasketResponseDto toBasketResponseDto(Map<PizzaResponseDto, Integer> pizzaCountMap, Long userId);
+       BasketResponseDto toBasketResponseDto(Map<PizzaResponseDto, Integer> pizzaCountMap, Long userId);
 }

@@ -10,8 +10,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"userApp"})
-@EqualsAndHashCode(exclude = {"userApp"})
+@ToString(exclude = {"userApp", "pizzas"})
+@EqualsAndHashCode(exclude = {"userApp", "pizzas"})
 
 @Entity
 @Table(name = "favorites")
@@ -25,6 +25,6 @@ public class Favorites {
     @JoinTable(name = "pizzas_favorites")
     private List<Pizza> pizzas;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private UserApp userApp;
 }

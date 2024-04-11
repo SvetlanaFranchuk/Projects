@@ -12,3 +12,6 @@ spring:
   liquibase:
     change-log: classpath:db/migration/db.changelog-master.yaml
     enabled: true
+token:
+  signing:
+    key: U2FsdGVkX1+Tui6uHV9tyDImpZUqs25eTnSqPz0gTi4=

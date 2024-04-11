@@ -94,14 +94,14 @@ class ProductServiceImpl_Test_Pizza {
     @Test
     void updatePizza() {
         Long pizzaId = 1L;
-        when(pizzaRepository.findById(pizzaId)).thenReturn(Optional.of(TestData.PIZZA));
+        when(pizzaRepository.findById(pizzaId)).thenReturn(Optional.of(TestData.PIZZA_NEW));
         when(ingredientRepository.getReferenceById(1L)).thenReturn(TestData.INGREDIENT_1);
         when(ingredientRepository.getReferenceById(2L)).thenReturn(TestData.INGREDIENT_2);
         when(doughRepository.getReferenceById(1)).thenReturn(TestData.DOUGH_1);
         entityManager.flush();
         when(pizzaRepository.save(TestData.PIZZA_NEW)).thenReturn(TestData.PIZZA_NEW);
         when(pizzaMapper.toPizzaResponseDto(TestData.PIZZA_NEW)).thenReturn(TestData.PIZZA_RESPONSE_DTO_NEW);
-        when(doughMapper.toDoughResponseClientDto(TestData.PIZZA.getDough())).thenReturn(TestData.DOUGH_RESPONSE_CLIENT_DTO);
+        when(doughMapper.toDoughResponseClientDto(TestData.PIZZA_NEW.getDough())).thenReturn(TestData.DOUGH_RESPONSE_CLIENT_DTO);
         when(ingredientMapper.toIngredientResponseClientDto(TestData.INGREDIENT_1)).thenReturn(TestData.INGREDIENT_RESPONSE_CLIENT_DTO_1);
         when(ingredientMapper.toIngredientResponseClientDto(TestData.INGREDIENT_2)).thenReturn(TestData.INGREDIENT_RESPONSE_CLIENT_DTO_2);
 

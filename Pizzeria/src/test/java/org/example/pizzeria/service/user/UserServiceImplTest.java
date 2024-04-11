@@ -23,6 +23,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -58,7 +62,7 @@ class UserServiceImplTest {
 
     @Test
     void save() {
-        when(userMapper.toUserApp(TestData.USER_REGISTER_REQUEST_DTO)).thenReturn(TestData.USER_APP);
+        when(userMapper.toUserApp(TestData.USER_REGISTER_REQUEST_DTO, "testPassword")).thenReturn(TestData.USER_APP);
         UserResponseDto expectedResponseDto = TestData.USER_RESPONSE_DTO;
         when(userRepository.save(TestData.USER_APP)).thenReturn(TestData.USER_APP);
         when(userMapper.toUserResponseDto(TestData.USER_APP)).thenReturn(expectedResponseDto);
@@ -67,7 +71,7 @@ class UserServiceImplTest {
         Favorites favorites = new Favorites();
         favorites.setUserApp(TestData.USER_APP);
 
-        UserResponseDto actualResponseDto = userServiceImpl.save(TestData.USER_REGISTER_REQUEST_DTO);
+        UserResponseDto actualResponseDto = userServiceImpl.save(TestData.USER_REGISTER_REQUEST_DTO, "testPassword");
         assertEquals(expectedResponseDto, actualResponseDto);
     }
 
@@ -76,7 +80,7 @@ class UserServiceImplTest {
         when(userRepository.findByUserNameAndEmail(TestData.USER_REGISTER_REQUEST_DTO.userName(),
                 TestData.USER_REGISTER_REQUEST_DTO.email())).thenReturn(Optional.ofNullable(TestData.USER_APP));
 
-        assertThrows(UserCreateException.class, () -> userServiceImpl.save(TestData.USER_REGISTER_REQUEST_DTO));
+        assertThrows(UserCreateException.class, () -> userServiceImpl.save(TestData.USER_REGISTER_REQUEST_DTO, "testPassword"));
         verify(userRepository).findByUserNameAndEmail(TestData.USER_REGISTER_REQUEST_DTO.userName(), TestData.USER_REGISTER_REQUEST_DTO.email());
         verifyNoMoreInteractions(userRepository);
     }
@@ -132,10 +136,10 @@ class UserServiceImplTest {
         LocalDate date = LocalDate.of(2000, 1, 15);
         userRepository.save(TestData.USER_APP);
         List<UserApp> users = List.of(TestData.USER_APP);
-        when(userRepository.findUserAppByBirthDate(date)).thenReturn(users);
+        when(userRepository.findAllByBirthDate(date)).thenReturn(users);
         when(userMapper.toUserResponseDto(any())).thenAnswer(invocation -> {
             UserApp user = invocation.getArgument(0);
-            return new UserResponseDto(user.getId(), user.getUserName(), user.getEmail(), user.getBirthDate(),
+            return new UserResponseDto(user.getId(), user.getUsername(), user.getEmail(), user.getBirthDate(),
                     user.getAddress(), user.getPhoneNumber());
         });
         List<UserResponseDto> responseDtoList = userServiceImpl.getUsersByBirthday(date);
@@ -147,26 +151,26 @@ class UserServiceImplTest {
     @Test
     void getUsersByBirthday_NoUsersFound_ThrowEntityInPizzeriaNotFoundException() {
         LocalDate date = LocalDate.of(2000, 1, 1);
-        when(userRepository.findUserAppByBirthDate(date)).thenReturn(Collections.emptyList());
+        when(userRepository.findAllByBirthDate(date)).thenReturn(Collections.emptyList());
         assertThrows(EntityInPizzeriaNotFoundException.class, () -> userServiceImpl.getUsersByBirthday(date));
-        verify(userRepository, times(1)).findUserAppByBirthDate(date);
+        verify(userRepository, times(1)).findAllByBirthDate(date);
         verify(userMapper, never()).toUserResponseDto(any());
     }
 
     @Test
     void getUserByClientRole() {
-        when(userRepository.findAllByRole(Role.CLIENT)).thenReturn(List.of(TestData.USER_APP_2));
+        when(userRepository.findAllByRole(Role.ROLE_CLIENT)).thenReturn(List.of(TestData.USER_APP_2));
         when(userMapper.toUserResponseDto(TestData.USER_APP_2)).thenReturn(TestData.USER_RESPONSE_DTO_2);
         List<UserResponseDto> userResponseDtoList = userServiceImpl.getUserByClientRole();
 
         assertNotNull(userResponseDtoList);
         assertEquals(1, userResponseDtoList.size());
-        assertEquals(TestData.USER_APP_2.getUserName(), userResponseDtoList.getFirst().getUserName());
+        assertEquals(TestData.USER_APP_2.getUsername(), userResponseDtoList.getFirst().getUserName());
     }
 
     @Test
     void getUserByClientRole_EmptyList() {
-        when(userRepository.findAllByRole(Role.CLIENT)).thenReturn(Collections.emptyList());
+        when(userRepository.findAllByRole(Role.ROLE_CLIENT)).thenReturn(Collections.emptyList());
         List<UserResponseDto> userResponseDtoList = userServiceImpl.getUserByClientRole();
         assertNotNull(userResponseDtoList);
         assertTrue(userResponseDtoList.isEmpty());
@@ -184,7 +188,7 @@ class UserServiceImplTest {
         List<UserBlockedResponseDto> result = userServiceImpl.getUserBlocked();
 
         assertEquals(1, result.size());
-        assertEquals(TestData.USER_APP_BLOCKED.getUserName(), result.getFirst().getUserName());
+        assertEquals(TestData.USER_APP_BLOCKED.getUsername(), result.getFirst().getUserName());
         assertTrue(result.getFirst().isBlocked());
     }
 
@@ -203,8 +207,8 @@ class UserServiceImplTest {
         Review review1 = new Review(1L, "Good pizza", 10, reviewDate, TestData.USER_APP_NOT_BLOCKED);
         when(reviewRepository.findAllByUserApp_Id(TestData.USER_APP_NOT_BLOCKED.getId())).thenReturn(List.of(review1));
         when(userRepository.save(TestData.USER_APP_BLOCKED)).thenReturn(TestData.USER_APP_BLOCKED);
-        when(userMapper.toUserBlockedResponseDto(2L, TestData.USER_APP_BLOCKED.getUserName(), true, reviewDate))
-                .thenReturn(new UserBlockedResponseDto(2L, TestData.USER_APP_BLOCKED.getUserName(), true, reviewDate));
+        when(userMapper.toUserBlockedResponseDto(2L, TestData.USER_APP_BLOCKED.getUsername(), true, reviewDate))
+                .thenReturn(new UserBlockedResponseDto(2L, TestData.USER_APP_BLOCKED.getUsername(), true, reviewDate));
 
         UserBlockedResponseDto result = userServiceImpl.changeUserBlocking(2L, true);
         assertEquals(TestData.USER_BLOCKED_RESPONSE_DTO.getUserName(), result.getUserName());
@@ -232,6 +236,62 @@ class UserServiceImplTest {
         assertThrows(StatusAlreadyExistsException.class, () -> userServiceImpl.changeUserBlocking(1L, true));
 
         verify(userRepository, times(1)).getReferenceById(1L);
+    }
+
+    @Test
+    void getByUserName() {
+        String userName = "IvanAdmin";
+        UserApp expectedUser = TestData.USER_APP;
+        when(userRepository.findByUserName(userName)).thenReturn(Optional.of(expectedUser));
+        UserApp actualUser = userServiceImpl.getByUserName(userName);
+        assertNotNull(actualUser);
+        assertEquals(userName, actualUser.getUsername());
+    }
+
+    @Test
+    void getByUserName_BadName_ThrowEntityInPizzeriaNotFoundException() {
+        String userName = "nonExistingUser";
+        when(userRepository.findByUserName(userName)).thenReturn(Optional.empty());
+        assertThrows(EntityInPizzeriaNotFoundException.class, () -> userServiceImpl.getByUserName(userName));
+    }
+
+    @Test
+    void userDetailsService() {
+        String userName = "IvanAdmin";
+        UserApp expectedUser = TestData.USER_APP;
+        when(userRepository.findByUserName(userName)).thenReturn(Optional.of(expectedUser));
+
+        UserDetailsService userDetailsService = userServiceImpl.userDetailsService();
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+        assertNotNull(userDetails);
+        assertEquals(userName, userDetails.getUsername());
+    }
+
+    @Test
+    void userDetailsService_UserNotFound_ThrowEntityInPizzeriaNotFoundException() {
+        String userName = "NonExistentUser";
+        when(userRepository.findByUserName(userName)).thenReturn(Optional.empty());
+        UserDetailsService userDetailsService = userServiceImpl.userDetailsService();
+        assertThrows(EntityInPizzeriaNotFoundException.class, () -> userDetailsService.loadUserByUsername(userName));
+    }
+
+    @Test
+    void getCurrentUser() {
+        String userName = "IvanAdmin";
+        UserApp expectedUser = TestData.USER_APP;
+
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userName, null));
+        when(userRepository.findByUserName(userName)).thenReturn(Optional.of(expectedUser));
+        UserApp currentUser = userServiceImpl.getCurrentUser();
+        assertNotNull(currentUser);
+        assertEquals(expectedUser, currentUser);
+    }
+
+    @Test
+    void getCurrentUser_NoAuthenticatedUser() {
+        SecurityContextHolder.clearContext();
+        Throwable exception = assertThrows(NullPointerException.class, () -> userServiceImpl.getCurrentUser());
+        assertInstanceOf(NullPointerException.class, exception, "Expected a NullPointerException to be thrown, but got a different type of exception.");
     }
 }
 

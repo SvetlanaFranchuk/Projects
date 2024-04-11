@@ -2,6 +2,7 @@ package org.example.pizzeria;
 
 import org.example.pizzeria.dto.benefits.ReviewRequestDto;
 import org.example.pizzeria.dto.benefits.ReviewResponseDto;
+import org.example.pizzeria.dto.order.OrderRequestDto;
 import org.example.pizzeria.dto.order.OrderResponseDto;
 import org.example.pizzeria.dto.product.dough.DoughCreateRequestDto;
 import org.example.pizzeria.dto.product.dough.DoughResponseClientDto;
@@ -12,7 +13,13 @@ import org.example.pizzeria.dto.product.ingredient.IngredientResponseClientDto;
 import org.example.pizzeria.dto.product.ingredient.IngredientResponseDto;
 import org.example.pizzeria.dto.product.pizza.PizzaRequestDto;
 import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
-import org.example.pizzeria.dto.user.*;
+import org.example.pizzeria.dto.user.UserBlockedResponseDto;
+import org.example.pizzeria.dto.user.UserBonusDto;
+import org.example.pizzeria.dto.user.UserRequestDto;
+import org.example.pizzeria.dto.user.UserResponseDto;
+import org.example.pizzeria.dto.user.auth.JwtAuthenticationResponse;
+import org.example.pizzeria.dto.user.auth.UserLoginFormRequestDto;
+import org.example.pizzeria.dto.user.auth.UserRegisterRequestDto;
 import org.example.pizzeria.entity.benefits.Bonus;
 import org.example.pizzeria.entity.benefits.Favorites;
 import org.example.pizzeria.entity.order.*;
@@ -54,7 +61,7 @@ public class TestData {
             .birthDate(LocalDate.of(2000, 1, 15))
             .address(ADDRESS)
             .isBlocked(false)
-            .role(Role.ADMIN)
+            .role(Role.ROLE_ADMIN)
             .bonus(BONUS)
             .build();
     public static final UserApp USER_APP_2 = UserApp.builder()
@@ -67,7 +74,7 @@ public class TestData {
             .address(ADDRESS)
             .phoneNumber(CONTACT_INFORMATION)
             .isBlocked(false)
-            .role(Role.CLIENT)
+            .role(Role.ROLE_CLIENT)
             .bonus(new Bonus(0, 0.0))
             .build();
     public static final UserApp USER_APP_NOT_BLOCKED = UserApp.builder()
@@ -80,7 +87,7 @@ public class TestData {
             .address(ADDRESS)
             .phoneNumber(CONTACT_INFORMATION)
             .isBlocked(false)
-            .role(Role.CLIENT)
+            .role(Role.ROLE_CLIENT)
             .bonus(new Bonus(0, 0.0))
             .build();
     public static final UserApp USER_APP_BLOCKED = UserApp.builder()
@@ -93,7 +100,7 @@ public class TestData {
             .address(ADDRESS)
             .phoneNumber(CONTACT_INFORMATION)
             .isBlocked(true)
-            .role(Role.CLIENT)
+            .role(Role.ROLE_CLIENT)
             .bonus(new Bonus(0, 0.0))
             .build();
     public static final UserApp USER_APP_WITH_NEW_BONUS = UserApp.builder()
@@ -103,7 +110,7 @@ public class TestData {
             .email("iv.admin@pizzeria.com")
             .address(ADDRESS)
             .isBlocked(false)
-            .role(Role.ADMIN)
+            .role(Role.ROLE_ADMIN)
             .bonus(BONUS_NEW)
             .build();
     public static final Basket BASKET = new Basket(1L, USER_APP, null);
@@ -158,9 +165,17 @@ public class TestData {
             EXPECTED_DATE_TIME,
             PIZZA_TO_COUNT,
             USER_APP.getId());
+    public static final Map<Long, Integer> PIZZA_ID_TO_COUNT = new HashMap<>();
+    static{ PIZZA_ID_TO_COUNT.put(1L, 2);}
+    public static final OrderRequestDto ORDER_REQUEST_DTO = new OrderRequestDto(TestData.EXPECTED_DATE_TIME,
+            TestData.DELIVERY_ADDRESS_NEW.getCity(),
+            TestData.DELIVERY_ADDRESS_NEW.getStreetName(),
+            TestData.DELIVERY_ADDRESS_NEW.getHouseNumber(),
+            TestData.DELIVERY_ADDRESS_NEW.getApartmentNumber(), PIZZA_ID_TO_COUNT);
 
 
     public static final OrderDetails ORDER_DETAILS = new OrderDetails(1L, PIZZA, 2, null);
+    public static final OrderDetails ORDER_DETAILS_1 = new OrderDetails(1L, PIZZA, 2, null);
     public static final PizzaRequestDto PIZZA_REQUEST_DTO = new PizzaRequestDto("Margarita",
             "Description for pizza Margaritta", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
             TypeBySize.MEDIUM, 1, new ArrayList<>(), List.of(1L, 2L),
@@ -191,17 +206,25 @@ public class TestData {
             "Description for pizza Carbonara", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
             TypeBySize.LARGE, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList,
             (0.2 + 0.4 + 0.23) * 1.7, 493, true);
+    public static final Order ORDER_PAID = new Order(1L,  NOW, null, null, EXPECTED_SUM,
+            StatusOrder.PAID, DELIVERY_ADDRESS, ORDER_DETAILS,USER_APP);
+    public static final Order ORDER_PAID_1 = new Order(1L,  NOW, null, null, EXPECTED_SUM,
+            StatusOrder.PAID, DELIVERY_ADDRESS, ORDER_DETAILS_1,USER_APP);
 
     public static final Favorites FAVORITES = new Favorites(1L, List.of(PIZZA, PIZZA_2), USER_APP);
 
-    public static final UserRegisterRequestDto USER_REGISTER_REQUEST_DTO = new UserRegisterRequestDto("IvanAdmin",
-            "Qwerty", "iv.admin@pizzeria.com", LocalDate.of(2000, 1, 15),
-            "", "", "", "", "+490246562332");
     public static final UserRequestDto USER_REQUEST_DTO = new UserRequestDto("Qwerty", "iv.admin@pizzeria.com", LocalDate.of(2000, 1, 15),
             "", "test", "10", "", "+480246562332");
     public static final UserResponseDto USER_RESPONSE_DTO = new UserResponseDto(1L, "IvanAdmin",
             "iv.admin@pizzeria.com", LocalDate.of(2000, 1, 15), ADDRESS,
             CONTACT_INFORMATION);
+
+    public static final JwtAuthenticationResponse JWT_AUTHENTICATION_RESPONSE = new JwtAuthenticationResponse("d5679ab7-260a-42a3-87ab-49c72b3d7407",
+            USER_RESPONSE_DTO, Role.ROLE_ADMIN);
+    public static final UserRegisterRequestDto USER_REGISTER_REQUEST_DTO = new UserRegisterRequestDto("IvanAdmin", "validPassword",
+            "iv.admin@pizzeria.com", LocalDate.of(2000, 1, 15), "","","","",
+            "490246562332");
+    public static final UserLoginFormRequestDto USER_LOGIN_FORM_REQUEST_DTO = new UserLoginFormRequestDto("IvanAdmin", "validPassword");
     public static final UserResponseDto USER_RESPONSE_DTO_2 = new UserResponseDto(2L, "TestClient",
             "clientTest@pizzeria.com", LocalDate.of(2001, 10, 15), ADDRESS,
             CONTACT_INFORMATION);

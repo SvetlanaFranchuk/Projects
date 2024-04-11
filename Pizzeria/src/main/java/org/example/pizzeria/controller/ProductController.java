@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.example.pizzeria.dto.benefits.FavoritesResponseDto;
 import org.example.pizzeria.dto.product.dough.DoughCreateRequestDto;
@@ -19,12 +19,12 @@ import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
 import org.example.pizzeria.entity.product.ingredient.GroupIngredient;
 import org.example.pizzeria.entity.product.pizza.Styles;
 import org.example.pizzeria.entity.product.pizza.ToppingsFillings;
-import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
 import org.example.pizzeria.service.product.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,33 +51,32 @@ public class ProductController {
     @Operation(summary = "Adding information about dough to reference books",
             description = "Addition is only possible for a unique combination of test type and price")
     @PostMapping("/addDough")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DoughResponseDto> addDough(@RequestBody @Valid DoughCreateRequestDto newDough) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.addDough(newDough));
     }
 
     @Operation(summary = "Update pizza dough parameters: weight and calorie")
     @PatchMapping("/updateDough/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DoughResponseDto> updateDough(@RequestBody @Valid DoughUpdateRequestDto doughUpdateRequestDto,
                                                         @Parameter(description = "id dough")
-                                                        @PathVariable("id") @Min(0) Integer id) {
-        DoughResponseDto updatedDough = productService.updateDough(doughUpdateRequestDto, id);
-        if (updatedDough != null) {
-            return ResponseEntity.ok(updatedDough);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+                                                        @PathVariable("id") @Positive @NotNull Integer id) {
+        return ResponseEntity.ok(productService.updateDough(doughUpdateRequestDto, id));
     }
 
     @Operation(summary = "Deleting recipe of dough if it no one use")
     @DeleteMapping("/deleteDough/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteDough(@Parameter(description = "id dough")
-                                              @PathVariable("id") @Min(0) Integer id) {
+                                              @PathVariable("id") @Positive @NotNull Integer id) {
         productService.deleteDough(id);
         return ResponseEntity.ok("Dough deleted successfully");
     }
 
     @Operation(summary = "Show all information about doughs")
     @GetMapping("/getAllDoughForAdmin")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<DoughResponseDto> getAllDoughForAdmin() {
         return productService.getAllDoughForAdmin();
     }
@@ -90,33 +89,32 @@ public class ProductController {
 
     @Operation(summary = "Adding information about ingredient to reference books")
     @PostMapping("/addIngredient")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<IngredientResponseDto> addIngredient(@RequestBody @Valid IngredientRequestDto newIngredient) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.addIngredient(newIngredient));
     }
 
     @Operation(summary = "Updating information about ingredient to reference books")
     @PutMapping("/updateIngredient/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<IngredientResponseDto> updateIngredient(@RequestBody @Valid IngredientRequestDto ingredientRequestDto,
                                                                   @Parameter(description = "id ingredient")
-                                                                  @PathVariable("id") @Min(0) Long id) {
-        IngredientResponseDto IngredientResponseDto = productService.updateIngredient(ingredientRequestDto, id);
-        if (IngredientResponseDto != null) {
-            return ResponseEntity.ok(IngredientResponseDto);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+                                                                  @PathVariable("id") @Positive @NotNull Long id) {
+        return ResponseEntity.ok(productService.updateIngredient(ingredientRequestDto, id));
     }
 
     @Operation(summary = "Delaying information about ingredient to reference books")
     @DeleteMapping("/deleteIngredient/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteIngredient(@Parameter(description = "id ingredient")
-                                                   @PathVariable("id") @Min(0) Long id) {
+                                                   @PathVariable("id") @Positive @NotNull Long id) {
         productService.deleteIngredient(id);
         return ResponseEntity.ok("Ingredient deleted successfully");
     }
 
     @Operation(summary = "Getting information about ingredient")
     @GetMapping("/getAllIngredientForAdmin")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<IngredientResponseDto> getAllIngredientForAdmin() {
         return productService.getAllIngredientForAdmin();
     }
@@ -131,7 +129,7 @@ public class ProductController {
     @Operation(summary = "Getting information about ingredient into the pizza")
     @GetMapping("/{idPizza}/ingredients")
     public List<IngredientResponseClientDto> getAllIngredientsForPizza(@Parameter(description = "pizzas id")
-                                                                       @PathVariable("idPizza") @Min(0) Long idPizza) {
+                                                                       @PathVariable("idPizza") @Positive @NotNull Long idPizza) {
         return productService.getAllIngredientForPizza(idPizza);
     }
 
@@ -139,28 +137,22 @@ public class ProductController {
     @PostMapping("/addPizza")
     public ResponseEntity<PizzaResponseDto> addPizza(@RequestBody @Valid PizzaRequestDto newPizza,
                                                      @Parameter(description = "user ID")
-                                                     @RequestParam @Min(0) Long userId) {
-        PizzaResponseDto addedPizza = productService.addPizza(newPizza, userId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(addedPizza);
+                                                     @RequestParam @Positive @NotNull Long userId) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.addPizza(newPizza, userId));
     }
 
     @Operation(summary = "Updating information about recipe of pizza to reference books")
     @PutMapping("/updatePizza/{id}")
     public ResponseEntity<PizzaResponseDto> updatePizza(@RequestBody @Valid PizzaRequestDto pizza,
                                                         @Parameter(description = "pizza ID")
-                                                        @PathVariable("id") @Min(0) Long id) {
-        PizzaResponseDto updatedPizza = productService.updatePizza(pizza, id);
-        if (updatedPizza != null) {
-            return ResponseEntity.ok(updatedPizza);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+                                                        @PathVariable("id") @Positive @NotNull Long id) {
+        return ResponseEntity.ok(productService.updatePizza(pizza, id));
     }
 
     @Operation(summary = "Deleting information about recipe of pizza to reference books")
     @DeleteMapping("/deletePizzaRecipe/{id}")
     public ResponseEntity<String> deletePizzaRecipe(@Parameter(description = "pizza ID")
-                                                    @PathVariable("id") @Min(0) Long id) {
+                                                    @PathVariable("id") @Positive @NotNull Long id) {
         productService.deletePizzaRecipe(id);
         return ResponseEntity.ok("Pizza recipe deleted successfully");
     }
@@ -199,18 +191,18 @@ public class ProductController {
     @Operation(summary = "Adding pizza to users favorites")
     @PostMapping("/addPizzaToUserFavorite")
     public ResponseEntity<FavoritesResponseDto> addPizzaToUserFavorite(@Parameter(description = "user ID")
-                                                                       @RequestParam @Min(0) Long userId,
+                                                                       @RequestParam @Positive @NotNull Long userId,
                                                                        @Parameter(description = "pizza ID")
-                                                                       @RequestParam @Valid Long pizzaId) {
+                                                                       @RequestParam @Positive @NotNull Long pizzaId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.addPizzaToUserFavorite(userId, pizzaId));
     }
 
     @Operation(summary = "Deleting pizza from users favorites")
     @DeleteMapping("/deletePizzaFromUserFavorite")
     public ResponseEntity<String> deletePizzaFromUserFavorite(@Parameter(description = "user ID")
-                                                              @RequestParam @Min(0) Long userId,
+                                                              @RequestParam @Positive @NotNull Long userId,
                                                               @Parameter(description = "pizza ID")
-                                                              @RequestParam @Valid Long pizzaId) {
+                                                              @RequestParam @Positive @NotNull Long pizzaId) {
         productService.deletePizzaFromUserFavorite(pizzaId, userId);
         return ResponseEntity.ok("Pizza deleted from user's favorites successfully");
     }
@@ -218,18 +210,14 @@ public class ProductController {
     @Operation(summary = "Getting all favorites pizza of users")
     @GetMapping("/getAllFavoritePizzaByUser/{userId}")
     public ResponseEntity<List<PizzaResponseDto>> getAllFavoritePizzaByUser(@Parameter(description = "user ID")
-                                                                            @RequestParam @Min(0) Long userId) {
+                                                                            @PathVariable @Positive @NotNull Long userId) {
         return ResponseEntity.ok(productService.getAllFavoritePizzaByUser(userId));
     }
 
     @Operation(summary = "Getting information about pizza")
     @GetMapping("/getPizza/{id}")
-    public ResponseEntity<PizzaResponseDto> getPizza(@PathVariable @Positive Long id) {
-        try {
-            PizzaResponseDto pizzaResponseDto = productService.getPizza(id);
-            return ResponseEntity.ok(pizzaResponseDto);
-        } catch (EntityInPizzeriaNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<PizzaResponseDto> getPizza(@Parameter(description = "pizza ID")
+                                                     @PathVariable @Positive @NotNull Long id) {
+        return ResponseEntity.ok(productService.getPizza(id));
     }
 }

@@ -363,15 +363,15 @@ databaseChangeLog:
                     unique: true
               - column:
                   name: password
-                  type: varchar(15)
+                  type: varchar(255)
               - column:
                   name: phone_number
                   type: varchar(15)
               - column:
                   name: role
-                  type: varchar(10)
+                  type: varchar(15)
                   constraints:
-                    check: "role in ('CLIENT','MANAGER','ADMIN')"
+                    check: "role in ('ROLE_CLIENT','ROLE_MANAGER','ROLE_ADMIN')"
             tableName: users
   - changeSet:
       id: 2c5c1b17-b6dd-4d69-86dc-7b5a20b840a2

@@ -1,4 +1,4 @@
-package org.example.pizzeria.dto.user;
+package org.example.pizzeria.dto.user.auth;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
@@ -13,13 +13,14 @@ import java.time.LocalDate;
 public record UserRegisterRequestDto(
         @Schema(description = "user name")
         @Size(min = 5, max = 25, message = "User name length could be from 5 to 25 symbols")
+        @NotBlank(message = "Username cannot be empty")
         String userName,
         @Schema(description = "password")
         @Size(min = 5, max = 15, message = "Password length could be from 5 to 15 symbols")
         String password,
         @Schema(description = "e-mail")
         @Email
-        @NotBlank
+        @NotBlank(message = "Email cannot be empty")
         String email,
         @Schema(description = "User birthday in format yyyy-MM-dd", example = "2004-08-29")
         @Past(message = "Date of birth must be in the past")

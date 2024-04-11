@@ -2,6 +2,7 @@ package org.example.pizzeria.service.order;
 
 import org.example.pizzeria.dto.order.*;
 import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
+import org.example.pizzeria.dto.product.pizza.PizzaToBasketRequestDto;
 import org.example.pizzeria.entity.benefits.Bonus;
 import org.example.pizzeria.entity.order.*;
 import org.example.pizzeria.entity.product.pizza.Pizza;
@@ -56,9 +57,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public BasketResponseDto addPizzaToBasket(Long userId, Long pizzaId, int countPizza) {
-        Pizza pizza = pizzaRepository.getReferenceById(pizzaId);
-        if (countPizza <= 0) {
+    public BasketResponseDto addPizzaToBasket(Long userId, PizzaToBasketRequestDto pizzaToBasketRequestDto) {
+        Pizza pizza = pizzaRepository.getReferenceById(pizzaToBasketRequestDto.getPizzaId());
+        if (pizzaToBasketRequestDto.getCountPizza() <= 0) {
             throw new NotCorrectArgumentException(ErrorMessage.NOT_CORRECT_ARGUMENT);
         }
         Basket basket = basketRepository.findByUserApp_Id(userId)
@@ -69,7 +70,7 @@ public class OrderServiceImpl implements OrderService {
                 });
 
         List<Pizza> pizzas = basket.getPizzas();
-        for (int i = 0; i < countPizza; i++) {
+        for (int i = 0; i < pizzaToBasketRequestDto.getCountPizza(); i++) {
             pizzas.add(pizza);
         }
         basket.setPizzas(pizzas);
@@ -198,7 +199,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    public static Map<Pizza, Integer> convertToPizzaCountMap(List<Pizza> pizzas) {
+    private static Map<Pizza, Integer> convertToPizzaCountMap(List<Pizza> pizzas) {
         Map<Pizza, Integer> pizzaCountMap = new HashMap<>();
         for (Pizza pizza : pizzas) {
             pizzaCountMap.put(pizza, pizzaCountMap.getOrDefault(pizza, 0) + 1);

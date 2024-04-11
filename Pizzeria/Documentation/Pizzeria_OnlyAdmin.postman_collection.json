@@ -1,0 +1,896 @@
+{
+	"info": {
+		"_postman_id": "45c8eedf-95f2-4ca6-8a29-37774d99c46f",
+		"name": "Pizzeria_OnlyAdmin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32323927"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "registration",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userName\": \"NewAdmin\",\r\n    \"password\": \"1234567\",\r\n    \"email\": \"NewAdmin@ww.com\",\r\n     \"birthDate\": [\r\n        2005,\r\n        5,\r\n        16\r\n    ],\r\n    \"addressCity\": \"Emmerich\",\r\n    \"addressStreetName\": \"Berlinstrasse\",\r\n    \"addressHouseNumber\": \"11-b\",\r\n    \"addressApartmentNumber\": \"\",\r\n    \"phoneNumber\": \"+23123882\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "authentication",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userName\": \"SuperAdmin\",\r\n    \"password\": \"1234567\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/auth/authentication",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"auth",
+								"authentication"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getUsersByBirthday",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Set token to variable\", function () {\r",
+									"    var responseText = pm.response.text();\r",
+									"    pm.collectionVariables.set(\"token\", responseText);\r",
+									"})\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjgzODA4MiwiZXhwIjoxNzEyOTgyMDgyfQ.iu1-xoHWF_ZCSYoRlZGP7Cho-Vs75_N678gKyNpbRx8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/admin/user/birthday?date=2021-02-10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"user",
+								"birthday"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2021-02-10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "changeBlockingUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjgzODA4MiwiZXhwIjoxNzEyOTgyMDgyfQ.iu1-xoHWF_ZCSYoRlZGP7Cho-Vs75_N678gKyNpbRx8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/admin/user/change_blocking/10?isBlocked=false",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"user",
+								"change_blocking",
+								"10"
+							],
+							"query": [
+								{
+									"key": "isBlocked",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getUserByClientRole",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjgzODA4MiwiZXhwIjoxNzEyOTgyMDgyfQ.iu1-xoHWF_ZCSYoRlZGP7Cho-Vs75_N678gKyNpbRx8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/admin/user/clients",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"user",
+								"clients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getUserBlocked",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjgzODA4MiwiZXhwIjoxNzEyOTgyMDgyfQ.iu1-xoHWF_ZCSYoRlZGP7Cho-Vs75_N678gKyNpbRx8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/admin/user/blocked_clients",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"user",
+								"blocked_clients"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Dough",
+					"item": [
+						{
+							"name": "addDough",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"typeDough\": \"CLASSICA\",\r\n    \"smallWeight\": \"120\",\r\n    \"smallNutrition\": 98,\r\n    \"smallPrice\": 0.96\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/product/addDough",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"addDough"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllDoughForAdmin",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/product/getAllDoughForAdmin",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"getAllDoughForAdmin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deleteDough",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/product/deleteDough/9",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"deleteDough",
+										"9"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "AdminUpdateDough",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"smallWeight\": \"140\",\r\n    \"smallNutrition\": 109\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/product/updateDough/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"updateDough",
+										"3"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Ingredient",
+					"item": [
+						{
+							"name": "addIngredient",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Salami\",\r\n    \"weight\": \"12\",\r\n    \"nutrition\": \"12\",\r\n    \"price\": \"0.92\",\r\n    \"groupIngredient\": \"BASIC\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/product/addIngredient",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"addIngredient"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllIngredientsForPizza",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/product/2/ingredients",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"2",
+										"ingredients"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllIngredientByGroup",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/product/getAllIngredientByGroup?groupIngredient=EXTRA",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"getAllIngredientByGroup"
+									],
+									"query": [
+										{
+											"key": "groupIngredient",
+											"value": "EXTRA"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllIngredientForAdmin",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/product/getAllIngredientForAdmin",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"getAllIngredientForAdmin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deleteIngredient",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/product/deleteIngredient/67",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"deleteIngredient",
+										"67"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "updateIngredient",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Basil\",\r\n    \"weight\": \"14\",\r\n    \"nutrition\": \"12\",\r\n    \"price\": \"0.02\",\r\n    \"groupIngredient\": \"EXTRA\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/product/updateIngredient/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"updateIngredient",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Pizza",
+					"item": [
+						{
+							"name": "addPizza",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Margarita_test_1\",\r\n    \"description\": \"description for Margarita_test_1\",\r\n    \"styles\": \"AMERICAN\",\r\n    \"toppingsFillings\": \"VEGETABLES\",\r\n    \"size\": \"SMALL\",\r\n    \"doughId\": 1,\r\n    \"ingredientsSauceListId\": [10,3,4],\r\n    \"ingredientsBasicListId\": [8],\r\n    \"ingredientsExtraListId\": [23,45]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/product/addPizza?userId=1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"addPizza"
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllPizzaStandardRecipe",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/product/getAllPizzaStandardRecipe",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"getAllPizzaStandardRecipe"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllPizzaStandardRecipeByStyles",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/product/getAllPizzaStandardRecipeByStyles?styles=AMERICAN",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"getAllPizzaStandardRecipeByStyles"
+									],
+									"query": [
+										{
+											"key": "styles",
+											"value": "AMERICAN"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllPizzaStandardRecipeByTopping",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/product/getAllPizzaStandardRecipeByTopping?toppingsFillings=MEAT",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"getAllPizzaStandardRecipeByTopping"
+									],
+									"query": [
+										{
+											"key": "toppingsFillings",
+											"value": "MEAT"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllPizzaStandardRecipeByToppingByStyles",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/product/getAllPizzaStandardRecipeByToppingByStyles?toppingsFillings=VEGETABLES&styles=AMERICAN",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"getAllPizzaStandardRecipeByToppingByStyles"
+									],
+									"query": [
+										{
+											"key": "toppingsFillings",
+											"value": "VEGETABLES"
+										},
+										{
+											"key": "styles",
+											"value": "AMERICAN"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "updatePizza",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Margarita_25\",\r\n    \"description\": \"description for Margarita_25\",\r\n    \"styles\": \"AMERICAN\",\r\n    \"toppingsFillings\": \"VEGETABLES\",\r\n    \"size\": \"SMALL\",\r\n    \"doughId\": 2,\r\n    \"ingredientsSauceListId\": [10, 11],\r\n    \"ingredientsBasicListId\": [6],\r\n    \"ingredientsExtraListId\": [8]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/product/updatePizza/6",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"updatePizza",
+										"6"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deletePizzaRecipe",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/product/deletePizzaRecipe/18",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"product",
+										"deletePizzaRecipe",
+										"18"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "updateStatus",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/order/23/status?status=PAID",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"order",
+								"23",
+								"status"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "PAID"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}
