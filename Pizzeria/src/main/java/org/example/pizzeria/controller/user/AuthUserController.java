@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 )
 @Validated
 @RestController
-@RequestMapping(path = "auth",
+@RequestMapping(path = "/auth",
         produces = MediaType.APPLICATION_JSON_VALUE)
 @CrossOrigin(origins = "http://localhost:3000")
 public class AuthUserController {

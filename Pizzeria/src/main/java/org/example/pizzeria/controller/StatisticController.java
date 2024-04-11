@@ -4,6 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.PastOrPresent;
 import org.example.pizzeria.dto.statistic.CountOrdersDto;
 import org.example.pizzeria.dto.statistic.IngredientConsumptionDto;
 import org.example.pizzeria.dto.statistic.PopularityPizzasDto;
@@ -39,10 +42,14 @@ public class StatisticController {
     @Operation(summary = "Getting information about profit")
     @GetMapping("/getProfitInformation")
     public ResponseEntity<ProfitReportDto> getProfitInformation(@Parameter(description = "start date")
-                                                                    @RequestParam @Valid
-                                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                                @RequestParam
+                                                                @NotNull
+                                                                @Past
+                                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                                                 @Parameter(description = "end date")
-                                                                @RequestParam @Valid
+                                                                @RequestParam
+                                                                @NotNull
+                                                                @PastOrPresent
                                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return ResponseEntity.ok(statisticService.getProfitInformation(startDate, endDate));
     }
@@ -50,44 +57,60 @@ public class StatisticController {
     @Operation(summary = "Getting information about ingredient consumption")
     @GetMapping("/getIngredientConsumptionInfo")
     public ResponseEntity<List<IngredientConsumptionDto>> getIngredientConsumptionInfo(@Parameter(description = "start date")
-                                                                @RequestParam @Valid
-                                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                                                       @RequestParam
+                                                                                       @NotNull
+                                                                                       @Past
+                                                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                                                                        @Parameter(description = "end date")
-                                                                @RequestParam @Valid
-                                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+                                                                                       @RequestParam
+                                                                                       @NotNull
+                                                                                       @PastOrPresent
+                                                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return ResponseEntity.ok(statisticService.getIngredientConsumptionInfo(startDate, endDate));
     }
 
     @Operation(summary = "Getting information about count orders")
     @GetMapping("/getCountOrdersInfo")
     public ResponseEntity<List<CountOrdersDto>> getCountOrdersInfo(@Parameter(description = "start date")
-                                                                                       @RequestParam @Valid
-                                                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                                   @RequestParam
+                                                                   @NotNull
+                                                                   @Past
+                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                                                    @Parameter(description = "end date")
-                                                                                       @RequestParam @Valid
-                                                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+                                                                   @RequestParam
+                                                                   @NotNull
+                                                                   @PastOrPresent
+                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return ResponseEntity.ok(statisticService.getCountOrdersInfo(startDate, endDate));
     }
 
     @Operation(summary = "Getting information about average grade")
     @GetMapping("/getAverageGrade")
     public ResponseEntity<Double> getAverageGrade(@Parameter(description = "start date")
-                                                                @RequestParam @Valid
-                                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-                                                                @Parameter(description = "end date")
-                                                                @RequestParam @Valid
-                                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+                                                  @RequestParam
+                                                  @NotNull
+                                                  @Past
+                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                  @Parameter(description = "end date")
+                                                  @RequestParam
+                                                  @NotNull
+                                                  @PastOrPresent
+                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return ResponseEntity.ok(statisticService.getAverageGrade(startDate, endDate));
     }
 
     @Operation(summary = "Getting information about popularity Pizzas")
     @GetMapping("/getPopularityPizzasInfo")
     public ResponseEntity<List<PopularityPizzasDto>> getPopularityPizzasInfo(@Parameter(description = "start date")
-                                                                   @RequestParam @Valid
-                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                                             @RequestParam
+                                                                             @NotNull
+                                                                             @Past
+                                                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                                                              @Parameter(description = "end date")
-                                                                   @RequestParam @Valid
-                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+                                                                             @RequestParam
+                                                                             @NotNull
+                                                                             @PastOrPresent
+                                                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return ResponseEntity.ok(statisticService.getPopularityPizzasInfo(startDate, endDate));
     }
 

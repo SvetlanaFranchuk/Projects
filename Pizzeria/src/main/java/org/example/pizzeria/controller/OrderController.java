@@ -4,13 +4,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Positive;
 import org.example.pizzeria.dto.order.*;
 import org.example.pizzeria.dto.product.pizza.PizzaToBasketRequestDto;
 import org.example.pizzeria.entity.order.StatusOrder;
 import org.example.pizzeria.service.order.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,7 +43,7 @@ public class OrderController {
     @Operation(summary = "Adding pizza to basket")
     @PostMapping("/addPizzaToBasket/{userId}")
     public ResponseEntity<BasketResponseDto> addPizzaToBasket(@Parameter(description = "user ID")
-                                                                  @PathVariable @Positive Long userId,
+                                                              @PathVariable @Positive  @NotNull Long userId,
                                                               @RequestBody @Valid PizzaToBasketRequestDto pizzaToBasketRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.addPizzaToBasket(userId, pizzaToBasketRequestDto));
     }
@@ -50,7 +51,7 @@ public class OrderController {
     @Operation(summary = "Getting information about users basket")
     @GetMapping("/getBasketByUser/{userId}")
     public ResponseEntity<BasketResponseDto> getBasketByUser(@Parameter(description = "user ID")
-                                                             @PathVariable @Positive Long userId) {
+                                                             @PathVariable @Positive @NotNull Long userId) {
         return ResponseEntity.ok(orderService.getBasketByUser(userId));
     }
 
@@ -63,14 +64,14 @@ public class OrderController {
     @Operation(summary = "Moving details from basket to order")
     @PostMapping("/moveDetailsBasketToOrder/{id}")
     public ResponseEntity<OrderResponseDto> moveDetailsBasketToOrder(@Parameter(description = "basket ID")
-                                                                     @PathVariable @Positive Long id) {
+                                                                     @PathVariable @Positive @NotNull Long id) {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.moveDetailsBasketToOrder(id));
     }
 
     @Operation(summary = "Updating information about order ")
     @PatchMapping("/updateOrderAndOrderDetails/{id}")
     public ResponseEntity<OrderResponseDto> updateOrderAndOrderDetails(@Parameter(description = "order ID")
-                                                                       @PathVariable @Positive Long id,
+                                                                       @PathVariable @Positive @NotNull Long id,
                                                                        @RequestBody @Valid OrderRequestDto orderRequestDto) {
         return ResponseEntity.ok(orderService.updateOrderAndOrderDetails(id, orderRequestDto));
     }
@@ -118,8 +119,13 @@ public class OrderController {
     @GetMapping("/period")
     public ResponseEntity<List<OrderStatusResponseDto>> getOrdersByPeriod(
             @Parameter(description = "Start date")
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam
+            @NotNull
+            @Past
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @Parameter(description = "End date")
+            @NotNull
+            @Past
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return ResponseEntity.ok(orderService.getAllOrdersByPeriod(startDate, endDate));
     }

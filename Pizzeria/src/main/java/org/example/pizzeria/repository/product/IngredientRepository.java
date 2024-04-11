@@ -12,7 +12,5 @@ import java.util.Optional;
 public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
     List<Ingredient> findAllByGroupIngredient(GroupIngredient groupIngredient);
 
-    Optional<Ingredient> findAllByName(String name);
-
     List<Ingredient> findAllByNameAndPrice(String name, double price);
 }

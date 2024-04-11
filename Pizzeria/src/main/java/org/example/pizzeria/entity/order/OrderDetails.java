@@ -1,6 +1,8 @@
 package org.example.pizzeria.entity.order;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 import org.example.pizzeria.entity.product.pizza.Pizza;
 
@@ -23,6 +25,8 @@ public class OrderDetails {
     private Pizza pizza;
 
     @Column(name = "quantity")
+    @NotNull
+    @Positive
     private int quantity;
 
     @OneToOne

@@ -199,7 +199,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    public static Map<Pizza, Integer> convertToPizzaCountMap(List<Pizza> pizzas) {
+    private static Map<Pizza, Integer> convertToPizzaCountMap(List<Pizza> pizzas) {
         Map<Pizza, Integer> pizzaCountMap = new HashMap<>();
         for (Pizza pizza : pizzas) {
             pizzaCountMap.put(pizza, pizzaCountMap.getOrDefault(pizza, 0) + 1);

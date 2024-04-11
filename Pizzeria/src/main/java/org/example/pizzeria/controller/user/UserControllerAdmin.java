@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Positive;
 import org.example.pizzeria.dto.user.UserBlockedResponseDto;
 import org.example.pizzeria.dto.user.UserResponseDto;
@@ -47,8 +49,10 @@ public class UserControllerAdmin {
     @Operation(summary = "Retrieving information about users whose birthday is on a given date")
     @GetMapping("birthday")
     public List<UserResponseDto> getUsersByBirthday(@Parameter(description = "Given date ")
-                                                    @RequestParam @Valid
-                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate date) {
+                                                    @RequestParam
+                                                    @NotNull
+                                                    @Past
+                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate date) {
         return userService.getUsersByBirthday(date);
     }
 
@@ -67,7 +71,7 @@ public class UserControllerAdmin {
     @Operation(summary = "Changing blocked status of user")
     @PutMapping("/change_blocking/{id}")
     public ResponseEntity<UserBlockedResponseDto> changeBlockingUser(@Parameter(description = "User id")
-                                                                     @PathVariable("id") @Positive Long id,
+                                                                     @PathVariable("id") @Positive @NotNull Long id,
                                                                      @RequestParam @Valid boolean isBlocked) {
             return ResponseEntity.ok(userService.changeUserBlocking(id, isBlocked));
          }

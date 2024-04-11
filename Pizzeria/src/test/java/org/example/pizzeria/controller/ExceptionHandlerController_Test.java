@@ -177,7 +177,7 @@ private ExceptionHandlerController exceptionHandlerController;
         ResponseEntity<ErrorResponseDto> responseEntity = controller.handleEntityNotFoundException(ex);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-        assertEquals("not found", Objects.requireNonNull(responseEntity.getBody()).message());
+        assertEquals("Entity not found", Objects.requireNonNull(responseEntity.getBody()).message());
     }
 
 

@@ -136,26 +136,7 @@ class OrderControllerTest_Basket {
 
     @Test
     void moveDetailsBasketToOrder() throws Exception {
-//        LocalDateTime now = LocalDateTime.now();
-//        LocalDateTime expectedDateTime = now.plusHours(1);
-//        double expectedSum = (0.2 + 0.4 + 0.23) * 1.3 * 2;
-//        Map<PizzaResponseDto, Integer> pizzaToCount = new HashMap<>();
-//        pizzaToCount.put(TestData.PIZZA_RESPONSE_DTO, 2);
-
         Basket basket = TestData.BASKET;
-//        OrderResponseDto expectedOrderResponseDto = new OrderResponseDto(1L,
-//                TestData.DELIVERY_ADDRESS.getCity(),
-//                TestData.DELIVERY_ADDRESS.getStreetName(),
-//                TestData.DELIVERY_ADDRESS.getHouseNumber(),
-//                TestData.DELIVERY_ADDRESS.getApartmentNumber(),
-//                expectedDateTime,
-//                expectedSum,
-//                StatusOrder.NEW,
-//                null,
-//                now,
-//                pizzaToCount,
-//                1L);
-
         when(orderService.moveDetailsBasketToOrder(anyLong())).thenReturn(TestData.ORDER_RESPONSE_DTO);
         mockMvc.perform(post("/order/moveDetailsBasketToOrder/{id}", basket.getId())
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))

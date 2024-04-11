@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.example.pizzeria.dto.benefits.ReviewRequestDto;
@@ -43,14 +45,19 @@ public class UserController {
     @Operation(summary = "Getting information about user")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUserById(@Parameter(description = "user id")
-                                                       @PathVariable("id") @Positive Long id) {
+                                                       @PathVariable("id")
+                                                       @Positive
+                                                       @NotNull Long id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
 
     @Operation(summary = "Updating information about user")
     @PutMapping("/update/{id}")
     public ResponseEntity<UserResponseDto> updateUser(@Parameter(description = "User id")
-                                                      @PathVariable("id") @Positive Long id,
+                                                      @PathVariable("id")
+                                                      @Positive
+                                                      @NotNull
+                                                      Long id,
                                                       @RequestBody @Valid UserRequestDto userRequestDto) {
         return ResponseEntity.ok(userService.update(id, userRequestDto));
     }
@@ -58,16 +65,16 @@ public class UserController {
     @Operation(summary = "Retrieving information about users bonus")
     @GetMapping("/getBonus/{id}")
     public ResponseEntity<UserBonusDto> getUserBonus(@Parameter(description = "User id")
-                                                     @PathVariable("id") @Positive Long id) {
+                                                     @PathVariable("id") @Positive @NotNull Long id) {
         return ResponseEntity.ok(userService.getUserBonus(id));
     }
 
     @Operation(summary = "Updating information about users bonus")
     @PutMapping("/updateBonus/{id}")
     public ResponseEntity<UserBonusDto> updateUserBonus(@Parameter(description = "User id")
-                                                        @PathVariable("id") @Positive Long id,
+                                                        @PathVariable("id") @Positive @NotNull Long id,
                                                         @Parameter(description = "Count new ordered pizzas")
-                                                        @RequestParam @Valid @Positive int count,
+                                                        @RequestParam @Valid @Positive @NotNull int count,
                                                         @Parameter(description = "Sum new ordered pizzas")
                                                         @RequestParam @Valid @PositiveOrZero double sum) {
         return ResponseEntity.ok(userService.updateUserBonus(id, count, sum));
@@ -76,7 +83,7 @@ public class UserController {
     @Operation(summary = "Adding review")
     @PostMapping("/addReview/{id}")
     public ResponseEntity<ReviewResponseDto> addReview(@Parameter(description = "User id")
-                                                       @PathVariable("id") @Positive Long id,
+                                                       @PathVariable("id") @Positive @NotNull Long id,
                                                        @RequestBody @Valid ReviewRequestDto reviewRequestDto) {
         return ResponseEntity.ok(userService.addReview(reviewRequestDto, id));
     }
@@ -84,9 +91,9 @@ public class UserController {
     @Operation(summary = "Update review")
     @PatchMapping("/updateReview/{id}")
     public ResponseEntity<ReviewResponseDto> updateReview(@Parameter(description = "Id review")
-                                                          @PathVariable @Positive Long id,
+                                                          @PathVariable @Positive @NotNull Long id,
                                                           @Parameter(description = "Id review")
-                                                          @RequestParam @Positive Long userId,
+                                                          @RequestParam @Positive @NotNull Long userId,
                                                           @RequestBody @Valid ReviewRequestDto reviewRequestDto) {
         return ResponseEntity.ok(userService.updateReview(id, reviewRequestDto, userId));
     }
@@ -94,7 +101,7 @@ public class UserController {
     @Operation(summary = "Delete review")
     @DeleteMapping("/deleteReview/{id}")
     public ResponseEntity<String> deleteReview(@Parameter(description = "Id review")
-                                               @PathVariable @Positive Long id) {
+                                               @PathVariable @Positive @NotNull Long id) {
         userService.deleteReview(id);
         return ResponseEntity.ok("Review deleted successfully");
     }
@@ -108,7 +115,7 @@ public class UserController {
     @Operation(summary = "Getting all review by user")
     @GetMapping("/getAllReviewByUser/{id}")
     public List<ReviewResponseDto> getAllReviewByUser(@Parameter(description = "User id")
-                                                      @PathVariable @Positive Long id) {
+                                                      @PathVariable @Positive @NotNull Long id) {
         return userService.getAllReviewByUser(id);
     }
 
@@ -116,10 +123,12 @@ public class UserController {
     @GetMapping("/getAllReviewByPeriod")
     public List<ReviewResponseDto> getAllReviewByPeriod(@Parameter(description = "Start date. Format 2024-01-01T00:00:00")
                                                         @RequestParam
-                                                        @Valid LocalDateTime startDate,
+                                                        @NotNull
+                                                        @Past LocalDateTime startDate,
                                                         @Parameter(description = "End date. Format 2024-01-01T00:00:00")
                                                         @RequestParam
-                                                        @Valid LocalDateTime endDate) {
+                                                        @NotNull
+                                                        @Past LocalDateTime endDate) {
         return userService.getAllReviewByPeriod(startDate, endDate);
     }
 }

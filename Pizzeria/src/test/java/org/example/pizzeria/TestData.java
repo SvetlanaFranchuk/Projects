@@ -1,6 +1,5 @@
 package org.example.pizzeria;
 
-import io.jsonwebtoken.Jwt;
 import org.example.pizzeria.dto.benefits.ReviewRequestDto;
 import org.example.pizzeria.dto.benefits.ReviewResponseDto;
 import org.example.pizzeria.dto.order.OrderRequestDto;
@@ -14,7 +13,10 @@ import org.example.pizzeria.dto.product.ingredient.IngredientResponseClientDto;
 import org.example.pizzeria.dto.product.ingredient.IngredientResponseDto;
 import org.example.pizzeria.dto.product.pizza.PizzaRequestDto;
 import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
-import org.example.pizzeria.dto.user.*;
+import org.example.pizzeria.dto.user.UserBlockedResponseDto;
+import org.example.pizzeria.dto.user.UserBonusDto;
+import org.example.pizzeria.dto.user.UserRequestDto;
+import org.example.pizzeria.dto.user.UserResponseDto;
 import org.example.pizzeria.dto.user.auth.JwtAuthenticationResponse;
 import org.example.pizzeria.dto.user.auth.UserLoginFormRequestDto;
 import org.example.pizzeria.dto.user.auth.UserRegisterRequestDto;
