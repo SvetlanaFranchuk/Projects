@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Positive;
 import org.example.pizzeria.dto.user.UserBlockedResponseDto;
 import org.example.pizzeria.dto.user.UserResponseDto;
+import org.example.pizzeria.dto.user.UserResponseDtoForAdmin;
 import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
 import org.example.pizzeria.exception.user.StatusAlreadyExistsException;
 import org.example.pizzeria.service.user.UserServiceImpl;
@@ -58,7 +59,7 @@ public class UserControllerAdmin {
 
     @Operation(summary = "Retrieving information about users whose have role CLIENT")
     @GetMapping("/clients")
-    public List<UserResponseDto> getUserByClientRole() {
+    public List<UserResponseDtoForAdmin> getUserByClientRole() {
         return userService.getUserByClientRole();
     }
 
