@@ -2,10 +2,7 @@ package org.example.pizzeria.service.user;
 
 import org.example.pizzeria.dto.benefits.ReviewRequestDto;
 import org.example.pizzeria.dto.benefits.ReviewResponseDto;
-import org.example.pizzeria.dto.user.UserBlockedResponseDto;
-import org.example.pizzeria.dto.user.UserBonusDto;
-import org.example.pizzeria.dto.user.UserRequestDto;
-import org.example.pizzeria.dto.user.UserResponseDto;
+import org.example.pizzeria.dto.user.*;
 import org.example.pizzeria.dto.user.auth.UserRegisterRequestDto;
 import org.example.pizzeria.entity.benefits.Bonus;
 import org.example.pizzeria.entity.benefits.Favorites;
@@ -153,9 +150,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponseDto> getUserByClientRole() {
+    public List<UserResponseDtoForAdmin> getUserByClientRole() {
         return userRepository.findAllByRole(Role.ROLE_CLIENT).stream()
-                .map(u -> userMapper.toUserResponseDto(u)).toList();
+                .map(u -> userMapper.toUserResponseDtoForAdmin(u)).toList();
     }
 
     @Override

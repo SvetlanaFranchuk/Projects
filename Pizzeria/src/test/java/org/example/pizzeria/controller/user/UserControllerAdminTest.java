@@ -97,7 +97,7 @@ class UserControllerAdminTest {
 
     @Test
     void getUserByClientRole() throws Exception {
-        when(userService.getUserByClientRole()).thenReturn(List.of(TestData.USER_RESPONSE_DTO));
+        when(userService.getUserByClientRole()).thenReturn(List.of(TestData.USER_RESPONSE_DTO_FOR_ADMIN));
 
         mockMvc.perform(get("/admin/user/clients")
                         .contentType(MediaType.APPLICATION_JSON)

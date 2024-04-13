@@ -2,6 +2,7 @@ package org.example.pizzeria.mapper.user;
 
 import org.example.pizzeria.dto.user.UserBlockedResponseDto;
 import org.example.pizzeria.dto.user.UserBonusDto;
+import org.example.pizzeria.dto.user.UserResponseDtoForAdmin;
 import org.example.pizzeria.dto.user.auth.UserRegisterRequestDto;
 import org.example.pizzeria.dto.user.UserResponseDto;
 import org.example.pizzeria.entity.benefits.Bonus;
@@ -36,6 +37,11 @@ public class UserMapper {
     public UserResponseDto toUserResponseDto(UserApp userApp) {
         return new UserResponseDto(userApp.getId(), userApp.getUsername(), userApp.getEmail(), userApp.getBirthDate(),
                 userApp.getAddress(), userApp.getPhoneNumber());
+    }
+
+    public UserResponseDtoForAdmin toUserResponseDtoForAdmin(UserApp userApp) {
+        return new UserResponseDtoForAdmin(userApp.getId(), userApp.getUsername(), userApp.getEmail(), userApp.getBirthDate(),
+                userApp.getAddress(), userApp.getPhoneNumber(), userApp.isBlocked());
     }
 
     public UserBonusDto toUserBonusDto(Integer countOrders, Double sumOrders) {

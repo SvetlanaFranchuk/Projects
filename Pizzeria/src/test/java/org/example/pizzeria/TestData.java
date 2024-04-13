@@ -13,10 +13,7 @@ import org.example.pizzeria.dto.product.ingredient.IngredientResponseClientDto;
 import org.example.pizzeria.dto.product.ingredient.IngredientResponseDto;
 import org.example.pizzeria.dto.product.pizza.PizzaRequestDto;
 import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
-import org.example.pizzeria.dto.user.UserBlockedResponseDto;
-import org.example.pizzeria.dto.user.UserBonusDto;
-import org.example.pizzeria.dto.user.UserRequestDto;
-import org.example.pizzeria.dto.user.UserResponseDto;
+import org.example.pizzeria.dto.user.*;
 import org.example.pizzeria.dto.user.auth.JwtAuthenticationResponse;
 import org.example.pizzeria.dto.user.auth.UserLoginFormRequestDto;
 import org.example.pizzeria.dto.user.auth.UserRegisterRequestDto;
@@ -218,7 +215,9 @@ public class TestData {
     public static final UserResponseDto USER_RESPONSE_DTO = new UserResponseDto(1L, "IvanAdmin",
             "iv.admin@pizzeria.com", LocalDate.of(2000, 1, 15), ADDRESS,
             CONTACT_INFORMATION);
-
+    public static final UserResponseDtoForAdmin USER_RESPONSE_DTO_FOR_ADMIN = new UserResponseDtoForAdmin(2L, "TestClient",
+            "clientTest@pizzeria.com", LocalDate.of(2000, 1, 15), ADDRESS,
+            CONTACT_INFORMATION, false);
     public static final JwtAuthenticationResponse JWT_AUTHENTICATION_RESPONSE = new JwtAuthenticationResponse("d5679ab7-260a-42a3-87ab-49c72b3d7407",
             USER_RESPONSE_DTO, Role.ROLE_ADMIN);
     public static final UserRegisterRequestDto USER_REGISTER_REQUEST_DTO = new UserRegisterRequestDto("IvanAdmin", "validPassword",

@@ -3,6 +3,7 @@ package org.example.pizzeria.service.user;
 import org.example.pizzeria.TestData;
 import org.example.pizzeria.dto.user.UserBlockedResponseDto;
 import org.example.pizzeria.dto.user.UserResponseDto;
+import org.example.pizzeria.dto.user.UserResponseDtoForAdmin;
 import org.example.pizzeria.entity.benefits.Favorites;
 import org.example.pizzeria.entity.benefits.Review;
 import org.example.pizzeria.entity.order.Basket;
@@ -160,8 +161,8 @@ class UserServiceImplTest {
     @Test
     void getUserByClientRole() {
         when(userRepository.findAllByRole(Role.ROLE_CLIENT)).thenReturn(List.of(TestData.USER_APP_2));
-        when(userMapper.toUserResponseDto(TestData.USER_APP_2)).thenReturn(TestData.USER_RESPONSE_DTO_2);
-        List<UserResponseDto> userResponseDtoList = userServiceImpl.getUserByClientRole();
+        when(userMapper.toUserResponseDtoForAdmin(TestData.USER_APP_2)).thenReturn(TestData.USER_RESPONSE_DTO_FOR_ADMIN);
+        List<UserResponseDtoForAdmin> userResponseDtoList = userServiceImpl.getUserByClientRole();
 
         assertNotNull(userResponseDtoList);
         assertEquals(1, userResponseDtoList.size());
@@ -171,7 +172,7 @@ class UserServiceImplTest {
     @Test
     void getUserByClientRole_EmptyList() {
         when(userRepository.findAllByRole(Role.ROLE_CLIENT)).thenReturn(Collections.emptyList());
-        List<UserResponseDto> userResponseDtoList = userServiceImpl.getUserByClientRole();
+        List<UserResponseDtoForAdmin> userResponseDtoList = userServiceImpl.getUserByClientRole();
         assertNotNull(userResponseDtoList);
         assertTrue(userResponseDtoList.isEmpty());
     }

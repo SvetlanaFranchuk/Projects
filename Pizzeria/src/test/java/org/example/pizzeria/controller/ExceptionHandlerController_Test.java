@@ -48,8 +48,8 @@ class ExceptionHandlerController_Test {
     private UserServiceImpl userService;
     @MockBean
     private JwtService jwtService;
-@MockBean
-private ExceptionHandlerController exceptionHandlerController;
+    @MockBean
+    private ExceptionHandlerController exceptionHandlerController;
     private String jwtToken;
 
     @BeforeEach

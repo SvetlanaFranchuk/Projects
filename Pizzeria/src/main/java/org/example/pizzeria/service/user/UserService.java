@@ -24,7 +24,7 @@ public interface UserService {
 
     List<UserResponseDto> getUsersByBirthday(LocalDate date);
 
-    List<UserResponseDto> getUserByClientRole();
+    List<UserResponseDtoForAdmin> getUserByClientRole();
 
     List<UserBlockedResponseDto> getUserBlocked();
 
