@@ -42,6 +42,7 @@ public interface OrderMapper {
     @Mapping(target = "orderDetails", ignore = true)
     @Mapping(target = "typeBonus", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "sum", ignore = true)
     Order toOrder(UserApp userApp, DeliveryAddress deliveryAddress);
 
 }

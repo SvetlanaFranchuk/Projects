@@ -29,7 +29,7 @@ import java.util.List;
 )
 @Validated
 @RestController
-@RequestMapping(path = "order",
+@RequestMapping(path = "/order",
         produces = MediaType.APPLICATION_JSON_VALUE)
 @CrossOrigin(origins = "http://localhost:3000")
 public class OrderController {
@@ -125,7 +125,6 @@ public class OrderController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @Parameter(description = "End date")
             @NotNull
-            @Past
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         return ResponseEntity.ok(orderService.getAllOrdersByPeriod(startDate, endDate));
     }

@@ -16,6 +16,7 @@ public interface IngredientMapper {
 
     IngredientResponseDto toIngredientResponseDto(Ingredient ingredient);
     IngredientResponseClientDto toIngredientResponseClientDto(Ingredient ingredient);
+    @Mapping(target = "id", ignore = true)
     Ingredient toIngredient(String name, int weight,int nutrition, double price, GroupIngredient groupIngredient, Set<Pizza> pizzaSet);
 
 }

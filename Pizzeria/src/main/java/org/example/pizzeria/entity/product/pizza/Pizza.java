@@ -57,6 +57,7 @@ public class Pizza {
     @ManyToOne(fetch = FetchType.LAZY)
     private Dough dough;
 
+    @Builder.Default
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "pizzaSet")
     private List<Ingredient> ingredientsList = new ArrayList<>();
 

@@ -1,0 +1,27 @@
+version: '3.8'
+
+volumes:
+  pg_pizzeria:
+
+services:
+  pizzeria_db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1
+      - POSTGRES_DB=pizzeria
+    volumes:
+      - pg_pizzeria:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  app:
+    restart: always
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - pizzeria_db
+    environment:
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://pizzeria_db:5432/pizzeria'
+      JAVA_OPTS: '-Xmx512m'

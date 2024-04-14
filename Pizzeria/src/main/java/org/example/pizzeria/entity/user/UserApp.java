@@ -36,8 +36,9 @@ public class UserApp implements UserDetails {
     @Column(name = "id")
     private Long id;
 
+    @Builder.Default
     @Column(name = "user_name")
-    private String userName;
+    private String userName = "user";
 
     @Column(name = "password")
     private String password;
@@ -74,9 +75,11 @@ public class UserApp implements UserDetails {
     @OneToOne(cascade = CascadeType.REMOVE)
     private Favorites favorites;
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Review> reviews = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Order> orders = new HashSet<>();
 

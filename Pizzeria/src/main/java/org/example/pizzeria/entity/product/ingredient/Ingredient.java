@@ -37,6 +37,7 @@ public class Ingredient {
     @Column(name = "group_ingredient")
     private GroupIngredient groupIngredient;
 
+    @Builder.Default
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "pizzas_ingredients",
             joinColumns = @JoinColumn(name = "ingredient_id"),

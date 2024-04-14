@@ -12,6 +12,7 @@ import org.mapstruct.Mapping;
 public interface ReviewMapper {
     @Mapping(target = "reviewDate", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "userApp", ignore = true)
+    @Mapping(target = "id", ignore = true)
     Review toReview(String comment, Integer grade);
 
     @Mapping(target = "userName", source = "userApp.username")

@@ -11,12 +11,15 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface PizzaMapper {
-    @Autowired
-    DoughMapper doughMapper = null;
-
     @Mapping(target = "id", source = "pizza.id")
     PizzaResponseDto toPizzaResponseDto(Pizza pizza);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "standardRecipe", ignore = true)
+    @Mapping(target = "amount", ignore = true)
+    @Mapping(target = "nutrition", ignore = true)
+    @Mapping(target = "dough", ignore = true)
+    @Mapping(target = "ingredientsList", ignore = true)
     Pizza toPizza(PizzaRequestDto newPizza);
 
     default List<PizzaResponseDto> mapPizzasToPizzaResponseDtos(List<Pizza> pizzas) {
