@@ -3,7 +3,6 @@ package org.example.pizzeria.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.PastOrPresent;
@@ -28,7 +27,7 @@ import java.util.List;
 )
 @Validated
 @RestController
-@RequestMapping(path = "stat",
+@RequestMapping(path = "/stat",
         produces = MediaType.APPLICATION_JSON_VALUE)
 @CrossOrigin(origins = "http://localhost:3000")
 @PreAuthorize("hasRole('MANAGER')")

@@ -5,7 +5,6 @@ import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
 import org.example.pizzeria.entity.product.pizza.Pizza;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 

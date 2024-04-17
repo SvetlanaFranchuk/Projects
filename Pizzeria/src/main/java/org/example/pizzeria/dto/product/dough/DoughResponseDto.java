@@ -4,8 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.Getter;
-import lombok.Setter;
 import org.example.pizzeria.entity.product.ingredient.TypeDough;
 
 @Schema(description = "Form for read information about dough")
@@ -23,6 +21,6 @@ public record DoughResponseDto(
         @NotNull(message = "Field must be filled in") @Positive @Max(600) int smallNutrition,
 
         @Schema(description = "Price for small pizza")
-        @NotNull(message = "Field must be filled in") @Positive double smallPrice){
+        @NotNull(message = "Field must be filled in") @Positive double smallPrice) {
 
 }

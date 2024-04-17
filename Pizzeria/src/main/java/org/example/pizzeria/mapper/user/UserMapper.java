@@ -2,9 +2,9 @@ package org.example.pizzeria.mapper.user;
 
 import org.example.pizzeria.dto.user.UserBlockedResponseDto;
 import org.example.pizzeria.dto.user.UserBonusDto;
+import org.example.pizzeria.dto.user.UserResponseDto;
 import org.example.pizzeria.dto.user.UserResponseDtoForAdmin;
 import org.example.pizzeria.dto.user.auth.UserRegisterRequestDto;
-import org.example.pizzeria.dto.user.UserResponseDto;
 import org.example.pizzeria.entity.benefits.Bonus;
 import org.example.pizzeria.entity.user.Address;
 import org.example.pizzeria.entity.user.ContactInformation;

@@ -1,12 +1,8 @@
 package org.example.pizzeria.controller.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.pizzeria.TestData;
 import org.example.pizzeria.controller.ExceptionHandlerController;
-import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
-import org.example.pizzeria.exception.ErrorMessage;
 import org.example.pizzeria.exception.user.StatusAlreadyExistsException;
-import org.example.pizzeria.exception.user.UserCreateException;
 import org.example.pizzeria.filter.JwtAuthenticationFilter;
 import org.example.pizzeria.service.auth.JwtService;
 import org.example.pizzeria.service.user.UserServiceImpl;
@@ -17,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -31,7 +26,8 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,8 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserControllerAdminTest {
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
     @MockBean
     private UserServiceImpl userService;
     @MockBean
@@ -57,6 +51,7 @@ class UserControllerAdminTest {
         jwtToken = "generated_jwt_token";
         when(jwtService.generateToken(any())).thenReturn(jwtToken);
     }
+
     @Test
     void getUsersByBirthday() throws Exception {
         LocalDate date = LocalDate.of(2000, 1, 15);

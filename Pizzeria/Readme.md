@@ -1,4 +1,124 @@
 # Хронология проекта
+#### 18.04.23 ветка (noteAvramenko)
+1) CLRL+ALT+L - старалась применять всегда, повторно прошлась по каждому классу
+2) К сожалению, нашла в коде только одну переменную с заглавной буквы - исправила.
+   Если у вас есть возможность указать названия, где я просмотрела этот момент, буду благодарна.
+3) Реализация мапперов через mupstract и руками была задумана специально для демонстрации умения
+   писать мапперы разными методами
+4) В некоторых методах пробовала ставить RequiredArgConstructor, но возникли конфликты при
+   подключении авторизации, поэтому от этой аннотации избавилась и заменила на конструкторы
+5) Насколько я поняла getReferenceById() и findById() разные вещи: первый метод возвращает ссылку
+   и не позволяет потом изменять состояние, второй я использую, когда по логике работы нужно менять
+   состояние. Я столкнулась с этим при написании тестов. Поэтому в разных случаях использую разные варианты.
+   Заменяла на getReferenceById по совету (замечанию) преподавателя
+6) Разнесла РroductService на 4 сервиса: тесто, ингредиенты, пицца и избранное. То же проделала с контроллерами.
+7) Аналогично из UserServce вынесла отзывы, плюс контроллеры
+8) убрала излишнее сохранение: метод add (ReviewService); moveDetailsBasketToOrder (OrderService)
+9) исправила
+10) Дополнительно добавлены тесты JACOCO
+11) Объединено с частью Front(требует доработки в связи с изменением контроллеров).
+12) Созданы Dockerfile , Docker-compose файлы для создания контейнеров.
+
+#### 17.04.2024 получены замечания от Юрия Авраменко
+Yuriy A., [17/04/2024 08:10]
+1. Нет форматирования кода (CTRL + ALT + L). Как пример, откройте интерфейсы репозитория и примените
+   данную комбинацию.(+ от имени класса(интерфейса) принятно отступать одну строку до начала кода)
+2. В коде встречаются методы и переменные названные с заглавной буквы, что противоречит lowerCamelCase.
+3. Часть мапперов реализована с помощью библиотеки mapstruct,два маппера реализованы как классы руками.
+4. Библиотека lombok используется не везде.
+   Если есть библиотека lombok, и поля класса , которые нужно заинжектить через конструктор помечены как final.
+   То достаточно проставить аннотацию @RequiredArgsConstructor и можно убрать конструктор с кучей параметров.
+
+5. Работа с репозиториями - в части методов используется корректный вызов поиска объекта по id,
+   как пример UserApp userApp = userRepository.findById(userId),
+   а в других  UserApp userApp = userRepository.getReferenceById(userId);
+   Желательно использовать что то одно, лучше первый вариант, так как код становится проще, например :
+   Существующий код :
+   @Override
+   public UserBonusDto getUserBonus(Long userId) {
+   try {
+   UserApp userApp = userRepository.getReferenceById(userId);
+   return userMapper.toUserBonusDto(userApp.getBonus().getCountOrders(),
+   userApp.getBonus().getSumOrders());
+   } catch (RuntimeException e) {
+   throw new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND);
+   }
+   }
+
+Как можно было написать :
+
+/*
+UserApp user = userRepository.findById(userId)
+.orElseThrow(() -> new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND));
+return userMapper.toUserBonusDto(user.getBonus().getCountOrders(),
+user.getBonus().getSumOrders());
+
+     */
+
+Аналогично в других сервисах.
+
+6. Отсутствие отдельных сервисов для Dough,Ingredient,Pizza, Favorites
+   Все помещено в один сервис ProductServiceImpl.
+
+   Корректно было бы разнести логику работы с каждой сущностью в свой сервис и уже в класс ProductServiceImpl заинжектить
+   сервисы конкретных сущностей. Или же в ProductController инжектить нужные сервисы для каждой сущности.
+7. Тоже самое касается Review, логика работы занесена в сервис пользователя , лучше вынести в отдельный сервис.
+   Ориентируйтесь на то, что каждый сервис должен отвечать за что-то свое))
+
+Дополнительно, когда класс отвечает за что-то одно, например DoughService, то и названия методов становятся корректней ,
+нет необходимости в названия писать сущность к которой они относятся, было вот так :
+addDough, updateDough, deleteDough, validateDoughExist - станет add,update,delete,validateThatExists
+Эта стилистика распространяется и на контроллеры тоже.
+
+8. Некорректная работа со связями между сущностями, в следствии чего - переизбыток кода.
+   Как пример :
+   Сущность заказ :
+
+   @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+   @JoinColumn(name = "order_details_id", referencedColumnName = "id")
+   private OrderDetails orderDetails;
+
+Yuriy A., [17/04/2024 08:10]
+Имеет связь с таблицей деталей заказа и проставлено cascade = CascadeType.ALL, значит все что будет сделано с заказом
+будет также сделано и с таблицей деталей, если будет пересохранен заказ то и связанная таблица тоже будет записана.
+
+В итоге вот в таком коде :
+
+       Order order = createNewOrder(userApp);
+        double totalAmount = pizzas.stream().mapToDouble(Pizza::getAmount).sum();
+        order.setSum(totalAmount);
+        applyBonus(userApp, order, pizzas, totalAmount);
+
+        OrderDetails orderDetails = createOrderDetails(pizzas, order);
+    
+    //Данное сохранение лишнее, так как достаточно просто добавить orderDetails в order и
+    //записать только order, orderDetails сохраниться тоже 
+        //orderDetails = orderDetailsRepository.save(orderDetails);
+    
+        order.setOrderDetails(orderDetails);
+        order = orderRepository.save(order);
+
+Аналогично ниже с пользователем ,
+userApp.addOrder(order);
+userRepository.save(userApp);
+Достаточно добавить заказ к пользователю и все связанные сущности тоже запишутся, userApp -> order -> orderDetails
+
+В каждом сервисе есть такой код, где связанные сущности записываются отдельно в одном и том же методе.
+Если отрефакторить, то часть методов можно не помечать @Transactional
+
+
+9. В Методе обновления данных о пользователе :
+   userApp.setPassword(Objects.equals(userApp.getPassword(), userRequestDto.password()) ?
+   userApp.getPassword() : userRequestDto.password());
+   Пароль сохранится в не зашифрованном виде, следовательно потом невозможно будет авторизоваться.
+
+
+Дополнительно , что бы я переделал, но в этом проекте точно делать не нужно сейчас,
+Преобразование в DTO объекты и обратно перенес бы в контроллеры.
+Таким образом в сервисах код был бы проще и понятней и можно было более проще использовать взаимодействие между сервисами.
+Не обязательно каждый сервис должен что-то отдавать в контроллер и по REST, очень часто сервисы взаимодействуют с друг другом без
+использования DTO, это не нужно.
+
 #### 11.04.2024 (ветка authorization)
 - внесены изменения согласно замечаниям
 - внесены изменения в документацию

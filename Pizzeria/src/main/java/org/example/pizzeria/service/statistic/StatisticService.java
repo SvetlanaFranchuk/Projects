@@ -10,8 +10,12 @@ import java.util.List;
 
 public interface StatisticService {
     ProfitReportDto getProfitInformation(LocalDate startDate, LocalDate endDate);
+
     List<IngredientConsumptionDto> getIngredientConsumptionInfo(LocalDate startDate, LocalDate endDate);
+
     List<CountOrdersDto> getCountOrdersInfo(LocalDate startDate, LocalDate endDate);
+
     Double getAverageGrade(LocalDate startDate, LocalDate endDate);
+
     List<PopularityPizzasDto> getPopularityPizzasInfo(LocalDate startDate, LocalDate endDate);
 }

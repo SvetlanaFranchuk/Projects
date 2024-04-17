@@ -3,8 +3,6 @@ package org.example.pizzeria.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.pizzeria.TestData;
 import org.example.pizzeria.dto.statistic.ProfitReportDto;
-import org.example.pizzeria.entity.order.Order;
-import org.example.pizzeria.entity.order.StatusOrder;
 import org.example.pizzeria.filter.JwtAuthenticationFilter;
 import org.example.pizzeria.repository.order.OrderRepository;
 import org.example.pizzeria.service.auth.JwtService;
@@ -24,7 +22,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -47,6 +44,7 @@ class StatisticControllerTest {
     @MockBean
     private OrderRepository orderRepository;
     private String jwtToken;
+
     @BeforeEach
     void setUp() {
         Mockito.reset(orderRepository);
@@ -56,6 +54,7 @@ class StatisticControllerTest {
         jwtToken = "generated_jwt_token";
         when(jwtService.generateToken(any())).thenReturn(jwtToken);
     }
+
     @Test
     void getProfitInformation() throws Exception {
         LocalDate startDate = LocalDate.of(2024, 1, 1);
@@ -66,7 +65,7 @@ class StatisticControllerTest {
                         .param("startDate", startDate.format(DateTimeFormatter.ISO_DATE))
                         .param("endDate", endDate.format(DateTimeFormatter.ISO_DATE))
                         .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.salesAmount").isNumber())
@@ -131,4 +130,4 @@ class StatisticControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray());
     }
-    }
+}

@@ -43,7 +43,7 @@ public class OrderController {
     @Operation(summary = "Adding pizza to basket")
     @PostMapping("/addPizzaToBasket/{userId}")
     public ResponseEntity<BasketResponseDto> addPizzaToBasket(@Parameter(description = "user ID")
-                                                              @PathVariable @Positive  @NotNull Long userId,
+                                                              @PathVariable @Positive @NotNull Long userId,
                                                               @RequestBody @Valid PizzaToBasketRequestDto pizzaToBasketRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.addPizzaToBasket(userId, pizzaToBasketRequestDto));
     }

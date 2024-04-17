@@ -13,6 +13,7 @@ import java.util.List;
 @Repository
 public interface PizzaRepository extends JpaRepository<Pizza, Long> {
     List<Pizza> findAllByStandardRecipeAndStyles(boolean isStandardRecipe, Styles styles);
+
     List<Pizza> findAllByStandardRecipe(boolean isStandardRecipe);
 
     List<Pizza> findAllByStandardRecipeAndToppingsFillings(boolean isStandardRecipe, ToppingsFillings toppingsFillings);
@@ -21,6 +22,7 @@ public interface PizzaRepository extends JpaRepository<Pizza, Long> {
 
     List<Pizza> findAllByDoughIs(Dough dough);
 
-    List<Pizza> findAllByIngredientsListIsContaining(Ingredient ingredient);
+    List<Pizza> findAllByIngredientsListContaining(Ingredient ingredient);
 
+    List<Pizza> findAllByDoughId(Integer id);
 }

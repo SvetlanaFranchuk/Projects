@@ -4,25 +4,18 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Positive;
 import org.example.pizzeria.dto.user.UserBlockedResponseDto;
 import org.example.pizzeria.dto.user.UserResponseDto;
 import org.example.pizzeria.dto.user.UserResponseDtoForAdmin;
-import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
-import org.example.pizzeria.exception.user.StatusAlreadyExistsException;
 import org.example.pizzeria.service.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +28,7 @@ import java.util.List;
 )
 @Validated
 @RestController
-@RequestMapping(path = "admin/user",
+@RequestMapping(path = "/admin/user",
         produces = MediaType.APPLICATION_JSON_VALUE)
 @CrossOrigin(origins = "http://localhost:3000")
 @PreAuthorize("hasRole('ADMIN')")
@@ -53,7 +46,7 @@ public class UserControllerAdmin {
                                                     @RequestParam
                                                     @NotNull
                                                     @Past
-                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate date) {
+                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return userService.getUsersByBirthday(date);
     }
 
@@ -74,7 +67,7 @@ public class UserControllerAdmin {
     public ResponseEntity<UserBlockedResponseDto> changeBlockingUser(@Parameter(description = "User id")
                                                                      @PathVariable("id") @Positive @NotNull Long id,
                                                                      @RequestParam @Valid boolean isBlocked) {
-            return ResponseEntity.ok(userService.changeUserBlocking(id, isBlocked));
-         }
+        return ResponseEntity.ok(userService.changeUserBlocking(id, isBlocked));
+    }
 
 }

@@ -8,9 +8,9 @@ import java.util.Map;
 
 @Schema(description = "Reading records in the basket")
 public record BasketResponseDto(
-    @Schema(description = "List of pizzas")
-    Map<PizzaResponseDto, Integer> pizzaCountMap,
-    @Schema(description = "user ID")
-    @NotNull
-    Long userId){
+        @Schema(description = "List of pizzas")
+        Map<PizzaResponseDto, Integer> pizzaCountMap,
+        @Schema(description = "user ID")
+        @NotNull
+        Long userId) {
 }

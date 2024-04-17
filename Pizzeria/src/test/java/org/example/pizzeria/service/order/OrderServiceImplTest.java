@@ -14,6 +14,7 @@ import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
 import org.example.pizzeria.exception.NotCorrectArgumentException;
 import org.example.pizzeria.exception.order.InvalidOrderStatusException;
 import org.example.pizzeria.mapper.order.BasketMapper;
+import org.example.pizzeria.mapper.order.OrderDetailsMapper;
 import org.example.pizzeria.mapper.order.OrderMapper;
 import org.example.pizzeria.mapper.product.PizzaMapper;
 import org.example.pizzeria.repository.order.BasketRepository;
@@ -57,6 +58,8 @@ class OrderServiceImplTest {
     private BasketMapper basketMapper;
     @Mock
     private OrderMapper orderMapper;
+    @Mock
+    private OrderDetailsMapper orderDetailsMapper;
     @InjectMocks
     private OrderServiceImpl orderService;
 
@@ -186,15 +189,14 @@ class OrderServiceImplTest {
         when(basketRepository.findById(basketId)).thenReturn(Optional.of(basket));
         when(userRepository.findById(any())).thenReturn(Optional.of(TestData.USER_APP));
         when(orderMapper.toOrder(any(), any())).thenReturn(newOrder);
-        when(orderDetailsRepository.save(any(OrderDetails.class))).thenReturn(orderDetails);
         newOrder.setOrderDetails(orderDetails);
         when(orderRepository.save(any(Order.class))).thenReturn(newOrder);
-        when(pizzaMapper.toPizzaResponseDto(any(Pizza.class))).thenReturn(new PizzaResponseDto());
 
         when(basketRepository.save(TestData.BASKET)).thenReturn(TestData.BASKET);
         userApp.setOrders(new HashSet<>());
         userApp.addOrder(newOrder);
         when(userRepository.save(userApp)).thenReturn(userApp);
+        when(orderDetailsMapper.pizzasToOrderDetailsDtoList(anyList())).thenReturn(List.of(TestData.ORDER_DETAILS_RESPONSE_DTO));
         when(orderMapper.toOrderResponseDto(any(Order.class), any(), any())).thenReturn(expectedOrderResponseDto);
 
         OrderResponseDto result = orderService.moveDetailsBasketToOrder(basketId);
@@ -234,8 +236,6 @@ class OrderServiceImplTest {
         double expectedSum = (0.2 + 0.4 + 0.23) * 1.3 * 2;
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expectedDateTime = LocalDateTime.now().plusHours(1);
-        Map<PizzaResponseDto, Integer> pizzaToCount = new HashMap<>();
-        pizzaToCount.put(TestData.PIZZA_RESPONSE_DTO, 2);
         Map<Long, Integer> pizzaIdToCount = new HashMap<>();
         pizzaIdToCount.put(1L, 2);
         OrderDetails orderDetails = TestData.ORDER_DETAILS;
@@ -256,14 +256,14 @@ class OrderServiceImplTest {
         lenient().when(orderDetailsRepository.save(orderDetails)).thenReturn(orderDetails);
         lenient().when(orderRepository.save(newOrder)).thenReturn(newOrder);
         lenient().when(userRepository.save(TestData.USER_APP)).thenReturn(TestData.USER_APP);
-        when(pizzaMapper.toPizzaResponseDto(TestData.PIZZA)).thenReturn(TestData.PIZZA_RESPONSE_DTO);
-        when(orderMapper.toOrderResponseDto(newOrder, TestData.DELIVERY_ADDRESS_NEW, pizzaToCount)).thenReturn(orderResponseDto);
+        when(orderDetailsMapper.pizzasToOrderDetailsDtoList(anyList())).thenReturn(List.of(TestData.ORDER_DETAILS_RESPONSE_DTO));
+        when(orderMapper.toOrderResponseDto(newOrder, TestData.DELIVERY_ADDRESS_NEW, List.of(TestData.ORDER_DETAILS_RESPONSE_DTO))).thenReturn(orderResponseDto);
 
         OrderResponseDto result = orderService.updateOrderAndOrderDetails(1L, orderRequestDto);
         assertNotNull(result);
         assertEquals(StatusOrder.NEW, result.statusOrder());
         assertNotNull(result.orderDateTime());
-        assertNotNull(result.pizzaToCount());
+        assertNotNull(result.pizzaIdToCount());
         assertEquals(expectedSum, result.sum());
     }
 
@@ -380,7 +380,7 @@ class OrderServiceImplTest {
         when(orderRepository.findAllByUserApp_Id(userId)).thenReturn(List.of(order));
         when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
         when(orderDetailsRepository.findAllByOrder(order)).thenReturn(List.of(orderDetails));
-        when(pizzaMapper.toPizzaResponseDto(TestData.PIZZA)).thenReturn(TestData.PIZZA_RESPONSE_DTO);
+        when(orderDetailsMapper.orderDetailsListToOrderDetailsResponseDtoList(anyList())).thenReturn(List.of(TestData.ORDER_DETAILS_RESPONSE_DTO));
         when(orderMapper.toOrderResponseDto(any(), any(), any())).thenReturn(orderResponseDto);
 
         List<OrderResponseDto> orderResponseDtoList = orderService.getAllOrdersByUser(userId);
@@ -405,17 +405,19 @@ class OrderServiceImplTest {
         OrderResponseDto orderResponseDto = TestData.ORDER_RESPONSE_DTO;
         when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
         when(orderDetailsRepository.findAllByOrder(order)).thenReturn(List.of(orderDetails));
-        when(pizzaMapper.toPizzaResponseDto(TestData.PIZZA)).thenReturn(TestData.PIZZA_RESPONSE_DTO);
+        when(orderDetailsMapper.orderDetailsListToOrderDetailsResponseDtoList(anyList())).thenReturn(List.of(TestData.ORDER_DETAILS_RESPONSE_DTO));
         when(orderMapper.toOrderResponseDto(any(), any(), any())).thenReturn(orderResponseDto);
         OrderResponseDto result = orderService.getOrderByUser(1L);
         assertEquals(orderResponseDto, result);
     }
+
     @Test
     void getOrderByUser_NonExistentOrderId_EntityNotFoundException() {
         Long nonExistentOrderId = 100L;
         when(orderRepository.findById(nonExistentOrderId)).thenReturn(Optional.empty());
         assertThrows(EntityInPizzeriaNotFoundException.class, () -> orderService.getOrderByUser(nonExistentOrderId));
     }
+
     @Test
     void getOrderByStatus() {
         List<Order> orders = List.of(TestData.ORDER);

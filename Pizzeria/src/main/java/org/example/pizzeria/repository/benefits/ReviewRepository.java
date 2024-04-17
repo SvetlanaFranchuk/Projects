@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findAllByUserApp(UserApp userApp);
+
     List<Review> findAllByUserApp_Id(Long userId);
 
     List<Review> findAllByReviewDateBetween(LocalDateTime startDate, LocalDateTime endDate);

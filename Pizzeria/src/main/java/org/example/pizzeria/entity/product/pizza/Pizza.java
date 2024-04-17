@@ -2,8 +2,6 @@ package org.example.pizzeria.entity.product.pizza;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.example.pizzeria.entity.order.Basket;
-import org.example.pizzeria.entity.order.OrderDetails;
 import org.example.pizzeria.entity.product.ingredient.Dough;
 import org.example.pizzeria.entity.product.ingredient.Ingredient;
 
@@ -18,9 +16,9 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "pizzas",
-uniqueConstraints = {
-@UniqueConstraint(columnNames = "title")
-})
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "title")
+        })
 public class Pizza {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

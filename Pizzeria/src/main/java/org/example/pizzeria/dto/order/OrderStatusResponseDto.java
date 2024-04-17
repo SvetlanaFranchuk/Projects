@@ -1,12 +1,12 @@
 package org.example.pizzeria.dto.order;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
-import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.example.pizzeria.entity.order.StatusOrder;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Schema(description = "Form for reading status order")
 public record OrderStatusResponseDto(

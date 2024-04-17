@@ -5,7 +5,6 @@ import org.example.pizzeria.TestData;
 import org.example.pizzeria.controller.ExceptionHandlerController;
 import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
 import org.example.pizzeria.exception.ErrorMessage;
-import org.example.pizzeria.exception.user.UserCreateException;
 import org.example.pizzeria.filter.JwtAuthenticationFilter;
 import org.example.pizzeria.service.auth.JwtService;
 import org.example.pizzeria.service.user.UserServiceImpl;
@@ -23,7 +22,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,7 +38,6 @@ class UserControllerTest {
     private UserServiceImpl userService;
     @MockBean
     private JwtService jwtService;
-
     private String jwtToken;
 
     @BeforeEach
@@ -75,36 +74,52 @@ class UserControllerTest {
     }
 
     @Test
-    void updateUser() throws Exception {
-        when(userService.update(1L, TestData.USER_REQUEST_DTO)).thenReturn(TestData.USER_RESPONSE_DTO);
+    void getBonus() throws Exception {
+        when(userService.getBonus(1L)).thenReturn(TestData.USER_BONUS_DTO);
 
-        mockMvc.perform(put("/user/update/1")
+        mockMvc.perform(get("/user/getBonus/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(TestData.USER_REQUEST_DTO))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userName").value("IvanAdmin"))
-                .andExpect(jsonPath("$.email").value("iv.admin@pizzeria.com"));
+                .andExpect(jsonPath("$.countOrders").value(TestData.USER_BONUS_DTO.getCountOrders()))
+                .andExpect(jsonPath("$.sumOrders").value(TestData.USER_BONUS_DTO.getSumOrders()));
     }
 
     @Test
-    public void updateUser_UserNotFound_TrowEntityInPizzeriaNotFoundException() throws Exception {
-        when(userService.update(1L, TestData.USER_REQUEST_DTO)).thenThrow(new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND));
+    void getBonus_UserNotFound_ThrowEntityInPizzeriaNotFoundException() throws Exception {
+        long userId = 999L;
+        doThrow(EntityInPizzeriaNotFoundException.class).when(userService).getBonus(userId);
 
-        mockMvc.perform(put("/user/update/1")
+        mockMvc.perform(get("/user/getBonus/{id}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(TestData.USER_REQUEST_DTO))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    public void updateUser_NothingToUpdate() throws Exception {
-        mockMvc.perform(put("/user/update/{id}", 1L)
+    void updateBonus() throws Exception {
+        when(userService.updateBonus(1L, 20, 375))
+                .thenReturn(TestData.USER_NEW_BONUS_DTO);
+        mockMvc.perform(put("/user/updateBonus/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}")
+                        .param("count", String.valueOf(20))
+                        .param("sum", String.valueOf(375.0))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.countOrders").value(TestData.USER_NEW_BONUS_DTO.getCountOrders()))
+                .andExpect(jsonPath("$.sumOrders").value(TestData.USER_NEW_BONUS_DTO.getSumOrders()));
     }
 
+    @Test
+    void updateBonus_UserNotFound_ThrowEntityInPizzeriaNotFoundException() throws Exception {
+        long userId = 999L;
+        doThrow(EntityInPizzeriaNotFoundException.class).when(userService).updateBonus(userId, 20, 375.0);
+
+        mockMvc.perform(put("/user/updateBonus/{id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("count", String.valueOf(20))
+                        .param("sum", String.valueOf(375.0))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
+                .andExpect(status().isNotFound());
+    }
 }

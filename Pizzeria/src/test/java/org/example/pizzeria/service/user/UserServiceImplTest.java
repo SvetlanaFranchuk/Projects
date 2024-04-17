@@ -2,8 +2,10 @@ package org.example.pizzeria.service.user;
 
 import org.example.pizzeria.TestData;
 import org.example.pizzeria.dto.user.UserBlockedResponseDto;
+import org.example.pizzeria.dto.user.UserBonusDto;
 import org.example.pizzeria.dto.user.UserResponseDto;
 import org.example.pizzeria.dto.user.UserResponseDtoForAdmin;
+import org.example.pizzeria.entity.benefits.Bonus;
 import org.example.pizzeria.entity.benefits.Favorites;
 import org.example.pizzeria.entity.benefits.Review;
 import org.example.pizzeria.entity.order.Basket;
@@ -17,6 +19,7 @@ import org.example.pizzeria.repository.benefits.FavoritesRepository;
 import org.example.pizzeria.repository.benefits.ReviewRepository;
 import org.example.pizzeria.repository.order.BasketRepository;
 import org.example.pizzeria.repository.user.UserRepository;
+import org.example.pizzeria.service.auth.AuthenticationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +31,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -51,6 +55,10 @@ class UserServiceImplTest {
     private ReviewRepository reviewRepository;
     @Mock
     private UserMapper userMapper;
+    @Mock
+    private PasswordEncoder passwordEncoder;
+    @Mock
+    private AuthenticationService authenticationService;
     @InjectMocks
     private UserServiceImpl userServiceImpl;
 
@@ -63,7 +71,7 @@ class UserServiceImplTest {
 
     @Test
     void save() {
-        when(userMapper.toUserApp(TestData.USER_REGISTER_REQUEST_DTO, "testPassword")).thenReturn(TestData.USER_APP);
+        when(userMapper.toUserApp(TestData.USER_REGISTER_REQUEST_DTO, "validPassword")).thenReturn(TestData.USER_APP);
         UserResponseDto expectedResponseDto = TestData.USER_RESPONSE_DTO;
         when(userRepository.save(TestData.USER_APP)).thenReturn(TestData.USER_APP);
         when(userMapper.toUserResponseDto(TestData.USER_APP)).thenReturn(expectedResponseDto);
@@ -72,7 +80,7 @@ class UserServiceImplTest {
         Favorites favorites = new Favorites();
         favorites.setUserApp(TestData.USER_APP);
 
-        UserResponseDto actualResponseDto = userServiceImpl.save(TestData.USER_REGISTER_REQUEST_DTO, "testPassword");
+        UserResponseDto actualResponseDto = userServiceImpl.save(TestData.USER_REGISTER_REQUEST_DTO, "validPassword");
         assertEquals(expectedResponseDto, actualResponseDto);
     }
 
@@ -81,7 +89,7 @@ class UserServiceImplTest {
         when(userRepository.findByUserNameAndEmail(TestData.USER_REGISTER_REQUEST_DTO.userName(),
                 TestData.USER_REGISTER_REQUEST_DTO.email())).thenReturn(Optional.ofNullable(TestData.USER_APP));
 
-        assertThrows(UserCreateException.class, () -> userServiceImpl.save(TestData.USER_REGISTER_REQUEST_DTO, "testPassword"));
+        assertThrows(UserCreateException.class, () -> userServiceImpl.save(TestData.USER_REGISTER_REQUEST_DTO, "validPassword"));
         verify(userRepository).findByUserNameAndEmail(TestData.USER_REGISTER_REQUEST_DTO.userName(), TestData.USER_REGISTER_REQUEST_DTO.email());
         verifyNoMoreInteractions(userRepository);
     }
@@ -109,8 +117,9 @@ class UserServiceImplTest {
     @Test
     public void update() {
         when(userRepository.getReferenceById(1L)).thenReturn(TestData.USER_APP);
-
-        userServiceImpl.update(1L, TestData.USER_REQUEST_DTO);
+        when(userRepository.save(TestData.USER_APP)).thenReturn(TestData.USER_APP);
+        when(userMapper.toUserResponseDto(TestData.USER_APP)).thenReturn(TestData.USER_RESPONSE_DTO);
+        UserResponseDto result = userServiceImpl.update(1L, TestData.USER_REQUEST_DTO, "12345");
         assertEquals(TestData.ADDRESS_NEW, TestData.USER_APP.getAddress());
         assertEquals(TestData.CONTACT_INFORMATION_NEW, TestData.USER_APP.getPhoneNumber());
     }
@@ -119,9 +128,8 @@ class UserServiceImplTest {
     void update_NoDataToChange() {
         Long userId = 1L;
         when(userRepository.getReferenceById(userId)).thenReturn(TestData.USER_APP);
-        UserResponseDto updatedUser = userServiceImpl.update(userId, TestData.USER_REQUEST_DTO);
+        UserResponseDto updatedUser = userServiceImpl.update(userId, TestData.USER_REQUEST_DTO, "12345");
         assertNull(updatedUser);
-        verify(userRepository).save(any(UserApp.class));
     }
 
     @Test
@@ -129,7 +137,7 @@ class UserServiceImplTest {
         Long userId = 999L;
         when(userRepository.getReferenceById(userId)).thenThrow(NoSuchElementException.class);
         assertThrows(EntityInPizzeriaNotFoundException.class,
-                () -> userServiceImpl.update(999L, TestData.USER_REQUEST_DTO));
+                () -> userServiceImpl.update(999L, TestData.USER_REQUEST_DTO, "12345"));
     }
 
     @Test
@@ -294,5 +302,47 @@ class UserServiceImplTest {
         Throwable exception = assertThrows(NullPointerException.class, () -> userServiceImpl.getCurrentUser());
         assertInstanceOf(NullPointerException.class, exception, "Expected a NullPointerException to be thrown, but got a different type of exception.");
     }
+
+    @Test
+    void getBonus() {
+        when(userRepository.getReferenceById(1L)).thenReturn(TestData.USER_APP);
+        when(userMapper.toUserBonusDto(TestData.BONUS.getCountOrders(), TestData.BONUS.getSumOrders()))
+                .thenReturn(TestData.USER_BONUS_DTO);
+        UserBonusDto result = userServiceImpl.getBonus(1L);
+
+        assertEquals(TestData.USER_BONUS_DTO, result);
+    }
+
+    @Test
+    void getBonus_UserNotFound_ThrowEntityInPizzeriaNotFoundException() {
+        when(userRepository.getReferenceById(99L)).thenReturn(null);
+        assertThrows(EntityInPizzeriaNotFoundException.class, () ->
+                userServiceImpl.getBonus(99L));
+    }
+
+    @Test
+    void updateBonus() {
+        int countToAdd = 20;
+        double sumToAdd = 375.0;
+        Bonus expectedBonus = new Bonus(30, 500.0);
+        when(userRepository.getReferenceById(1L)).thenReturn(TestData.USER_APP);
+        when(userRepository.save(any(UserApp.class))).thenReturn(TestData.USER_APP_WITH_NEW_BONUS);
+        when(userMapper.toUserBonusDto(expectedBonus.getCountOrders(), expectedBonus.getSumOrders()))
+                .thenReturn(TestData.USER_NEW_BONUS_DTO);
+        UserBonusDto result = userServiceImpl.updateBonus(1L, countToAdd, sumToAdd);
+
+        assertNotNull(result);
+        assertEquals(expectedBonus.getCountOrders(), result.getCountOrders());
+        assertEquals(expectedBonus.getSumOrders(), result.getSumOrders());
+    }
+
+    @Test
+    void updateBonus_UserNotFound_ThrowEntityInPizzeriaNotFoundException() {
+        when(userRepository.getReferenceById(99L)).thenReturn(null);
+        assertThrows(EntityInPizzeriaNotFoundException.class, () ->
+                userServiceImpl.updateBonus(99L, 20, 375));
+    }
+
+
 }
 

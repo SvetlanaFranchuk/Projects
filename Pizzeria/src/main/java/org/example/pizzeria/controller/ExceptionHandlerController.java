@@ -2,7 +2,6 @@ package org.example.pizzeria.controller;
 
 import org.example.pizzeria.dto.ErrorResponseDto;
 import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
-import org.example.pizzeria.exception.ErrorMessage;
 import org.example.pizzeria.exception.InvalidIDException;
 import org.example.pizzeria.exception.NotCorrectArgumentException;
 import org.example.pizzeria.exception.order.InvalidOrderStatusException;
@@ -14,7 +13,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
@@ -98,6 +96,7 @@ public class ExceptionHandlerController {
     public ResponseEntity<ErrorResponseDto> handleStatusAlreadyExistsException(StatusAlreadyExistsException ex) {
         return ResponseEntity.badRequest().body(new ErrorResponseDto(ex.getMessage()));
     }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
