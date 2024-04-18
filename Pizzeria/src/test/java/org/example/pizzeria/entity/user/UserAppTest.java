@@ -5,9 +5,6 @@ import org.example.pizzeria.entity.order.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserAppTest {
@@ -38,8 +35,8 @@ class UserAppTest {
         userApp.addReview(review);
         userApp.removeReview(review);
         assertEquals(0, userApp.getReviews().size());
-        assertTrue(!userApp.getReviews().contains(review));
-        assertEquals(null, review.getUserApp());
+        assertFalse(userApp.getReviews().contains(review));
+        assertNull(review.getUserApp());
     }
 
     @Test
@@ -55,7 +52,7 @@ class UserAppTest {
         userApp.addOrder(order);
         userApp.removeOrder(order);
         assertEquals(0, userApp.getOrders().size());
-        assertTrue(!userApp.getOrders().contains(order));
-        assertEquals(null, order.getUserApp());
+        assertFalse(userApp.getOrders().contains(order));
+        assertNull(order.getUserApp());
     }
 }

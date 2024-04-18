@@ -1,6 +1,6 @@
 package org.example.pizzeria.service.auth;
 
-import lombok.RequiredArgsConstructor;
+import org.example.pizzeria.dto.user.UserRequestDto;
 import org.example.pizzeria.dto.user.UserResponseDto;
 import org.example.pizzeria.dto.user.auth.JwtAuthenticationResponse;
 import org.example.pizzeria.dto.user.auth.UserLoginFormRequestDto;
@@ -11,7 +11,6 @@ import org.example.pizzeria.exception.user.UserCreateException;
 import org.example.pizzeria.mapper.user.UserMapper;
 import org.example.pizzeria.repository.user.UserRepository;
 import org.example.pizzeria.service.user.UserServiceImpl;
-import org.springdoc.api.ErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,21 +23,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthenticationService {
     private final UserServiceImpl userService;
     private final JwtService jwtService;
-    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
-   @Autowired
-   public AuthenticationService(UserServiceImpl userService, JwtService jwtService, PasswordEncoder passwordEncoder,
-                                AuthenticationManager authenticationManager, UserRepository userRepository,
-                                UserMapper userMapper) {
+    @Autowired
+    public AuthenticationService(UserServiceImpl userService, JwtService jwtService,
+                                 AuthenticationManager authenticationManager, UserRepository userRepository,
+                                 UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.jwtService = jwtService;
-        this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -50,22 +49,32 @@ public class AuthenticationService {
     @Transactional
     public JwtAuthenticationResponse registration(UserRegisterRequestDto request) {
         try {
-            String encodedPassword = passwordEncoder.encode(request.password());
-            UserResponseDto userResponseDto = userService.save(request, encodedPassword);
+            UserResponseDto userResponseDto = userService.save(request, encodePassword(request.password()));
             var user = userRepository.getReferenceById(userResponseDto.getId());
             var jwt = jwtService.generateToken(user);
             return new JwtAuthenticationResponse(jwt, userMapper.toUserResponseDto(user), user.getRole());
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             throw new UserCreateException("Failed to register user");
         }
-       }
+    }
+
+    /**
+     * Update user
+     *
+     * @param userRequestDto data of user
+     */
+    @Transactional
+    public UserResponseDto update(Long id, UserRequestDto userRequestDto) {
+        return userService.update(id, userRequestDto, encodePassword(userRequestDto.password()));
+    }
+
+
     /**
      * Authenticate user
      *
      * @param request data of user
      * @return token
-     *
-     * */
+     */
     public JwtAuthenticationResponse authentication(UserLoginFormRequestDto request) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -81,5 +90,9 @@ public class AuthenticationService {
         } catch (AuthenticationException e) {
             throw new UnauthorizedException("Authentication failed");
         }
+    }
+
+    private String encodePassword(String password) {
+        return passwordEncoder.encode(password);
     }
 }

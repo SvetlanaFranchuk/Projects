@@ -8,8 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface FavoritesRepository extends JpaRepository<Favorites, Long>{
+public interface FavoritesRepository extends JpaRepository<Favorites, Long> {
     Optional<Favorites> findByUserApp(UserApp userApp);
+
     Optional<Favorites> findByUserApp_Id(Long id);
 
 }

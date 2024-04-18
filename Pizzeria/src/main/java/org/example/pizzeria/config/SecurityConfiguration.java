@@ -32,7 +32,7 @@ public class SecurityConfiguration {
 
     @Autowired
     public SecurityConfiguration(JwtAuthenticationFilter jwtAuthenticationFilter, UserServiceImpl userService
-            ) {
+    ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.userService = userService;
     }
@@ -54,7 +54,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/*").permitAll()
                         .requestMatchers("/order/**").hasAnyRole("ADMIN", "CLIENT")
                         .anyRequest().authenticated()
-                        )
+                )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

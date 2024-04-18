@@ -2,6 +2,7 @@ package org.example.pizzeria;
 
 import org.example.pizzeria.dto.benefits.ReviewRequestDto;
 import org.example.pizzeria.dto.benefits.ReviewResponseDto;
+import org.example.pizzeria.dto.order.OrderDetailsResponseDto;
 import org.example.pizzeria.dto.order.OrderRequestDto;
 import org.example.pizzeria.dto.order.OrderResponseDto;
 import org.example.pizzeria.dto.product.dough.DoughCreateRequestDto;
@@ -141,15 +142,19 @@ public class TestData {
             TypeBySize.MEDIUM, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList,
             (0.2 + 0.4 + 0.23) * 1.3, 377, true);
 
-    public static final Order ORDER = new Order(1L,  null, null, null, 0.00,
-            StatusOrder.NEW, DELIVERY_ADDRESS, null,USER_APP);
+    public static final Order ORDER = new Order(1L, null, null, null, 0.00,
+            StatusOrder.NEW, DELIVERY_ADDRESS, null, USER_APP);
     public static final double EXPECTED_SUM = (0.2 + 0.4 + 0.23) * 1.3 * 2;
     public static final LocalDateTime NOW = LocalDateTime.now();
     public static final LocalDateTime EXPECTED_DATE_TIME = NOW.plusHours(1);
-    public static final Map<PizzaResponseDto, Integer> PIZZA_TO_COUNT = new HashMap<>();
+    public static final Map<Long, Integer> PIZZA_TO_COUNT = new HashMap<Long, Integer>();
+
     static {
-        PIZZA_TO_COUNT.put(TestData.PIZZA_RESPONSE_DTO, 2);
+        PIZZA_TO_COUNT.put(TestData.PIZZA_RESPONSE_DTO.getId(), 2);
     }
+
+    public static final OrderDetailsResponseDto ORDER_DETAILS_RESPONSE_DTO = new OrderDetailsResponseDto(1L, 2);
+
     public static final OrderResponseDto ORDER_RESPONSE_DTO = new OrderResponseDto(1L,
             TestData.DELIVERY_ADDRESS.getCity(),
             TestData.DELIVERY_ADDRESS.getStreetName(),
@@ -160,10 +165,14 @@ public class TestData {
             StatusOrder.NEW,
             null,
             EXPECTED_DATE_TIME,
-            PIZZA_TO_COUNT,
+            List.of(ORDER_DETAILS_RESPONSE_DTO),
             USER_APP.getId());
     public static final Map<Long, Integer> PIZZA_ID_TO_COUNT = new HashMap<>();
-    static{ PIZZA_ID_TO_COUNT.put(1L, 2);}
+
+    static {
+        PIZZA_ID_TO_COUNT.put(1L, 2);
+    }
+
     public static final OrderRequestDto ORDER_REQUEST_DTO = new OrderRequestDto(TestData.EXPECTED_DATE_TIME,
             TestData.DELIVERY_ADDRESS_NEW.getCity(),
             TestData.DELIVERY_ADDRESS_NEW.getStreetName(),
@@ -203,14 +212,14 @@ public class TestData {
             "Description for pizza Carbonara", Styles.CLASSIC_ITALIAN, ToppingsFillings.CHEESE,
             TypeBySize.LARGE, DOUGH_RESPONSE_CLIENT_DTO, ingredientResponseClientBasicDtoList,
             (0.2 + 0.4 + 0.23) * 1.7, 493, true);
-    public static final Order ORDER_PAID = new Order(1L,  NOW, null, null, EXPECTED_SUM,
-            StatusOrder.PAID, DELIVERY_ADDRESS, ORDER_DETAILS,USER_APP);
-    public static final Order ORDER_PAID_1 = new Order(1L,  NOW, null, null, EXPECTED_SUM,
-            StatusOrder.PAID, DELIVERY_ADDRESS, ORDER_DETAILS_1,USER_APP);
+    public static final Order ORDER_PAID = new Order(1L, NOW, null, null, EXPECTED_SUM,
+            StatusOrder.PAID, DELIVERY_ADDRESS, ORDER_DETAILS, USER_APP);
+    public static final Order ORDER_PAID_1 = new Order(1L, NOW, null, null, EXPECTED_SUM,
+            StatusOrder.PAID, DELIVERY_ADDRESS, ORDER_DETAILS_1, USER_APP);
 
     public static final Favorites FAVORITES = new Favorites(1L, List.of(PIZZA, PIZZA_2), USER_APP);
 
-    public static final UserRequestDto USER_REQUEST_DTO = new UserRequestDto("Qwerty", "iv.admin@pizzeria.com", LocalDate.of(2000, 1, 15),
+    public static final UserRequestDto USER_REQUEST_DTO = new UserRequestDto("12345", "iv.admin@pizzeria.com", LocalDate.of(2000, 1, 15),
             "", "test", "10", "", "+480246562332");
     public static final UserResponseDto USER_RESPONSE_DTO = new UserResponseDto(1L, "IvanAdmin",
             "iv.admin@pizzeria.com", LocalDate.of(2000, 1, 15), ADDRESS,
@@ -221,16 +230,12 @@ public class TestData {
     public static final JwtAuthenticationResponse JWT_AUTHENTICATION_RESPONSE = new JwtAuthenticationResponse("d5679ab7-260a-42a3-87ab-49c72b3d7407",
             USER_RESPONSE_DTO, Role.ROLE_ADMIN);
     public static final UserRegisterRequestDto USER_REGISTER_REQUEST_DTO = new UserRegisterRequestDto("IvanAdmin", "validPassword",
-            "iv.admin@pizzeria.com", LocalDate.of(2000, 1, 15), "","","","",
+            "iv.admin@pizzeria.com", LocalDate.of(2000, 1, 15), "", "", "", "",
             "490246562332");
     public static final UserLoginFormRequestDto USER_LOGIN_FORM_REQUEST_DTO = new UserLoginFormRequestDto("IvanAdmin", "validPassword");
-    public static final UserResponseDto USER_RESPONSE_DTO_2 = new UserResponseDto(2L, "TestClient",
-            "clientTest@pizzeria.com", LocalDate.of(2001, 10, 15), ADDRESS,
-            CONTACT_INFORMATION);
     public static final UserBlockedResponseDto USER_BLOCKED_RESPONSE_DTO = new UserBlockedResponseDto(2L,
             "TestClient", true, LocalDateTime.now());
-    public static final ReviewRequestDto REVIEW_REQUEST_DTO = new ReviewRequestDto( "Good pizza", 10);
-    public static final ReviewRequestDto REVIEW_REQUEST_DTO_3 = new ReviewRequestDto("Super", 10);
+    public static final ReviewRequestDto REVIEW_REQUEST_DTO = new ReviewRequestDto("Good pizza", 10);
     public static final ReviewResponseDto REVIEW_RESPONSE_DTO = new ReviewResponseDto("Good pizza",
             10, "IvanAdmin", LocalDateTime.now());
     public static final ReviewResponseDto REVIEW_RESPONSE_DTO_NEW = new ReviewResponseDto("Super",

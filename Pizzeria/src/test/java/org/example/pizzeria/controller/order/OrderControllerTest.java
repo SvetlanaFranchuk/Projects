@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.pizzeria.TestData;
 import org.example.pizzeria.controller.ExceptionHandlerController;
 import org.example.pizzeria.controller.OrderController;
-import org.example.pizzeria.dto.order.OrderRequestDto;
 import org.example.pizzeria.dto.order.OrderResponseDto;
 import org.example.pizzeria.dto.order.OrderStatusResponseDto;
 import org.example.pizzeria.entity.order.StatusOrder;
@@ -19,25 +18,20 @@ import org.example.pizzeria.service.order.OrderServiceImpl;
 import org.example.pizzeria.service.user.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -59,6 +53,7 @@ class OrderControllerTest {
     @MockBean
     private OrderRepository orderRepository;
     private String jwtToken;
+
     @BeforeEach
     void setUp() {
         Mockito.reset(orderRepository);
@@ -71,8 +66,8 @@ class OrderControllerTest {
 
     @Test
     void updateOrderAndOrderDetails() throws Exception {
-       Long orderId = 1L;
-       when(orderService.updateOrderAndOrderDetails(orderId, TestData.ORDER_REQUEST_DTO)).thenReturn(TestData.ORDER_RESPONSE_DTO);
+        Long orderId = 1L;
+        when(orderService.updateOrderAndOrderDetails(orderId, TestData.ORDER_REQUEST_DTO)).thenReturn(TestData.ORDER_RESPONSE_DTO);
 
         mockMvc.perform(patch("/order/updateOrderAndOrderDetails/{id}", orderId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -157,6 +152,7 @@ class OrderControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isNotFound());
     }
+
     @Test
     void getAllOrdersByUser() throws Exception {
         Long userId = 1L;
@@ -237,6 +233,7 @@ class OrderControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isNotFound());
     }
+
     @Test
     void getOrdersByPeriod() throws Exception {
         LocalDate startDate = LocalDate.now().minusDays(7);
@@ -255,6 +252,7 @@ class OrderControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.size()").value(orderStatusResponseDtos.size()));
     }
+
     @Test
     void getOrdersByPeriod_InvalidDate() throws Exception {
         LocalDate startDate = LocalDate.now().plusDays(1);

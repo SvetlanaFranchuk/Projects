@@ -6,9 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Map;
 
 @Schema(description = "Create new/update record in the basket")
-public record BasketRequestDto (
-    @Schema(description = "List of pizzas. First parameter is pizza id, second - count pizzas ")
-    Map<Long, Integer> pizzaToCount,
-    @Schema(description = "user ID")
-    @NotNull Long userId){
+public record BasketRequestDto(
+        @Schema(description = "List of pizzas. First parameter is pizza id, second - count pizzas ")
+        Map<Long, Integer> pizzaToCount,
+        @Schema(description = "user ID")
+        @NotNull Long userId) {
 }

@@ -1,0 +1,13 @@
+.formContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 15px;
+}
+Label{
+    color: black;
+}
+.formLabel{
+    color: white;
+}

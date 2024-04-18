@@ -10,10 +10,10 @@ import lombok.Data;
 @AllArgsConstructor
 @Schema(description = "Form for adding pizza to basket")
 public class PizzaToBasketRequestDto {
-   @Schema(description = "pizza id")
-   @NotNull
-   private Long pizzaId;
-   @Schema(description = "count pizza")
-   @Positive
-   int countPizza;
+    @Schema(description = "pizza id")
+    @NotNull
+    private Long pizzaId;
+    @Schema(description = "count pizza")
+    @Positive
+    int countPizza;
 }

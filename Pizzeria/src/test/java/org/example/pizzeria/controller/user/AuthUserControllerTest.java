@@ -1,14 +1,12 @@
 package org.example.pizzeria.controller.user;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.pizzeria.TestData;
 import org.example.pizzeria.controller.ExceptionHandlerController;
-import org.example.pizzeria.dto.user.UserResponseDto;
-import org.example.pizzeria.dto.user.auth.JwtAuthenticationResponse;
 import org.example.pizzeria.dto.user.auth.UserLoginFormRequestDto;
-import org.example.pizzeria.dto.user.auth.UserRegisterRequestDto;
 import org.example.pizzeria.entity.user.Role;
+import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
+import org.example.pizzeria.exception.ErrorMessage;
 import org.example.pizzeria.exception.user.UnauthorizedException;
 import org.example.pizzeria.exception.user.UserCreateException;
 import org.example.pizzeria.filter.JwtAuthenticationFilter;
@@ -29,12 +27,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDate;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthUserController.class)
 @ContextConfiguration(classes = {JwtAuthenticationFilter.class, JwtService.class})
@@ -46,6 +44,8 @@ class AuthUserControllerTest {
     @MockBean
     private AuthenticationService authenticationService;
     @MockBean
+    private JwtService jwtService;
+    @MockBean
     private UserServiceImpl userService;
     @MockBean
     private PasswordEncoder passwordEncoder;
@@ -53,8 +53,6 @@ class AuthUserControllerTest {
     private UserRepository userRepository;
     @MockBean
     private UserMapper userMapper;
-    @MockBean
-    private JwtService jwtService;
 
     private String jwtToken;
 
@@ -66,6 +64,7 @@ class AuthUserControllerTest {
         jwtToken = "generated_jwt_token";
         when(jwtService.generateToken(any())).thenReturn(jwtToken);
     }
+
     @Test
     void registration() throws Exception {
         doReturn(TestData.JWT_AUTHENTICATION_RESPONSE).when(authenticationService).registration(TestData.USER_REGISTER_REQUEST_DTO);
@@ -110,5 +109,38 @@ class AuthUserControllerTest {
                         .content(objectMapper.writeValueAsString(new UserLoginFormRequestDto("invalidUsername", "invalidPassword")))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void updateUser() throws Exception {
+        when(authenticationService.update(1L, TestData.USER_REQUEST_DTO)).thenReturn(TestData.USER_RESPONSE_DTO);
+
+        mockMvc.perform(put("/auth/update/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(TestData.USER_REQUEST_DTO))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userName").value("IvanAdmin"))
+                .andExpect(jsonPath("$.email").value("iv.admin@pizzeria.com"));
+    }
+
+    @Test
+    public void updateUser_UserNotFound_TrowEntityInPizzeriaNotFoundException() throws Exception {
+        when(authenticationService.update(1L, TestData.USER_REQUEST_DTO)).thenThrow(new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND));
+
+        mockMvc.perform(put("/auth/update/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(TestData.USER_REQUEST_DTO))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void updateUser_NothingToUpdate() throws Exception {
+        mockMvc.perform(put("/auth/update/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken))
+                .andExpect(status().isBadRequest());
     }
 }

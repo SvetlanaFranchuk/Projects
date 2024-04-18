@@ -17,6 +17,7 @@
     <properties>
         <java.version>21</java.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+        <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -106,6 +107,12 @@
             <artifactId>lombok-mapstruct-binding</artifactId>
             <version>${lombok-mapstruct-binding.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>org.jacoco.agent</artifactId>
+            <version>0.8.12</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -144,6 +151,37 @@
                 <version>3.2.4</version>
                 <configuration>
                     <mainClass>org.example.pizzeria.PizzeriaApplication</mainClass>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>jacoco-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-site</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>org/example/pizzeria/mapper/**/*</exclude>
+                        <exclude>org/example/pizzeria/dto/**/*</exclude>
+                        <exclude>org/example/pizzeria/filter/**/*</exclude>
+                        <exclude>org/example/pizzeria/config/**/*</exclude>
+                        <exclude>org/example/pizzeria/entity/**/*</exclude>
+                        <exclude>org/example/pizzeria/exception/**/*</exclude>
+                    </excludes>
+                    <destFile>${project.build.directory}/jacoco.exec</destFile>
                 </configuration>
             </plugin>
         </plugins>

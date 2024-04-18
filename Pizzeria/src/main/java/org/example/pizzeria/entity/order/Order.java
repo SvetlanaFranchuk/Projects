@@ -2,15 +2,10 @@ package org.example.pizzeria.entity.order;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.example.pizzeria.entity.benefits.Review;
 import org.example.pizzeria.entity.user.UserApp;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -37,7 +32,7 @@ public class Order {
     @Column(name = "type_bonus")
     private TypeBonus typeBonus;
 
-    @Column (name = "sum")
+    @Column(name = "sum")
     private double sum;
 
     @Enumerated(EnumType.STRING)

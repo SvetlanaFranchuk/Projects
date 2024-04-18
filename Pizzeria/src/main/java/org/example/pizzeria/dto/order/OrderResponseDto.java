@@ -2,11 +2,11 @@ package org.example.pizzeria.dto.order;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
-import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
 import org.example.pizzeria.entity.order.StatusOrder;
 import org.example.pizzeria.entity.order.TypeBonus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Schema(description = "Form for reading order")
@@ -42,7 +42,7 @@ public record OrderResponseDto(
         LocalDateTime orderDateTime,
         @Schema(description = "List pizzas")
         @NotNull
-        Map<PizzaResponseDto, Integer> pizzaToCount,
+        List<OrderDetailsResponseDto> pizzaIdToCount,
         @Schema(description = "User id")
         @NotNull
         Long userAppId

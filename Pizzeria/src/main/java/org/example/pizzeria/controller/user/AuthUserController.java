@@ -1,8 +1,13 @@
 package org.example.pizzeria.controller.user;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import org.example.pizzeria.dto.user.UserRequestDto;
+import org.example.pizzeria.dto.user.UserResponseDto;
 import org.example.pizzeria.dto.user.auth.JwtAuthenticationResponse;
 import org.example.pizzeria.dto.user.auth.UserLoginFormRequestDto;
 import org.example.pizzeria.dto.user.auth.UserRegisterRequestDto;
@@ -43,4 +48,15 @@ public class AuthUserController {
         return authenticationService.authentication(request);
     }
 
+
+    @Operation(summary = "Updating information about user")
+    @PutMapping("/update/{id}")
+    public ResponseEntity<UserResponseDto> updateUser(@Parameter(description = "User id")
+                                                      @PathVariable("id")
+                                                      @Positive
+                                                      @NotNull
+                                                      Long id,
+                                                      @RequestBody @Valid UserRequestDto userRequestDto) {
+        return ResponseEntity.ok(authenticationService.update(id, userRequestDto));
+    }
 }

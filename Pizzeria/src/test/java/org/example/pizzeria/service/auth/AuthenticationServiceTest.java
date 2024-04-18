@@ -28,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -60,15 +61,15 @@ class AuthenticationServiceTest {
     @Transactional
     void registration() {
         String password = "validPassword";
-        String Jwt = "d5679ab7-260a-42a3-87ab-49c72b3d7407";
+        String jwt = "d5679ab7-260a-42a3-87ab-49c72b3d7407";
 
         when(passwordEncoder.encode(TestData.USER_REGISTER_REQUEST_DTO.password())).thenReturn(password);
         when(userService.save(TestData.USER_REGISTER_REQUEST_DTO, password)).thenReturn(TestData.USER_RESPONSE_DTO);
         when(userRepository.getReferenceById(1L)).thenReturn(TestData.USER_APP);
-        when(jwtService.generateToken(TestData.USER_APP)).thenReturn(Jwt);
+        when(jwtService.generateToken(TestData.USER_APP)).thenReturn(jwt);
         when(userMapper.toUserResponseDto(TestData.USER_APP)).thenReturn(TestData.USER_RESPONSE_DTO);
         JwtAuthenticationResponse response = authenticationService.registration(TestData.USER_REGISTER_REQUEST_DTO);
-        Assertions.assertEquals(TestData.JWT_AUTHENTICATION_RESPONSE, response);
+        assertEquals(TestData.JWT_AUTHENTICATION_RESPONSE, response);
     }
 
     @Test
@@ -76,10 +77,7 @@ class AuthenticationServiceTest {
     public void registration_InvalidUserData_ThenExceptionThrown() {
         UserApp existingUser = TestData.USER_APP;
         userRepository.save(existingUser);
-
         UserRegisterRequestDto request = TestData.USER_REGISTER_REQUEST_DTO;
-        String password = "validPassword";
-        when(passwordEncoder.encode(TestData.USER_REGISTER_REQUEST_DTO.password())).thenReturn(password);
         Assertions.assertThrows(UserCreateException.class, () -> authenticationService.registration(request));
     }
 
@@ -101,14 +99,15 @@ class AuthenticationServiceTest {
         when(userMapper.toUserResponseDto(user)).thenReturn(TestData.USER_RESPONSE_DTO);
         JwtAuthenticationResponse response = authenticationService.authentication(TestData.USER_LOGIN_FORM_REQUEST_DTO);
         Assertions.assertNotNull(response);
-        Assertions.assertEquals(token, response.getToken());
+        assertEquals(token, response.getToken());
     }
 
     @Test
     public void authentication_InvalidCredentials_ThenExceptionThrown() {
         Mockito.when(authenticationManager.authenticate(any()))
                 .thenThrow(UnauthorizedException.class);
-
         Assertions.assertThrows(UnauthorizedException.class, () -> authenticationService.authentication(TestData.USER_LOGIN_FORM_REQUEST_DTO));
     }
+
+
 }

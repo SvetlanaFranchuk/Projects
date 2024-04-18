@@ -9,15 +9,25 @@ import java.util.List;
 
 public interface OrderService {
     BasketResponseDto addPizzaToBasket(Long userId, PizzaToBasketRequestDto pizzaToBasketRequestDto);
+
     BasketResponseDto changePizzasInBasket(BasketRequestDto request);
+
     BasketResponseDto getBasketByUser(Long userId);
+
     OrderResponseDto moveDetailsBasketToOrder(Long idBasket);
+
     OrderResponseDto updateOrderAndOrderDetails(Long id, OrderRequestDto orderRequestDto);
+
     void deleteOrder(Long id);
+
     OrderStatusResponseDto updateStatusOrder(Long orderId, StatusOrder statusOrder);
+
     List<OrderResponseDto> getAllOrdersByUser(Long userId);
+
     OrderResponseDto getOrderByUser(Long orderId);
+
     List<OrderStatusResponseDto> getOrderByStatus(StatusOrder statusOrder);
+
     List<OrderStatusResponseDto> getAllOrdersByPeriod(LocalDate startDate, LocalDate endDate);
 
 }

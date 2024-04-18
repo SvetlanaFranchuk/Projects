@@ -1,7 +1,5 @@
 package org.example.pizzeria.service.user;
 
-import org.example.pizzeria.dto.benefits.ReviewRequestDto;
-import org.example.pizzeria.dto.benefits.ReviewResponseDto;
 import org.example.pizzeria.dto.user.*;
 import org.example.pizzeria.dto.user.auth.UserRegisterRequestDto;
 import org.example.pizzeria.entity.benefits.Bonus;
@@ -14,12 +12,8 @@ import org.example.pizzeria.entity.user.Role;
 import org.example.pizzeria.entity.user.UserApp;
 import org.example.pizzeria.exception.EntityInPizzeriaNotFoundException;
 import org.example.pizzeria.exception.ErrorMessage;
-import org.example.pizzeria.exception.InvalidIDException;
 import org.example.pizzeria.exception.user.StatusAlreadyExistsException;
-import org.example.pizzeria.exception.user.UpdateReviewException;
-import org.example.pizzeria.exception.user.UserBlockedException;
 import org.example.pizzeria.exception.user.UserCreateException;
-import org.example.pizzeria.mapper.benefits.ReviewMapper;
 import org.example.pizzeria.mapper.user.UserMapper;
 import org.example.pizzeria.repository.benefits.FavoritesRepository;
 import org.example.pizzeria.repository.benefits.ReviewRepository;
@@ -32,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -46,18 +39,15 @@ public class UserServiceImpl implements UserService {
     public BasketRepository basketRepository;
     public FavoritesRepository favoritesRepository;
     public ReviewRepository reviewRepository;
-
     public UserMapper userMapper;
-    public ReviewMapper reviewMapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BasketRepository basketRepository, FavoritesRepository favoritesRepository, ReviewRepository reviewRepository, UserMapper userMapper, ReviewMapper reviewMapper) {
+    public UserServiceImpl(UserRepository userRepository, BasketRepository basketRepository, FavoritesRepository favoritesRepository, ReviewRepository reviewRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.basketRepository = basketRepository;
         this.favoritesRepository = favoritesRepository;
         this.reviewRepository = reviewRepository;
         this.userMapper = userMapper;
-        this.reviewMapper = reviewMapper;
     }
 
     @Override
@@ -84,10 +74,11 @@ public class UserServiceImpl implements UserService {
             throw new UserCreateException(ErrorMessage.USER_ALREADY_EXIST);
         }
     }
+
     @Override
     public UserApp getByUserName(String userName) {
         return userRepository.findByUserName(userName)
-                .orElseThrow(()-> new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND));
+                .orElseThrow(() -> new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND));
     }
 
     @Override
@@ -112,10 +103,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserResponseDto update(Long id, UserRequestDto userRequestDto) {
+    public UserResponseDto update(Long id, UserRequestDto userRequestDto, String password) {
         try {
             UserApp userApp = userRepository.getReferenceById(id);
-            setDifferences(userApp, userRequestDto);
+            setDifferences(userApp, userRequestDto, password);
             userApp = userRepository.save(userApp);
             return userMapper.toUserResponseDto(userApp);
         } catch (RuntimeException e) {
@@ -123,12 +114,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void setDifferences(UserApp userApp, UserRequestDto userRequestDto) {
+    private void setDifferences(UserApp userApp, UserRequestDto userRequestDto, String password) {
         Address address = new Address(userRequestDto.addressCity(), userRequestDto.addressStreetName(),
                 userRequestDto.addressHouseNumber(), userRequestDto.addressApartmentNumber());
         ContactInformation phoneNumber = new ContactInformation(userRequestDto.phoneNumber());
-        userApp.setPassword(Objects.equals(userApp.getPassword(), userRequestDto.password()) ?
-                userApp.getPassword() : userRequestDto.password());
+        userApp.setPassword(Objects.equals(userApp.getPassword(), password) ?
+                userApp.getPassword() : password);
         userApp.setEmail(Objects.equals(userApp.getEmail(), userRequestDto.email()) ?
                 userApp.getEmail() : userRequestDto.email());
         userApp.setBirthDate(userApp.getBirthDate().equals(userRequestDto.birthDate()) ?
@@ -183,7 +174,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserBonusDto getUserBonus(Long userId) {
+    public UserBonusDto getBonus(Long userId) {
         try {
             UserApp userApp = userRepository.getReferenceById(userId);
             return userMapper.toUserBonusDto(userApp.getBonus().getCountOrders(),
@@ -195,7 +186,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserBonusDto updateUserBonus(Long userId, int count, double sum) {
+    public UserBonusDto updateBonus(Long userId, int count, double sum) {
         try {
             UserApp userApp = userRepository.getReferenceById(userId);
             Bonus newBonus = userApp.getBonus();
@@ -210,65 +201,4 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    @Transactional
-    public ReviewResponseDto addReview(ReviewRequestDto reviewRequestDto, Long userId) {
-        UserApp userApp = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND));
-        if (userApp.isBlocked())
-            throw new UserBlockedException(ErrorMessage.USER_BLOCKED);
-        Review review = reviewMapper.toReview(reviewRequestDto.comment(), reviewRequestDto.grade());
-        review.setUserApp(userApp);
-        review = reviewRepository.save(review);
-        userApp.addReview(review);
-        userRepository.save(userApp);
-        return reviewMapper.toReviewResponseDto(review);
-    }
-
-    @Override
-    @Transactional
-    public ReviewResponseDto updateReview(Long reviewId, ReviewRequestDto reviewRequestDto, Long userId) {
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new EntityInPizzeriaNotFoundException("Review", ErrorMessage.ENTITY_NOT_FOUND));
-        UserApp userApp = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityInPizzeriaNotFoundException("User", ErrorMessage.ENTITY_NOT_FOUND));
-        if (userApp.isBlocked()) {
-            throw new UserBlockedException(ErrorMessage.USER_BLOCKED);
-        }
-        if (!Objects.equals(review.getUserApp().getId(), userApp.getId())) {
-            throw new UpdateReviewException(ErrorMessage.CANT_REVIEW_UPDATED);
-        }
-        review.setComment(reviewRequestDto.comment());
-        review.setGrade(reviewRequestDto.grade());
-        return reviewMapper.toReviewResponseDto(reviewRepository.save(review));
-    }
-
-    @Override
-    @Transactional
-    public void deleteReview(Long id) {
-        Optional<Review> review = reviewRepository.findById(id);
-        if (review.isPresent()) {
-            reviewRepository.delete(review.get());
-        } else {
-            throw new InvalidIDException(ErrorMessage.INVALID_ID);
-        }
-    }
-
-    @Override
-    public List<ReviewResponseDto> getAllReview() {
-        return reviewRepository.findAll().stream()
-                .map(r -> reviewMapper.toReviewResponseDto(r)).toList();
-    }
-
-    @Override
-    public List<ReviewResponseDto> getAllReviewByUser(Long userId) {
-        return reviewRepository.findAllByUserApp_Id(userId).stream()
-                .map(r -> reviewMapper.toReviewResponseDto(r)).toList();
-    }
-
-    @Override
-    public List<ReviewResponseDto> getAllReviewByPeriod(LocalDateTime startDate, LocalDateTime endDate) {
-        return reviewRepository.findAllByReviewDateBetween(startDate, endDate).stream()
-                .map(r -> reviewMapper.toReviewResponseDto(r)).toList();
-    }
 }

@@ -17,12 +17,12 @@ import java.time.LocalDateTime;
 @Schema(description = "Form for blocking user")
 public class UserBlockedResponseDto {
     @Schema(description = "user id")
-    private  @PositiveOrZero Long id;
+    private @PositiveOrZero Long id;
     @Schema(description = "user name")
-    private  @Size(min = 5, max = 25, message = "User name length could be from 5 to 25 symbols") String userName;
+    private @Size(min = 5, max = 25, message = "User name length could be from 5 to 25 symbols") String userName;
     @Schema(description = "is blocked")
     @BooleanFlag
-    private  boolean isBlocked;
+    private boolean isBlocked;
     @Schema(description = "data review")
-    private  @PastOrPresent LocalDateTime reviewDate;
+    private @PastOrPresent LocalDateTime reviewDate;
 }

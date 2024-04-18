@@ -4,12 +4,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.example.pizzeria.dto.product.pizza.PizzaResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
-@Schema (description = "Form for creating/updating order")
+@Schema(description = "Form for creating/updating order")
 public record OrderRequestDto(
         @Schema(description = "Delivery date and time")
         @Future
