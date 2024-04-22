@@ -36,7 +36,7 @@ function IngredientListPage() {
     dispatch(SetGroupIngredient(data.groupIngredient))
     setUpdateNeeded(true);
   };
-  console.log(ingredientList)
+
   const ingredientsLabels = 
     ingredientList &&
         ingredientList.map((item) =>({

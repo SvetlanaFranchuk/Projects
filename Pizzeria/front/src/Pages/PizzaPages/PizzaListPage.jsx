@@ -1,6 +1,5 @@
 import { Collapse } from "antd";
 import {  useSelector } from "react-redux";
-import StandartPizzaItem from "../../Camponents/PizzaItems/StandartPizzaItem";
 import UpdatePizzaForm from "../../Camponents/PizzaForms/UpdatePizzaForm";
 import listStyles from "./pizzalistPage.module.css";
 import PizzaGetFilter from "../../Camponents/PizzaForms/PizzaGetFilter";
@@ -11,23 +10,7 @@ function PizzaListPage() {
     (state) => state.pizzaReqest.allStandartPizzaDataState
   );
 
-  const pizzaLabels =
-    pizzaList &&
-    pizzaList.map((item) => ({
-      label: <span style={{ color: "white" }}>{item.title}</span>,
-      key: item.id,
-      children: (
-        <StandartPizzaItem
-          amount={item.amount}
-          ingredientsList={item.ingredientsList}
-          nutrition={item.nutrition}
-          size={item.size}
-          styles={item.styles}
-          title={item.title}
-          toppingsFillings={item.toppingsFillings}
-        ></StandartPizzaItem>
-      ),
-    }));
+
   const udatePizzaLabels =
     pizzaList &&
     pizzaList.map((item) => ({

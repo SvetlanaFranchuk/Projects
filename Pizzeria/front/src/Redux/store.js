@@ -6,6 +6,7 @@ import ingredientReducer from '../Redux/Features/AdminReqests/ingredientReqestsS
 import userCommentsReqestSlice from "./Features/userReqests/userCommentsReqestSlice.js";
 import pizzaReqestSlice from "./Features/PizzaReqest/pizzaReqestSlice.js";
 import  getUserDataByBirthDay  from "./Features/userReqests/getUserData.js";
+import orderReqestSlice from "./Features/OrderReqest/orderReqestSlice.js";
 
 export const store = configureStore({
     reducer:{
@@ -16,5 +17,6 @@ export const store = configureStore({
         userComments:userCommentsReqestSlice,
         pizzaReqest:pizzaReqestSlice,
         getUsersDataByBirthday:getUserDataByBirthDay,
+        orderSlice:orderReqestSlice,
     }
 })

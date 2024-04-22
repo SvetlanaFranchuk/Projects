@@ -13,7 +13,7 @@ export const addIngredient = createAsyncThunk(
                 Authorization:`Bearer ${token}`,
               }
             }   
-            const response = await axios.post(`${BASE_URL}product/addIngredient`,data,config)
+            const response = await axios.post(`${BASE_URL}ingredient/add`,data,config)
             return response.data;
             
         }catch(error){
@@ -31,7 +31,7 @@ export const getIngredients = createAsyncThunk(
                 Authorization:`Bearer ${token}`,
               }
             }   
-            const response = await axios.get(`${BASE_URL}product/getAllIngredientByGroup?groupIngredient=${data}`,config)
+            const response = await axios.get(`${BASE_URL}ingredient/getAllByGroup?groupIngredient=${data}`,config)
             return response.data;
             
         }catch(error){
@@ -49,7 +49,7 @@ export const getSauce = createAsyncThunk(
                 Authorization:`Bearer ${token}`,
               }
             }   
-            const response = await axios.get(`${BASE_URL}product/getAllIngredientByGroup?groupIngredient=SAUCE`,config)
+            const response = await axios.get(`${BASE_URL}ingredient/getAllByGroup?groupIngredient=SAUCE`,config)
             
             return response.data;
             
@@ -68,7 +68,7 @@ export const getExtra = createAsyncThunk(
                 Authorization:`Bearer ${token}`,
               }
             }   
-            const response = await axios.get(`${BASE_URL}product/getAllIngredientByGroup?groupIngredient=EXTRA`,config)
+            const response = await axios.get(`${BASE_URL}ingredient/getAllByGroup?groupIngredient=EXTRA`,config)
            
             return response.data;
             
@@ -87,7 +87,7 @@ export const getBasic = createAsyncThunk(
                 Authorization:`Bearer ${token}`,
               }
             }   
-            const response = await axios.get(`${BASE_URL}product/getAllIngredientByGroup?groupIngredient=BASIC`,config)
+            const response = await axios.get(`${BASE_URL}ingredient/getAllByGroup?groupIngredient=BASIC`,config)
            
             return response.data;
             
@@ -107,7 +107,7 @@ export const updateIngredient = createAsyncThunk(
             Authorization:`Bearer ${token}`,
           }
         }   
-        const response = await axios.put(`${BASE_URL}product/updateIngredient/${id}`, {
+        const response = await axios.put(`${BASE_URL}ingredient/update/${id}`, {
           name,
           weight,
           nutrition,
@@ -131,7 +131,7 @@ export const ingredientDelete = createAsyncThunk(
                 Authorization:`Bearer ${token}`,
               }
             }   
-            const response = await axios.delete(`${BASE_URL}product/deleteIngredient/${id}`,config)
+            const response = await axios.delete(`${BASE_URL}ingredient/delete/${id}`,config)
             return response.data;
         }catch(error){
             throw error;

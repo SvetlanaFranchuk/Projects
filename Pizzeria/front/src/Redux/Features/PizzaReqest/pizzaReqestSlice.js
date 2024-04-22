@@ -13,7 +13,7 @@ export const addPizza = createAsyncThunk(
         }
       }   
       const response = await axios.post(
-        `${BASE_URL}product/addPizza?userId=${id}`,
+        `${BASE_URL}pizza/add?userId=${id}`,
         data,config
       );
       return response.data;
@@ -43,7 +43,7 @@ export const updatePizza = createAsyncThunk(
               }
             }          
           const response = await axios.put(
-            `${BASE_URL}product/updatePizza/${id}`,
+            `${BASE_URL}pizza/update/${id}`,
             {title,
             description,
             styles,
@@ -70,7 +70,7 @@ export const getStandartPizza = createAsyncThunk(
               Authorization:`Bearer ${token}`,
             }
           }
-            const response = await axios.get(`${BASE_URL}product/getAllPizzaStandardRecipe`,config);
+            const response = await axios.get(`${BASE_URL}pizza/getAllPizzaStandardRecipe`,config);
             return response.data;
         }
         catch(error){
@@ -88,7 +88,7 @@ export const getPizzaByTopping = createAsyncThunk(
           Authorization:`Bearer ${token}`,
         }
       }
-      const response = await axios.get(`${BASE_URL}product/getAllPizzaStandardRecipeByTopping?toppingsFillings=${data}`,config)
+      const response = await axios.get(`${BASE_URL}pizza/getAllPizzaStandardRecipeByTopping?toppingsFillings=${data}`,config)
       return response.data;
     }catch(error){
       throw error;
@@ -105,7 +105,7 @@ export const getPizzaByStyles = createAsyncThunk(
               Authorization:`Bearer ${token}`,
             }
           }
-      const response = await axios.get(`${BASE_URL}product/getAllPizzaStandardRecipeByStyles?styles=${data}`,config)
+      const response = await axios.get(`${BASE_URL}pizza/getAllPizzaStandardRecipeByStyles?styles=${data}`,config)
       return response.data;
     }catch(error){
       throw error;
@@ -123,7 +123,7 @@ export const getPizzaByToppingAndStyles = createAsyncThunk(
           Authorization:`Bearer ${token}`,
         }
       }
-      const response = await axios.get(`${BASE_URL}product/getAllPizzaStandardRecipeByToppingByStyles?toppingsFillings=${toppingsFillings}&styles=${styles}`,config)
+      const response = await axios.get(`${BASE_URL}pizza/getAllPizzaStandardRecipeByToppingByStyles?toppingsFillings=${toppingsFillings}&styles=${styles}`,config)
       return response.data;
     }catch(error){
       throw error;
@@ -140,16 +140,37 @@ export const deletePizza = createAsyncThunk(
           Authorization:`Bearer ${token}`,
         }
       }
-      const response = await axios.delete(`${BASE_URL}product/deletePizzaRecipe/${id}`,config)
+      const response = await axios.delete(`${BASE_URL}pizza/deletePizzaRecipe/${id}`,config)
       return response.data;
     }catch(error){
       throw error;
     }
   }
 )
+export const getPizzaDetails = createAsyncThunk(
+  'getPizzaDetails/getPizzaDetails',
+  async(id)=>{
+    try{
+      const token = getTokenFromLocalStorage();
+      const config = {
+        headers:{
+          Authorization:`Bearer ${token}`,
+        }
+      }
+      const response = await axios.get(`${BASE_URL}pizza/getPizza/${id}`,config)
+      return response.data;
+    }catch(error){
+      throw error;
+    }
+  }
+)
+
 const pizzaReqestSlice = createSlice({
   name: "pizzaReqest",
   initialState: {
+    pizzaDetailsState:null,
+    pizzaDetailsLoadState:false,
+    pizzaDetailsErrorState:null,
     addPizzaDataState: null,
     addpizzaLoadState: false,
     addPizzaErrorState: null,
@@ -224,6 +245,19 @@ const pizzaReqestSlice = createSlice({
       .addCase(getPizzaByToppingAndStyles.rejected, (state, action) => {
         state.allStandartPizzaLoadState = false;
         state.allStandartPizzaErrorState = action.payload;
+      })
+      .addCase(getPizzaDetails.pending, (state) => {
+        state.pizzaDetailsLoadState = true;
+        state.pizzaDetailsErrorState = null;
+      })
+      .addCase(getPizzaDetails.fulfilled, (state, action) => {
+        state.pizzaDetailsState = action.payload;
+        state.pizzaDetailsLoadState = false;
+        state.pizzaDetailsErrorState = null;
+      })
+      .addCase(getPizzaDetails.rejected, (state, action) => {
+        state.pizzaDetailsLoadState = false;
+        state.pizzaDetailsErrorState = action.payload;
       })
   },
 });

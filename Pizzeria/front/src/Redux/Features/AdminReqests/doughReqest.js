@@ -13,14 +13,14 @@ export const doughReqest = createAsyncThunk(
                 Authorization:`Bearer ${token}`,
               }
             }   
-            const response = await axios.post(`${BASE_URL}product/addDough`,data,config)
+            const response = await axios.post(`${BASE_URL}dough/add`,data,config)
             return response.data;
             
         }catch(error){
             throw error;
         }
     }
-)
+);
 export const getAllDough = createAsyncThunk(
     'getAllDough/getAllDough',
     async ()=>{
@@ -31,7 +31,7 @@ export const getAllDough = createAsyncThunk(
                 Authorization:`Bearer ${token}`,
               }
             }   
-            const response = await axios.get(`${BASE_URL}product/getAllDoughForAdmin`,config)
+            const response = await axios.get(`${BASE_URL}dough/getAllForAdmin`,config)
       
             return response.data;
             
@@ -39,7 +39,7 @@ export const getAllDough = createAsyncThunk(
             throw error;
         }
     }
-)
+);
 export const updateDough = createAsyncThunk(
     'updateDough/updateDough',
     async ({id,data}) => {
@@ -52,7 +52,7 @@ export const updateDough = createAsyncThunk(
                 Authorization:`Bearer ${token}`,
               }
             }   
-            const response = await axios.patch(`${BASE_URL}product/updateDough/${id}`,{...data,
+            const response = await axios.patch(`${BASE_URL}dough/update/${id}`,{...data,
             smallWeight: parseInt(smallWeight),
             smallNutrition: parseInt(smallNutrition)
         },config);
@@ -62,7 +62,6 @@ export const updateDough = createAsyncThunk(
         }
     }
 );
-
 export const doughDelete = createAsyncThunk(
     'doughDelete/doughDelete',
     async (id)=>{
@@ -73,13 +72,13 @@ export const doughDelete = createAsyncThunk(
                 Authorization:`Bearer ${token}`,
               }
             }        
-            const response = await axios.delete(`${BASE_URL}product/deleteDough/${id}`,config)
+            const response = await axios.delete(`${BASE_URL}dough/delete/${id}`,config)
             return response.data;
         }catch(error){
             throw error;
         }
     }
-)
+);
 const doughReqestSlice = createSlice({
     name:'doughReqest',
     initialState:{

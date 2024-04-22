@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3gvftyn9-7dbc-413a-76c0-30c4ec468ee2
+      author: Svitlana_Franchuk
+      changes:
+        - sql:
+            sql: INSERT INTO reviews (comment, grade, review_date, user_app_id) VALUES ('Great pizza!', 9, '2024-04-18 21:00:00.000', 1);
+        - sql:
+            sql: INSERT INTO reviews (comment, grade, review_date, user_app_id) VALUES ('The service was excellent.', 8, '2024-04-02 13:45:00', 2);
+        - sql:
+            sql: INSERT INTO reviews (comment, grade, review_date, user_app_id) VALUES ('I did not like the taste.', 5, '2024-04-03 14:20:00', 3);
+        - sql:
+            sql: INSERT INTO reviews (comment, grade, review_date, user_app_id) VALUES ('Amazing experience!', 10, '2024-04-04 15:10:00', 4);
+        - sql:
+            sql: INSERT INTO reviews (comment, grade, review_date, user_app_id) VALUES ('Not bad, but could be better.', 7, '2024-04-05 16:00:00', 5);
+        - sql:
+            sql: INSERT INTO reviews (comment, grade, review_date, user_app_id) VALUES ('The pizza was cold.', 4, '2024-04-06 17:30:00', 6);
+        - sql:
+            sql: INSERT INTO reviews (comment, grade, review_date, user_app_id) VALUES ('Friendly staff.', 8, '2024-04-07 18:45:00', 7);
+        - sql:
+            sql: INSERT INTO reviews (comment, grade, review_date, user_app_id) VALUES ('Delicious pizza!', 9, '2024-04-08 19:20:00', 8);
+        - sql:
+            sql: INSERT INTO reviews (comment, grade, review_date, user_app_id) VALUES ('Could improve the delivery time.', 6, '2024-04-09 20:15:00', 9);
+        - sql:
+            sql: INSERT INTO reviews (comment, grade, review_date, user_app_id) VALUES ('Best pizza in town!', 10, '2024-04-10 21:00:00', 10);
+  - changeSet:
+      id: 312trd79-hjhj-n6g8-95c0-30c4ec468ee2
+      author: Svitlana_Franchuk
+      changes:
+        - sql:
+            sql: INSERT INTO users_reviews(reviews_id, user_app_id) VALUES (1, 1);
+        - sql:
+            sql: INSERT INTO users_reviews(reviews_id, user_app_id) VALUES (2, 2);
+        - sql:
+            sql: INSERT INTO users_reviews(reviews_id, user_app_id) VALUES (3, 3);
+        - sql:
+            sql: INSERT INTO users_reviews(reviews_id, user_app_id) VALUES (4, 4);
+        - sql:
+            sql: INSERT INTO users_reviews(reviews_id, user_app_id) VALUES (5, 5);
+        - sql:
+            sql: INSERT INTO users_reviews(reviews_id, user_app_id) VALUES (6, 6);
+        - sql:
+            sql: INSERT INTO users_reviews(reviews_id, user_app_id) VALUES (7, 7);
+        - sql:
+            sql: INSERT INTO users_reviews(reviews_id, user_app_id) VALUES (8, 8);
+        - sql:
+            sql: INSERT INTO users_reviews(reviews_id, user_app_id) VALUES (9, 9);
+        - sql:
+            sql: INSERT INTO users_reviews(reviews_id, user_app_id) VALUES (10, 10);

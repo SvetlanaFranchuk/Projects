@@ -6,6 +6,8 @@ import NavBar from "./Camponents/NavBar/NavBar";
 import GetUsersData from "./Pages/Get users data/GetUsersData";
 import IngredientsPage from "./Pages/IngredienyPage/IngredientPage";
 import RegisterPage from "./Pages/RegisterPage/RegisterPage";
+import OrderProcesingPage from "./Pages/OrderProcesingPage/OrderProcesingPage";
+import OrderDetailsPage from "./Pages/OrderDetailsPagge/OrderDetailsPage";
 
 
 function App() {
@@ -23,6 +25,8 @@ function App() {
         <Route path= "/ingredients-list" element={<IngredientsPage/>}/>
         <Route path= '/register' element={<RegisterPage></RegisterPage>}/>
         <Route path= '/add-pizza' element={<PizzaForm></PizzaForm>}/>
+        <Route path= '/admin-orders' element={<OrderProcesingPage></OrderProcesingPage>}/>
+        <Route path= '/order-details' element={<OrderDetailsPage></OrderDetailsPage>}/>
       </Routes>
     </Router>
   )

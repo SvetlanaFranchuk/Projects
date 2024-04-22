@@ -8,4 +8,6 @@ body{
   background-image: url('https://abrakadabra.fun/uploads/posts/2022-01/1642956430_1-abrakadabra-fun-p-fon-dlya-pitstsi-1.jpg');
   background-repeat: no-repeat;
   background-size: cover;
+  min-height: 100vh;
+  height: 100%;
 }

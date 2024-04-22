@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { getAllComments,getAllCommentsForPeriod,getAllCommentsByUserId} from "../../Redux/Features/userReqests/userCommentsReqestSlice";
+import {getAllCommentsForPeriod,getAllCommentsByUserId} from "../../Redux/Features/userReqests/userCommentsReqestSlice";
 import { useForm, Controller } from "react-hook-form";
 
 function GetRevievs() {

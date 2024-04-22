@@ -1,4 +1,4 @@
-export const BASE_URL = "http://192.168.1.102:8090/";
+export const BASE_URL = "http://192.168.1.102:8095/";
 export const GetUsersDataByDate = "admin/user/birthday?date=";
 export const GetBlockedUsersUrl = "admin/user/blocked_clients";
 export const updateUserBlockUrl = "";
@@ -18,6 +18,11 @@ export const stylesArr = [
   { id: 2, value: "AMERICAN" },
   { id: 3, value: "SPECIALITY" },
 ];
+export const statusArr = [
+  {id:1,value:'NEW'},
+  {id:2,value:'PAID'},
+  {id:3,value:'CANCELED'}
+]
 export { default as RegistrationForm } from "./Camponents/Registration_form/RegistrationForm";
 export { default as AuthorizationForm } from "./Camponents/AuthorizationForm/AuthorizationForm";
 export { default as DoughReqestForm } from "./Camponents/DoughForm/DoughReqestForm";

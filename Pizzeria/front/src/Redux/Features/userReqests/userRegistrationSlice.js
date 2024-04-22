@@ -7,7 +7,7 @@ export const userRegReqest = createAsyncThunk(
     'userReg/userregReqest',
     async(data)=>{
         try{
-            const response= await axios.post(`${BASE_URL}/user/register`,data)
+            const response= await axios.post(`${BASE_URL}auth/register`,data)
             return response.data;
         }catch(error){
             throw error;

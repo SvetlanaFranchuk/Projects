@@ -1,0 +1,535 @@
+databaseChangeLog:
+  - changeSet:
+      id: 41baa354-e10e-4015-a50b-f837e0e39a8r
+      author: Svitlana_Franchuk
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: basket_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pizza_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+            tableName: basket_pizza
+  - changeSet:
+      id: 41baa354-e10e-4015-a50b-f837e0e38a8c
+      author: Svitlana_Franchuk
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_app_id
+                  type: bigint
+                  constraints:
+                    unique: true
+            tableName: baskets
+  - changeSet:
+      id: b464465c-8742-4970-ac7a-183d2a88395f
+      author: Svitlana_Franchuk
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: small_nutrition
+                  type: integer
+              - column:
+                  name: small_price
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: small_weight
+                  type: integer
+              - column:
+                  name: type_dough
+                  type: varchar(25)
+                  constraints:
+                    check: "type_dough in ('CLASSICA','PAN_PIZZA','SICILIAN','NEW_YORK_STYLE','NEAPOLITAN','WHOLE_WHEAT_FLOUR','CORNMEAL')"
+            tableName: doughs
+  - changeSet:
+      id: 24038b02-f0ff-478d-862b-0cbfac27f850
+      author: Svitlana_Franchuk
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: user_app_id
+                  type: bigint
+                  constraints:
+                    unique: true
+            tableName: favorites
+  - changeSet:
+      id: 8217eade-65f2-4cab-8cb8-341afa1db11c
+      author: Svitlana_Franchuk
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    incrementBy: 1
+              - column:
+                  name: name
+                  type: varchar(75)
+              - column:
+                  name: nutrition
+                  type: integer
+              - column:
+                  name: price
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: weight
+                  type: integer
+              - column:
+                  name: group_ingredient
+                  type: varchar(6)
+                  constraints:
+                    check: "group_ingredient in ('SAUCE','BASIC','EXTRA')"
+            tableName: ingredients
+  - changeSet:
+      id: bb7034bc-551e-451b-a66f-45b4c3abb7d0
+      author: Svitlana_Franchuk
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: order_id
+                  type: bigint
+              - column:
+                  name: pizza_id
+                  type: bigint
+              - column:
+                  name: quantity
+                  type: integer
+                  constraints:
+                    nullable: false
+            tableName: order_details
+  - changeSet:
+      id: 324c081c-e062-4ec4-98dd-f1727c4c3c9d
+      author: Svitlana_Franchuk
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: sum
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: order_date_time
+                  type: timestamp(6)
+              - column:
+                  name: delivery_date_time
+                  type: timestamp(6)
+              - column:
+                  name: user_app_id
+                  type: bigint
+              - column:
+                  name: city
+                  type: varchar(75)
+              - column:
+                  name: street_name
+                  type: varchar(75)
+              - column:
+                  name: house_number
+                  type: varchar(5)
+              - column:
+                  name: apartment_number
+                  type: varchar(5)
+              - column:
+                  name: type_bonus
+                  type: varchar(25)
+                  constraints:
+                    check: "type_bonus in ('DISCOUNT_50','DISCOUNT_100','FREE_DELIVERY')"
+              - column:
+                  name: status_order
+                  type: varchar(255)
+                  constraints:
+                    check: "status_order in ('NEW','CANCELED','PAID')"
+            tableName: orders
+  - changeSet:
+      id: 608ee38a-48a9-4f23-8afe-a735ed27592c
+      author: Svitlana_Franchuk
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: dough_id
+                  type: integer
+              - column:
+                  name: is_standard_recipe
+                  type: boolean
+                  defaultValue: false
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    incrementBy: 1
+              - column:
+                  name: description
+                  type: varchar(255)
+              - column:
+                  name: size
+                  type: varchar(255)
+                  constraints:
+                    check: "size in ('SMALL','MEDIUM','LARGE')"
+              - column:
+                  name: styles
+                  type: varchar(255)
+                  constraints:
+                    check: "styles in ('CLASSIC_ITALIAN','AMERICAN','SPECIALITY')"
+              - column:
+                  name: title
+                  type: varchar(255)
+                  constraints:
+                    unique: true
+              - column:
+                  name: toppings_fillings
+                  type: varchar(255)
+                  constraints:
+                    check: "toppings_fillings in ('MEAT','VEGETABLES','CHEESE','SEAFOOD','VEGETARIAN')"
+              - column:
+                  name: amount
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: nutrition
+                  type: integer
+            tableName: pizzas
+  - changeSet:
+      id: 5b57602-ed3a-4666-9790-122db3e9aad9
+      author: Svitlana_Franchuk
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: favorites_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pizzas_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+            tableName: pizzas_favorites
+  - changeSet:
+      id: fe2b94b2-2c37-495a-9575-a807c3461470
+      author: Svitlana_Franchuk
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: ingredient_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pizza_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+            tableName: pizzas_ingredients
+            primaryKey:
+              columns:
+                - column:
+                    name: ingredient_id
+                - column:
+                    name: pizza_id
+  - changeSet:
+      id: 9f7bff34-2641-4043-b4ea-7c4d1be4a47e
+      author: Svitlana_Franchuk
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: grade
+                  type: integer
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: review_date
+                  type: timestamp(6)
+              - column:
+                  name: user_app_id
+                  type: bigint
+              - column:
+                  name: comment
+                  type: varchar(255)
+            tableName: reviews
+  - changeSet:
+      id: c75f392a-4bcc-481e-8f09-6fa8c10be232
+      author: Svitlana_Franchuk
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: birthdate
+                  type: date
+              - column:
+                  name: count_orders
+                  type: integer
+              - column:
+                  name: is_blocked
+                  type: boolean
+              - column:
+                  name: sum_orders
+                  type: DECIMAL(19, 2)
+              - column:
+                  name: basket_id
+                  type: bigint
+                  constraints:
+                    unique: true
+              - column:
+                  name: favorites_id
+                  type: bigint
+                  constraints:
+                    unique: true
+              - column:
+                  name: date_registration
+                  type: timestamp(6)
+              - column:
+                  name: city
+                  type: varchar(75)
+              - column:
+                  name: street_name
+                  type: varchar(75)
+              - column:
+                  name: house_number
+                  type: varchar(5)
+              - column:
+                  name: apartment_number
+                  type: varchar(5)
+              - column:
+                  name: email
+                  type: varchar(50)
+                  constraints:
+                    unique: true
+              - column:
+                  name: user_name
+                  type: varchar(25)
+                  constraints:
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(255)
+              - column:
+                  name: phone_number
+                  type: varchar(15)
+              - column:
+                  name: role
+                  type: varchar(15)
+                  constraints:
+                    check: "role in ('ROLE_CLIENT','ROLE_MANAGER','ROLE_ADMIN')"
+            tableName: users
+  - changeSet:
+      id: 2c5c1b17-b6dd-4d69-86dc-7b5a20b840a2
+      author: Svitlana_Franchuk
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: orders_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: user_app_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+            primaryKey:
+                columns:
+                  - column:
+                      name: user_app_id
+                  - column:
+                      name: orders_id
+            tableName: users_orders
+  - changeSet:
+      id: 551e7440-8276-445d-9b48-5117ed916ba1
+      author: Svitlana_Franchuk
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: reviews_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: user_app_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+            primaryKey:
+              columns:
+                - column:
+                    name: user_app_id
+                - column:
+                    name: reviews_id
+            tableName: users_reviews
+  - changeSet:
+      id: 74bad6ab-7a29-4589-866b-d0ca93c0a741
+      author: Svitlana_Franchuk
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: basket_pizza
+            constraintName: FKstipjpru8rgycjxys0rncio1m
+            referencedTableName: pizzas
+            baseColumnNames: pizza_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: basket_pizza
+            constraintName: FKq9iar5tt0p09skgnv8ay108y9
+            referencedTableName: baskets
+            baseColumnNames: basket_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: baskets
+            constraintName: FKkwjowamu8fgrxqfvj8weim1yj
+            referencedTableName: users
+            baseColumnNames: user_app_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: favorites
+            constraintName: FKl2rfhirxnb7m0jcdfs36gcfu2
+            referencedTableName: users
+            baseColumnNames: user_app_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: order_details
+            constraintName: FKjyu2qbqt8gnvno9oe9j2s2ldk
+            referencedTableName: orders
+            baseColumnNames: order_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: order_details
+            constraintName: FKr0qt00gddu56sn19sdqvm3e8p
+            referencedTableName: pizzas
+            baseColumnNames: pizza_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: orders
+            constraintName: FKmhr0kj8lvnex7fw94300b9ay1
+            referencedTableName: users
+            baseColumnNames: user_app_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: pizzas
+            constraintName: FKjywmbtdx3n21yfiwnoiojta39
+            referencedTableName: doughs
+            baseColumnNames: dough_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: pizzas_favorites
+            constraintName: FKh3ckodpf6j290ehc1gvv644ly
+            referencedTableName: pizzas
+            baseColumnNames: pizzas_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: pizzas_favorites
+            constraintName: FKh8u8q7cwt3evefep080i4kwcn
+            referencedTableName: favorites
+            baseColumnNames: favorites_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: pizzas_ingredients
+            constraintName: FKql1q3n3i1m94it69jc7c1840w
+            referencedTableName: pizzas
+            baseColumnNames: pizza_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: pizzas_ingredients
+            constraintName: FKjwn4lvj8ajaggx1nxospim99u
+            referencedTableName: ingredients
+            baseColumnNames: ingredient_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: reviews
+            constraintName: FKihcyr6ifu1qifsrxv4doq0ggf
+            referencedTableName: users
+            baseColumnNames: user_app_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: users
+            constraintName: FKommxbvym8k63qbwomj0ikj8us
+            referencedTableName: baskets
+            baseColumnNames: basket_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: users
+            constraintName: FKgiweg5smdughcwbydgckx27m
+            referencedTableName: favorites
+            baseColumnNames: favorites_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: users_orders
+            constraintName: FK2lnf5jw8p8q0ytkr8dp0mlx6
+            referencedTableName: orders
+            baseColumnNames: orders_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: users_orders
+            constraintName: FKpffgt2ude7evl48l1643snd8k
+            referencedTableName: users
+            baseColumnNames: user_app_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: users_reviews
+            constraintName: FKsrruhgv1krftmcioqdn9mplck
+            referencedTableName: reviews
+            baseColumnNames: reviews_id
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: users_reviews
+            constraintName: FKaf9kahnpnqwnigynwi7hefrwn
+            referencedTableName: users
+            baseColumnNames: user_app_id
+            referencedColumnNames: id

@@ -8,7 +8,7 @@ RUN npm run build
 FROM maven:3.9.5-eclipse-temurin-21 as backend-builder
 WORKDIR /opt/app
 COPY mvnw pom.xml ./
-COPY src ./src
+COPY src_back ./src
 RUN mvn clean install -DskipTests
 
 FROM eclipse-temurin:21-jdk-alpine

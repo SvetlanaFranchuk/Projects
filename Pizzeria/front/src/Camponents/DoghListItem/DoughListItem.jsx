@@ -17,8 +17,11 @@ function DoughListItem({id,typeDough,smallWeight,smallNutrion,smallPrice}){
   const dispatch = useDispatch();
   const submit = (data)=>{
     
-      
+      console.log(data)
     dispatch(updateDough({id,data}))
+    .then(()=>{
+      dispatch(getAllDough())
+    })
   }
   const handleDelete = ()=>{
     dispatch(doughDelete(id))

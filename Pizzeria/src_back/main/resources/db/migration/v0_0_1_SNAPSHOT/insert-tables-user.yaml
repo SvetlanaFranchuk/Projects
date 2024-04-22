@@ -1,0 +1,231 @@
+databaseChangeLog:
+  - changeSet:
+      id: 31233d79-7dbc-413a-95c0-30c4ec468ee2
+      author: Svitlana_Franchuk
+      changes:
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('SuperAdmin', '$2a$10$mGNlsukXvNLcxiZAHXDZl.Y.tqk1SDm2YxVFO7jX/vBlSGp48P3ia', 'Admin@pizza.com', '1974-11-11', '2024-04-01', false, 'ROLE_ADMIN', 'Warsaw', 'Nowogrodzka', '11', '22', '+48 225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('AdminIvan', '$2a$10$mUaCfn7AfptomhhY5DWOi.HpDCAEeyCIyyQVkdqZho492C2YmNe0C', 'AdminIvan@pizza.com', '1974-11-11', '2024-04-01', false, 'ROLE_ADMIN', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('AdminDen', '$2a$10$dfp.bFYadymV7.luex3h9eC5rVae.WbpsXrLLIioJWwL8cffH/OUC', 'AdminDen@pizza.com', '1974-11-11', '2024-04-01', false, 'ROLE_ADMIN', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('ManagerOlena', '$2a$10$fEifdixWl/M/84ibdCO1N.O274gulMGRT9a1su/n.u2QDSkSNTEQa', 'ManagerOlena@pizza.com', '1974-11-11', '2024-04-01', false, 'ROLE_MANAGER', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Leonardo_DiCaprio', '$2a$10$1RP2Q6WJRujYIfXcjx3eL.pwWa7zV/72/TCszervFA9sAjYFm3qLq', 'Leonardo_DiCaprio@pizza.com', '1974-11-11', '2024-04-01', false, 'ROLE_CLIENT', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Brad_Pitt', '$2a$10$pyJ8YwEHWy3iM89EbBZtfuZGdOh9THGyUPYsDs3b3jqawn3iGUOnW', 'Brad_Pitt@pizza.com', '1963-12-18', '2024-04-01', false, 'ROLE_CLIENT', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Tom_Hanks', '$2a$10$w0vGD36rHRWiz8uLZs6b8O9uuPdKPUoOrdKuk7lufr70hUubWDiuK', 'Tom_Hanks@pizza.com', '1956-07-09', '2024-04-01', false, 'ROLE_CLIENT', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Robert_Downey_Jr', '$2a$10$nha6cU3Ve6HmbrggIHQsUuM2HZ9Nnbh0lRkIsT9NvwY5zxwPBkV7K', 'Robert_Downey_Jr@pizza.com', '1965-04-04', '2024-04-01', false, 'ROLE_CLIENT', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Will_Smith', '$2a$10$pyeJ/Y8k5uEi/9SwChy6HOZ8VJaCjTCId/izankd0xYJIEhsUq6D.', 'Will_Smith@pizza.com', '1968-09-25', '2024-04-01', false, 'ROLE_CLIENT', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Johnny_Depp', '$2a$10$rUeQSOrOlLph1IFlQptphendszrKmzfxOkoOcvcz2nuLVtjd.BUMi', 'Johnny_Depp@pizza.com', '1963-06-09', '2024-04-01', false, 'ROLE_CLIENT', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Harrison_Ford', '$2a$10$rUeQSOrOlLph1IFlQptphendszrKmzfxOkoOcvcz2nuLVtjd.BUMi', 'Harrison_Ford@pizza.com', '1942-07-13', '2024-04-01', false, 'ROLE_CLIENT', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Denzel_Washington', '$2a$10$JWugTTEw2cmQT65DCwqfw.dX4SQuvVHWp4q6yUMzhfZv6kIaSIQXe', 'Denzel_Washington@pizza.com', '1954-12-28', '2024-04-01', false, 'ROLE_CLIENT', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Keanu_Reeves', '$2a$10$Ahb5Ymz2BY3bfLN.UFsTI.S8.X45UMc7jzilkUJjQdphgKNPhgzbS', 'Keanu_Reeves@pizza.com', '1964-09-02', '2024-04-01', false, 'ROLE_CLIENT', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Russell_Crowe', '$2a$10$eOe3XwJ/x/p3n2aCAHsfJet.UK3CHC1bmO7w9l4J9ggx6DPnSTjJC', 'Russell_Crowe@pizza.com', '1964-04-07', '2024-04-01', false, 'ROLE_CLIENT', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Morgan_Freeman', '$2a$10$F8kewlp4LIQLUb.nZ1gq.e0J2kSAf0UnAQPZgmB.cDqiD8fQFsZf2', 'Morgan_Freeman@pizza.com', '1937-06-01', '2024-04-01', false, 'ROLE_CLIENT', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Matt_Damon', '$2a$10$mPESVNsKmuyJUjxqQzI3e.dUzf6DEKewwfBBPiMDvvCLh/7pKi.0y', 'Matt_Damon@pizza.com', '1970-10-08', '2024-04-01', false, 'ROLE_CLIENT', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Nicole_Kidman', '$2a$10$KdSTf4wxFbaetSzRuWVuNOLxhc8EwL78PdUlxzv7l6E6OO5U9Ruou', 'Nicole_Kidman@pizza.com', '1967-06-20', '2024-04-01', false, 'ROLE_CLIENT', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Albert_Einstein', '$2a$10$8p8loJ2e9MzR6q/9RK5OcODXKZPf9e/dQtL25GXIZ9kf.dixaLyxK', 'Albert_Einstein@pizza.com', '1879-03-14', '2024-04-01', false, 'ROLE_CLIENT', 'Ulm', 'Bahnhofstraße', '135', '3', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Marie_Curie', '$2a$10$aCEIypi6V2q7KmfdKGiH5.QChnllU6U.2wWKrm1K1tg/KZnPDxqhO', 'Marie_Curie@pizza.com', '1867-11-07', '2024-04-01', false, 'ROLE_CLIENT', 'Warsaw', 'Nowogrodzka', '11', '22', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Isaac_Newton', '$2a$10$JNW.ErJUxvTbhe1oEu.kS.sMP8bnDn8qORYGYHYYD.Vcw595BLqnK', 'Isaac_Newton@pizza.com', '1643-12-25', '2024-04-01', false, 'ROLE_CLIENT', 'Woolsthorpe Manor', 'Woolsthorpe-by-Colsterworth', '', '', '+48225838000',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Galileo_Galilei', '$2a$10$zgFwf4ZJw49HU6rCfJR8/OAhqPumdCHWlXJCKxUUU2CP/UgTuOgbe', 'Galileo_Galilei@pizza.com', '1564-02-15', '2024-04-01', false, 'ROLE_CLIENT', 'Pisa', 'Via Santa Maria', '53', '2', '+390502212817',0,0);
+        - sql:
+            sql: INSERT INTO users(user_name, password, email, birthdate, date_registration, is_blocked, role, city, street_name, house_number, apartment_number, phone_number, count_orders, sum_orders) VALUES ('Nikola_Tesla', '$2a$10$b6UlsLxuQD3fBmLLUFz6O.CYpbafapxg1qV5qWspd2KFZzH4Gyk6i', 'Nikola_Tesla@pizza.com', '1856-07-10', '2024-04-01', false, 'ROLE_CLIENT', 'Smiljan', 'Smiljan', '', '', '',0,0);
+  - changeSet:
+      id: 312trd79-7dbc-413a-95c0-30c4ec468ee2
+      author: Svitlana_Franchuk
+      changes:
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (1);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (2);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (3);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (4);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (5);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (6);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (7);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (8);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (9);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (10);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (11);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (12);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (13);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (14);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (15);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (16);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (17);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (18);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (19);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (20);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (21);
+        - sql:
+            sql: INSERT INTO baskets(user_app_id) VALUES (22);
+  - changeSet:
+      id: 312trd79-hjhj-413a-95c0-30c4ec468ee2
+      author: Svitlana_Franchuk
+      changes:
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (1);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (2);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (3);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (4);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (5);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (6);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (7);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (8);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (9);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (10);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (11);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (12);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (13);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (14);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (15);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (16);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (17);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (18);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (19);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (20);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (21);
+        - sql:
+            sql: INSERT INTO favorites(user_app_id) VALUES (22);
+  - changeSet:
+      id: cfee850a-da70-4a2f-a7fd-2037c04db1aa
+      author: Svitlana_Franchuk
+      changes:
+        - sql:
+            sql: UPDATE users  SET basket_id = 1, favorites_id = 1  WHERE id = 1;
+        - sql:
+            sql: UPDATE users  SET basket_id = 2, favorites_id = 2  WHERE id = 2;
+        - sql:
+            sql: UPDATE users  SET basket_id = 3, favorites_id = 3  WHERE id = 3;
+        - sql:
+            sql: UPDATE users  SET basket_id = 4, favorites_id = 4  WHERE id = 4;
+        - sql:
+            sql: UPDATE users  SET basket_id = 5, favorites_id = 5  WHERE id = 5;
+        - sql:
+            sql: UPDATE users  SET basket_id = 6, favorites_id = 6  WHERE id = 6;
+        - sql:
+            sql: UPDATE users  SET basket_id = 7, favorites_id = 7  WHERE id = 7;
+        - sql:
+            sql: UPDATE users  SET basket_id = 8, favorites_id = 8  WHERE id = 8;
+        - sql:
+            sql: UPDATE users  SET basket_id = 9, favorites_id = 9  WHERE id = 9;
+        - sql:
+            sql: UPDATE users  SET basket_id = 10, favorites_id = 10  WHERE id = 10;
+        - sql:
+            sql: UPDATE users  SET basket_id = 11, favorites_id = 11  WHERE id = 11;
+        - sql:
+            sql: UPDATE users  SET basket_id = 12, favorites_id = 12  WHERE id = 12;
+        - sql:
+            sql: UPDATE users  SET basket_id = 13, favorites_id = 13  WHERE id = 13;
+        - sql:
+            sql: UPDATE users  SET basket_id = 14, favorites_id = 14  WHERE id = 14;
+        - sql:
+            sql: UPDATE users  SET basket_id = 15, favorites_id = 15  WHERE id = 15;
+        - sql:
+            sql: UPDATE users  SET basket_id = 16, favorites_id = 16  WHERE id = 16;
+        - sql:
+            sql: UPDATE users  SET basket_id = 17, favorites_id = 17  WHERE id = 17;
+        - sql:
+            sql: UPDATE users  SET basket_id = 18, favorites_id = 18  WHERE id = 18;
+        - sql:
+            sql: UPDATE users  SET basket_id = 19, favorites_id = 19  WHERE id = 19;
+        - sql:
+            sql: UPDATE users  SET basket_id = 20, favorites_id = 20  WHERE id = 20;
+        - sql:
+            sql: UPDATE users  SET basket_id = 21, favorites_id = 21  WHERE id = 21;
+        - sql:
+            sql: UPDATE users  SET basket_id = 22, favorites_id = 22  WHERE id = 22;
+  - changeSet:
+      id: 347133b1-3b7d-4e45-b83b-76d883d33ce9
+      author: Svitlana_Franchuk
+      changes:
+        - sql:
+            sql: INSERT INTO pizzas_favorites(favorites_id, pizzas_id) VALUES (1,6);
+        - sql:
+            sql: INSERT INTO pizzas_favorites(favorites_id, pizzas_id) VALUES (1,7);
+        - sql:
+            sql: INSERT INTO pizzas_favorites(favorites_id, pizzas_id) VALUES (4,5);
+        - sql:
+            sql: INSERT INTO pizzas_favorites(favorites_id, pizzas_id) VALUES (4,2);
+        - sql:
+            sql: INSERT INTO pizzas_favorites(favorites_id, pizzas_id) VALUES (20,8);
+        - sql:
+            sql: INSERT INTO pizzas_favorites(favorites_id, pizzas_id) VALUES (21,23);
+        - sql:
+            sql: INSERT INTO pizzas_favorites(favorites_id, pizzas_id) VALUES (22,30);
+  - changeSet:
+      id: 3481hjb1-3b7d-4e45-b83b-76d883d33ce9
+      author: Svitlana_Franchuk
+      changes:
+        - sql:
+            sql: INSERT INTO basket_pizza(basket_id, pizza_id) VALUES (1,6);
+        - sql:
+            sql: INSERT INTO basket_pizza(basket_id, pizza_id) VALUES (1,6);
+        - sql:
+            sql: INSERT INTO basket_pizza(basket_id, pizza_id) VALUES (1,6);
+        - sql:
+            sql: INSERT INTO basket_pizza(basket_id, pizza_id) VALUES (1,7);
+        - sql:
+            sql: INSERT INTO basket_pizza(basket_id, pizza_id) VALUES (4,2);
+        - sql:
+            sql: INSERT INTO basket_pizza(basket_id, pizza_id) VALUES (20,8);
+        - sql:
+            sql: INSERT INTO basket_pizza(basket_id, pizza_id) VALUES (21,23);
+        - sql:
+            sql: INSERT INTO basket_pizza(basket_id, pizza_id) VALUES (22,30);

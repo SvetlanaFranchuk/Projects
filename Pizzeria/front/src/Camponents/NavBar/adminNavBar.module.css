@@ -7,3 +7,18 @@
 .navSelect{
     width: 20%;
 }
+.navButtonsContainer{
+   display: flex;
+   justify-content: space-between;
+    padding: 2rem;
+}
+.navButton{
+    padding: 1rem;
+    border-radius: 13px;
+    border: none;
+    transition: background-color 0.3s, color 0.3s;
+    &:active{
+        background-color: rgb(97, 97, 194);
+        color: white;
+    }
+}

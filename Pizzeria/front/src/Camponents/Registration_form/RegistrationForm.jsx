@@ -23,6 +23,7 @@ function RegistrationForm() {
   const phoneRegex = /^[(]?[0-9]{3}[)]?[-\s]?[0-9]{3}[-\s]?[0-9]{4,6}$/
 
   return (
+    <div>
     <form className={styles.formContainer} onSubmit={handleSubmit(submit)}>
       <label className={styles.formLabel} htmlFor="userName">Login</label>
       <input
@@ -173,6 +174,7 @@ function RegistrationForm() {
 
       <input type="submit" value='Register'/>
     </form>
+    </div>
   );
 }
 export default RegistrationForm;

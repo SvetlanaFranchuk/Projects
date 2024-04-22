@@ -19,15 +19,14 @@ function AdminNavBar(){
             <Select className={navStyles.navSelect} defaultValue='Navigate'onChange={handleChange} >
                <OptGroup label = 'Users'/>
                 <Option value='userBlocking' onSelect={handleChange}>Blocking</Option>
-                <Option value='orderStatusChange' onSelect={handleChange}>Change order status</Option>
+                <Option value = 'admin-orders' onSelect={handleChange}></Option>
                 <OptGroup label = 'Users-statistics'/>
                 <Option value='usersData' onSelect={handleChange}>Get users data</Option>
                 <OptGroup label = 'manegment-statistics'/>
                 <Option value = 'standart-pizza-list' onSelect={handleChange}></Option>
                 <Option value = 'add-pizza' onSelect={handleChange}></Option>
-                <Option value = 'ingredients-list' onSelect={handleChange}></Option>
-
-            </Select>
+                <Option value = 'ingredients-list' onSelect={handleChange}></Option>          
+            </Select>   
 
         </div>
     )
