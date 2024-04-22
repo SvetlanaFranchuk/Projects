@@ -56,12 +56,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/auth/authentication",
+							"raw": "http://localhost:8095/auth/authentication",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8095",
 							"path": [
 								"auth",
 								"authentication"
@@ -99,7 +99,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjgzODA4MiwiZXhwIjoxNzEyOTgyMDgyfQ.iu1-xoHWF_ZCSYoRlZGP7Cho-Vs75_N678gKyNpbRx8",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 									"type": "string"
 								}
 							]
@@ -107,12 +107,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/admin/user/birthday?date=2021-02-10",
+							"raw": "http://localhost:8095/admin/user/birthday?date=2021-02-10",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8095",
 							"path": [
 								"admin",
 								"user",
@@ -136,7 +136,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjgzODA4MiwiZXhwIjoxNzEyOTgyMDgyfQ.iu1-xoHWF_ZCSYoRlZGP7Cho-Vs75_N678gKyNpbRx8",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 									"type": "string"
 								}
 							]
@@ -144,22 +144,22 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/admin/user/change_blocking/10?isBlocked=false",
+							"raw": "http://localhost:8095/admin/user/change_blocking/9?isBlocked=true",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8095",
 							"path": [
 								"admin",
 								"user",
 								"change_blocking",
-								"10"
+								"9"
 							],
 							"query": [
 								{
 									"key": "isBlocked",
-									"value": "false"
+									"value": "true"
 								}
 							]
 						}
@@ -174,7 +174,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjgzODA4MiwiZXhwIjoxNzEyOTgyMDgyfQ.iu1-xoHWF_ZCSYoRlZGP7Cho-Vs75_N678gKyNpbRx8",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 									"type": "string"
 								}
 							]
@@ -182,12 +182,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/admin/user/clients",
+							"raw": "http://localhost:8095/admin/user/clients",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8095",
 							"path": [
 								"admin",
 								"user",
@@ -205,7 +205,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjgzODA4MiwiZXhwIjoxNzEyOTgyMDgyfQ.iu1-xoHWF_ZCSYoRlZGP7Cho-Vs75_N678gKyNpbRx8",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 									"type": "string"
 								}
 							]
@@ -213,12 +213,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/admin/user/blocked_clients",
+							"raw": "http://localhost:8095/admin/user/blocked_clients",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8095",
 							"path": [
 								"admin",
 								"user",
@@ -244,7 +244,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 											"type": "string"
 										}
 									]
@@ -261,15 +261,15 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/product/addDough",
+									"raw": "http://localhost:8095/dough/add",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8080",
+									"port": "8095",
 									"path": [
-										"product",
-										"addDough"
+										"dough",
+										"add"
 									]
 								}
 							},
@@ -283,7 +283,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 											"type": "string"
 										}
 									]
@@ -291,15 +291,15 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/product/getAllDoughForAdmin",
+									"raw": "http://localhost:8095/dough/getAllForAdmin",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8080",
+									"port": "8095",
 									"path": [
-										"product",
-										"getAllDoughForAdmin"
+										"dough",
+										"getAllForAdmin"
 									]
 								}
 							},
@@ -308,6 +308,16 @@
 						{
 							"name": "deleteDough",
 							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
+											"type": "string"
+										}
+									]
+								},
 								"method": "DELETE",
 								"header": [],
 								"body": {
@@ -320,16 +330,16 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/product/deleteDough/9",
+									"raw": "http://localhost:8095/dough/delete/8",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8080",
+									"port": "8095",
 									"path": [
-										"product",
-										"deleteDough",
-										"9"
+										"dough",
+										"delete",
+										"8"
 									]
 								}
 							},
@@ -343,7 +353,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 											"type": "string"
 										}
 									]
@@ -352,7 +362,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"smallWeight\": \"140\",\r\n    \"smallNutrition\": 109\r\n}",
+									"raw": "{\r\n    \"smallWeight\": \"145\",\r\n    \"smallNutrition\": 109\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -360,16 +370,16 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/product/updateDough/3",
+									"raw": "http://localhost:8095/dough/update/8",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8080",
+									"port": "8095",
 									"path": [
-										"product",
-										"updateDough",
-										"3"
+										"dough",
+										"update",
+										"8"
 									]
 								}
 							},
@@ -388,7 +398,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 											"type": "string"
 										}
 									]
@@ -405,15 +415,15 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/product/addIngredient",
+									"raw": "http://localhost:8095/ingredient/add",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8080",
+									"port": "8095",
 									"path": [
-										"product",
-										"addIngredient"
+										"ingredient",
+										"add"
 									]
 								}
 							},
@@ -427,7 +437,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 											"type": "string"
 										}
 									]
@@ -435,14 +445,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/product/2/ingredients",
+									"raw": "http://localhost:8095/ingredient/2/ingredients",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8080",
+									"port": "8095",
 									"path": [
-										"product",
+										"ingredient",
 										"2",
 										"ingredients"
 									]
@@ -458,7 +468,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 											"type": "string"
 										}
 									]
@@ -466,15 +476,15 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/product/getAllIngredientByGroup?groupIngredient=EXTRA",
+									"raw": "http://localhost:8095/ingredient/getAllByGroup?groupIngredient=EXTRA",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8080",
+									"port": "8095",
 									"path": [
-										"product",
-										"getAllIngredientByGroup"
+										"ingredient",
+										"getAllByGroup"
 									],
 									"query": [
 										{
@@ -494,7 +504,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 											"type": "string"
 										}
 									]
@@ -502,15 +512,15 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/product/getAllIngredientForAdmin",
+									"raw": "http://localhost:8095/ingredient/getAllForAdmin",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8080",
+									"port": "8095",
 									"path": [
-										"product",
-										"getAllIngredientForAdmin"
+										"ingredient",
+										"getAllForAdmin"
 									]
 								}
 							},
@@ -524,7 +534,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 											"type": "string"
 										}
 									]
@@ -532,16 +542,16 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/product/deleteIngredient/67",
+									"raw": "http://localhost:8095/ingredient/delete/301",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8080",
+									"port": "8095",
 									"path": [
-										"product",
-										"deleteIngredient",
-										"67"
+										"ingredient",
+										"delete",
+										"301"
 									]
 								}
 							},
@@ -555,7 +565,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 											"type": "string"
 										}
 									]
@@ -572,15 +582,15 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/product/updateIngredient/1",
+									"raw": "http://localhost:8095/ingredient/update/1",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8080",
+									"port": "8095",
 									"path": [
-										"product",
-										"updateIngredient",
+										"ingredient",
+										"update",
 										"1"
 									]
 								}
@@ -600,7 +610,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 											"type": "string"
 										}
 									]
@@ -609,7 +619,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"title\": \"Margarita_test_1\",\r\n    \"description\": \"description for Margarita_test_1\",\r\n    \"styles\": \"AMERICAN\",\r\n    \"toppingsFillings\": \"VEGETABLES\",\r\n    \"size\": \"SMALL\",\r\n    \"doughId\": 1,\r\n    \"ingredientsSauceListId\": [10,3,4],\r\n    \"ingredientsBasicListId\": [8],\r\n    \"ingredientsExtraListId\": [23,45]\r\n}",
+									"raw": "{\r\n    \"title\": \"Margarita_test_1\",\r\n    \"description\": \"description for Margarita_test_1\",\r\n    \"styles\": \"AMERICAN\",\r\n    \"toppingsFillings\": \"VEGETABLES\",\r\n    \"size\": \"SMALL\",\r\n    \"doughId\": 1,\r\n    \"ingredientsSauceListId\": [9,3,4],\r\n    \"ingredientsBasicListId\": [40],\r\n    \"ingredientsExtraListId\": [23,45]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -617,15 +627,15 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8080/product/addPizza?userId=1",
+									"raw": "http://localhost:8095/pizza/add?userId=1",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8080",
+									"port": "8095",
 									"path": [
-										"product",
-										"addPizza"
+										"pizza",
+										"add"
 									],
 									"query": [
 										{
@@ -645,7 +655,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 											"type": "string"
 										}
 									]
@@ -653,14 +663,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/product/getAllPizzaStandardRecipe",
+									"raw": "http://localhost:8095/pizza/getAllPizzaStandardRecipe",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8080",
+									"port": "8095",
 									"path": [
-										"product",
+										"pizza",
 										"getAllPizzaStandardRecipe"
 									]
 								}
@@ -675,7 +685,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 											"type": "string"
 										}
 									]
@@ -683,14 +693,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/product/getAllPizzaStandardRecipeByStyles?styles=AMERICAN",
+									"raw": "http://localhost:8095/pizza/getAllPizzaStandardRecipeByStyles?styles=AMERICAN",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8080",
+									"port": "8095",
 									"path": [
-										"product",
+										"pizza",
 										"getAllPizzaStandardRecipeByStyles"
 									],
 									"query": [
@@ -711,7 +721,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 											"type": "string"
 										}
 									]
@@ -719,14 +729,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/product/getAllPizzaStandardRecipeByTopping?toppingsFillings=MEAT",
+									"raw": "http://localhost:8095/pizza/getAllPizzaStandardRecipeByTopping?toppingsFillings=MEAT",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8080",
+									"port": "8095",
 									"path": [
-										"product",
+										"pizza",
 										"getAllPizzaStandardRecipeByTopping"
 									],
 									"query": [
@@ -747,7 +757,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 											"type": "string"
 										}
 									]
@@ -755,14 +765,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/product/getAllPizzaStandardRecipeByToppingByStyles?toppingsFillings=VEGETABLES&styles=AMERICAN",
+									"raw": "http://localhost:8095/pizza/getAllPizzaStandardRecipeByToppingByStyles?toppingsFillings=VEGETABLES&styles=AMERICAN",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8080",
+									"port": "8095",
 									"path": [
-										"product",
+										"pizza",
 										"getAllPizzaStandardRecipeByToppingByStyles"
 									],
 									"query": [
@@ -827,7 +837,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJTdXBlckFkbWluQHd3LmNvbSIsImlhdCI6MTcxMjg0MDI0NiwiZXhwIjoxNzEyOTg0MjQ2fQ.rdV_bmxqRO_EBbBXsIOXi5HB2rlwGDLeCXcakeYwHnY",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
 											"type": "string"
 										}
 									]
@@ -835,16 +845,16 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/product/deletePizzaRecipe/18",
+									"raw": "http://localhost:8095/pizza/deletePizzaRecipe/32",
 									"protocol": "http",
 									"host": [
 										"localhost"
 									],
-									"port": "8080",
+									"port": "8095",
 									"path": [
-										"product",
+										"pizza",
 										"deletePizzaRecipe",
-										"18"
+										"32"
 									]
 								}
 							},
@@ -860,18 +870,28 @@
 				{
 					"name": "updateStatus",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJTdXBlckFkbWluIiwicm9sZSI6IlJPTEVfQURNSU4iLCJpZCI6MSwidXNlck5hbWUiOiJTdXBlckFkbWluIiwiZW1haWwiOiJBZG1pbkBwaXp6YS5jb20iLCJpYXQiOjE3MTM3MzUwMjgsImV4cCI6MTcxMzg3OTAyOH0.JbIdvZIPrfZdG5v4zvW0sCGwcu3qs2H-Wp-dnlAZUT8",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PATCH",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/order/23/status?status=PAID",
+							"raw": "http://localhost:8095/order/10/status?status=PAID",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "8080",
+							"port": "8095",
 							"path": [
 								"order",
-								"23",
+								"10",
 								"status"
 							],
 							"query": [

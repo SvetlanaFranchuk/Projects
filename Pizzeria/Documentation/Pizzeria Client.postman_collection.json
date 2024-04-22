@@ -1,0 +1,1227 @@
+{
+	"info": {
+		"_postman_id": "c0fbbf91-1c17-4043-a510-bd20111ed984",
+		"name": "Pizzeria Client",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32323927"
+	},
+	"item": [
+		{
+			"name": "Basket",
+			"item": [
+				{
+					"name": "addPizzaToBasket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNzIwODc4LCJleHAiOjE3MTM4NjQ4Nzh9.aAozIlXEMfW8yNyHbciR8F6fXjyhjyUu-c-PefYA1B0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pizzaId\": 2,\r\n    \"countPizza\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8095/order/addPizzaToBasket/17",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8095",
+							"path": [
+								"order",
+								"addPizzaToBasket",
+								"17"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "changePizzasInBasket",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNzE1MzQwLCJleHAiOjE3MTM4NTkzNDB9.ok-Q5i4k68czPnMA1_IE9WrQtNaiNoLBLPtWPukHLBs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pizzaToCount\": {\r\n        \"1\": 3,\r\n        \"18\":2\r\n    },\r\n    \"userId\": 17\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8095/order/changePizzasInBasket",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8095",
+							"path": [
+								"order",
+								"changePizzasInBasket"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "moveDetailsBasketToOrder",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNzIwODc4LCJleHAiOjE3MTM4NjQ4Nzh9.aAozIlXEMfW8yNyHbciR8F6fXjyhjyUu-c-PefYA1B0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8095/order/moveDetailsBasketToOrder/17",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8095",
+							"path": [
+								"order",
+								"moveDetailsBasketToOrder",
+								"17"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getBasketByUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNzE1MzQwLCJleHAiOjE3MTM4NTkzNDB9.ok-Q5i4k68czPnMA1_IE9WrQtNaiNoLBLPtWPukHLBs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8095/order/getBasketByUser/17",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8095",
+							"path": [
+								"order",
+								"getBasketByUser",
+								"17"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Dough",
+					"item": [
+						{
+							"name": "getAllDoughForClient",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM4NDc1LCJleHAiOjE3MTM3ODI0NzV9.tPYKB1a3qr1y5RcTIgxCz1buTifz8ajcxqS7zxKRJHk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/dough/getAllForClient",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"dough",
+										"getAllForClient"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Ingredient",
+					"item": [
+						{
+							"name": "getAllIngredientsForPizza",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM4NDc1LCJleHAiOjE3MTM3ODI0NzV9.tPYKB1a3qr1y5RcTIgxCz1buTifz8ajcxqS7zxKRJHk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/ingredient/2/ingredients",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"ingredient",
+										"2",
+										"ingredients"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllIngredientByGroup",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM4NDc1LCJleHAiOjE3MTM3ODI0NzV9.tPYKB1a3qr1y5RcTIgxCz1buTifz8ajcxqS7zxKRJHk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/ingredient/getAllByGroup?groupIngredient=EXTRA",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"ingredient",
+										"getAllByGroup"
+									],
+									"query": [
+										{
+											"key": "groupIngredient",
+											"value": "EXTRA"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Pizza",
+					"item": [
+						{
+							"name": "addPizza",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM4NDc1LCJleHAiOjE3MTM3ODI0NzV9.tPYKB1a3qr1y5RcTIgxCz1buTifz8ajcxqS7zxKRJHk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Margarita_test\",\r\n    \"description\": \"description for Margarita\",\r\n    \"styles\": \"AMERICAN\",\r\n    \"toppingsFillings\": \"VEGETABLES\",\r\n    \"size\": \"SMALL\",\r\n    \"doughId\": 1,\r\n    \"ingredientsSauceListId\": [10],\r\n    \"ingredientsBasicListId\": [8],\r\n    \"ingredientsExtraListId\": []\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8095/pizza/add?userId=17",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"pizza",
+										"add"
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "17"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllPizzaStandardRecipe",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM4NDc1LCJleHAiOjE3MTM3ODI0NzV9.tPYKB1a3qr1y5RcTIgxCz1buTifz8ajcxqS7zxKRJHk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/pizza/getAllPizzaStandardRecipe",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"pizza",
+										"getAllPizzaStandardRecipe"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllPizzaStandardRecipeByStyles",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM4NDc1LCJleHAiOjE3MTM3ODI0NzV9.tPYKB1a3qr1y5RcTIgxCz1buTifz8ajcxqS7zxKRJHk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/pizza/getAllPizzaStandardRecipeByStyles?styles=AMERICAN",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"pizza",
+										"getAllPizzaStandardRecipeByStyles"
+									],
+									"query": [
+										{
+											"key": "styles",
+											"value": "AMERICAN"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllPizzaStandardRecipeByTopping",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM4NDc1LCJleHAiOjE3MTM3ODI0NzV9.tPYKB1a3qr1y5RcTIgxCz1buTifz8ajcxqS7zxKRJHk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/pizza/getAllPizzaStandardRecipeByTopping?toppingsFillings=MEAT",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"pizza",
+										"getAllPizzaStandardRecipeByTopping"
+									],
+									"query": [
+										{
+											"key": "toppingsFillings",
+											"value": "MEAT"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllPizzaStandardRecipeByToppingByStyles",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM4NDc1LCJleHAiOjE3MTM3ODI0NzV9.tPYKB1a3qr1y5RcTIgxCz1buTifz8ajcxqS7zxKRJHk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/pizza/getAllPizzaStandardRecipeByToppingByStyles?toppingsFillings=VEGETABLES&styles=AMERICAN",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"pizza",
+										"getAllPizzaStandardRecipeByToppingByStyles"
+									],
+									"query": [
+										{
+											"key": "toppingsFillings",
+											"value": "VEGETABLES"
+										},
+										{
+											"key": "styles",
+											"value": "AMERICAN"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "updatePizza",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM4NDc1LCJleHAiOjE3MTM3ODI0NzV9.tPYKB1a3qr1y5RcTIgxCz1buTifz8ajcxqS7zxKRJHk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Margarita_25\",\r\n    \"description\": \"description for Margarita_25\",\r\n    \"styles\": \"AMERICAN\",\r\n    \"toppingsFillings\": \"VEGETABLES\",\r\n    \"size\": \"SMALL\",\r\n    \"doughId\": 2,\r\n    \"ingredientsSauceListId\": [10],\r\n    \"ingredientsBasicListId\": [6],\r\n    \"ingredientsExtraListId\": [8]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8095/pizza/update/31",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"pizza",
+										"update",
+										"31"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deletePizzaRecipe",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM4NDc1LCJleHAiOjE3MTM3ODI0NzV9.tPYKB1a3qr1y5RcTIgxCz1buTifz8ajcxqS7zxKRJHk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/pizza/deletePizzaRecipe/31",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"pizza",
+										"deletePizzaRecipe",
+										"31"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Favorites",
+					"item": [
+						{
+							"name": "addPizzaToUserFavorite",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM4NDc1LCJleHAiOjE3MTM3ODI0NzV9.tPYKB1a3qr1y5RcTIgxCz1buTifz8ajcxqS7zxKRJHk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/favorites/addPizzaToUserFavorite?pizzaId=7&userId=17",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"favorites",
+										"addPizzaToUserFavorite"
+									],
+									"query": [
+										{
+											"key": "pizzaId",
+											"value": "7"
+										},
+										{
+											"key": "userId",
+											"value": "17"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deletePizzaFromUserFavorite",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM4NDc1LCJleHAiOjE3MTM3ODI0NzV9.tPYKB1a3qr1y5RcTIgxCz1buTifz8ajcxqS7zxKRJHk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/favorites/deletePizzaFromUserFavorite?pizzaId=7&userId=17",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"favorites",
+										"deletePizzaFromUserFavorite"
+									],
+									"query": [
+										{
+											"key": "pizzaId",
+											"value": "7"
+										},
+										{
+											"key": "userId",
+											"value": "17"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllFavoritePizzaByUser",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM4NDc1LCJleHAiOjE3MTM3ODI0NzV9.tPYKB1a3qr1y5RcTIgxCz1buTifz8ajcxqS7zxKRJHk",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/favorites/getAllFavoritePizzaByUser/17",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"favorites",
+										"getAllFavoritePizzaByUser",
+										"17"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Bonus",
+					"item": [
+						{
+							"name": "getUserBonus",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNzIwODc4LCJleHAiOjE3MTM4NjQ4Nzh9.aAozIlXEMfW8yNyHbciR8F6fXjyhjyUu-c-PefYA1B0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/user/getBonus/17",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"user",
+										"getBonus",
+										"17"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Review",
+					"item": [
+						{
+							"name": "addReview",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM2MDU5LCJleHAiOjE3MTM3ODAwNTl9.bAWfIYMJbWS71dVLHQTP5bu2SEVJFPNXaQRyw-nPk6k",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"comment\": \"myMessage\",\r\n    \"grade\": \"10\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8095/review/add/17",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"review",
+										"add",
+										"17"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "updateReview",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM3NDg2LCJleHAiOjE3MTM3ODE0ODZ9.CoWVoEPb5nLl2It88Gr2ynHZxlq8RCI8FtsyxiLwa8Q",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"comment\": \"my test comment \",\r\n    \"grade\": \"9\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8095/review/update/11?userId=17",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"review",
+										"update",
+										"11"
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "17"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deleteReview",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNzI5NTcxLCJleHAiOjE3MTM4NzM1NzF9.Y-784l4DKFRYhbddYl7gQeRhg4icMM4GpqNrKvj1DpU",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/review/delete/11",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"review",
+										"delete",
+										"11"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllReview",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM3NDg2LCJleHAiOjE3MTM3ODE0ODZ9.CoWVoEPb5nLl2It88Gr2ynHZxlq8RCI8FtsyxiLwa8Q",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/review/getAll",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"review",
+										"getAll"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllReviewByUser",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM3NDg2LCJleHAiOjE3MTM3ODE0ODZ9.CoWVoEPb5nLl2It88Gr2ynHZxlq8RCI8FtsyxiLwa8Q",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/review/getAllByUser/17",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"review",
+										"getAllByUser",
+										"17"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllReviewByPeriod",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM3NDg2LCJleHAiOjE3MTM3ODE0ODZ9.CoWVoEPb5nLl2It88Gr2ynHZxlq8RCI8FtsyxiLwa8Q",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/review/getAllByPeriod?startDate=2024-01-01T00:00:00&endDate=2024-04-19T00:00:00",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"review",
+										"getAllByPeriod"
+									],
+									"query": [
+										{
+											"key": "startDate",
+											"value": "2024-01-01T00:00:00"
+										},
+										{
+											"key": "endDate",
+											"value": "2024-04-19T00:00:00"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "OperationWithUser",
+					"item": [
+						{
+							"name": "updateUser",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM2MDU5LCJleHAiOjE3MTM3ODAwNTl9.bAWfIYMJbWS71dVLHQTP5bu2SEVJFPNXaQRyw-nPk6k",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userName\": \"Nicole_Kidman\",\r\n    \"password\": \"1234567\",\r\n    \"email\": \"Nicole_Kidman@pizza.com\",\r\n     \"birthDate\": [\r\n        1967,\r\n        7,\r\n        20\r\n    ],\r\n    \"addressCity\": \"New York\",\r\n    \"addressStreetName\": \"Berlinstrasse\",\r\n    \"addressHouseNumber\": \"12-b\",\r\n    \"addressApartmentNumber\": \"\",\r\n    \"phoneNumber\": \"+23123782\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8095/auth/update/17",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"auth",
+										"update",
+										"17"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getUser",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNjM2MDU5LCJleHAiOjE3MTM3ODAwNTl9.bAWfIYMJbWS71dVLHQTP5bu2SEVJFPNXaQRyw-nPk6k",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8095/user/17",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"user",
+										"17"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Auth",
+					"item": [
+						{
+							"name": "registration",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userName\": \"NewAdmin\",\r\n    \"password\": \"1234567\",\r\n    \"email\": \"NewAdmin@ww.com\",\r\n     \"birthDate\": [\r\n        2005,\r\n        5,\r\n        16\r\n    ],\r\n    \"addressCity\": \"Emmerich\",\r\n    \"addressStreetName\": \"Berlinstrasse\",\r\n    \"addressHouseNumber\": \"11-b\",\r\n    \"addressApartmentNumber\": \"\",\r\n    \"phoneNumber\": \"+23123882\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/auth/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "authentication",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userName\": \"Nicole_Kidman\",\r\n    \"password\": \"1234567\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8095/auth/authentication",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"auth",
+										"authentication"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "updateOrderAndOrderDetails",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNzIwODc4LCJleHAiOjE3MTM4NjQ4Nzh9.aAozIlXEMfW8yNyHbciR8F6fXjyhjyUu-c-PefYA1B0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"deliveryDateTime\": \"2024-05-31T13:00:59.5725705\",\r\n    \"deliveryCity\": \"Emmerich\",\r\n    \"deliveryStreetName\": \"Berlinstrasse\",\r\n    \"deliveryHouseNumber\": \"15-b\",\r\n    \"deliveryApartmentNumber\": \"1-a\",\r\n    \"pizzaToCount\": {\r\n        \"3\": 2,\r\n        \"6\": 1\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8095/order/updateOrderAndOrderDetails/13",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8095",
+							"path": [
+								"order",
+								"updateOrderAndOrderDetails",
+								"13"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteOrder",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNzIwODc4LCJleHAiOjE3MTM4NjQ4Nzh9.aAozIlXEMfW8yNyHbciR8F6fXjyhjyUu-c-PefYA1B0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8095/order/12",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8095",
+							"path": [
+								"order",
+								"12"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getOrderById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNzIwODc4LCJleHAiOjE3MTM4NjQ4Nzh9.aAozIlXEMfW8yNyHbciR8F6fXjyhjyUu-c-PefYA1B0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8095/order/13",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8095",
+							"path": [
+								"order",
+								"13"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllOrdersByUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNzIwODc4LCJleHAiOjE3MTM4NjQ4Nzh9.aAozIlXEMfW8yNyHbciR8F6fXjyhjyUu-c-PefYA1B0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8095/order/getAllByUser/17",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8095",
+							"path": [
+								"order",
+								"getAllByUser",
+								"17"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getOrdersByStatus",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJOaWNvbGVfS2lkbWFuIiwicm9sZSI6IlJPTEVfQ0xJRU5UIiwiaWQiOjE3LCJ1c2VyTmFtZSI6Ik5pY29sZV9LaWRtYW4iLCJlbWFpbCI6Ik5pY29sZV9LaWRtYW5AcGl6emEuY29tIiwiaWF0IjoxNzEzNzIwODc4LCJleHAiOjE3MTM4NjQ4Nzh9.aAozIlXEMfW8yNyHbciR8F6fXjyhjyUu-c-PefYA1B0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8095/order/status?status=NEW",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8095",
+							"path": [
+								"order",
+								"status"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "NEW"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}

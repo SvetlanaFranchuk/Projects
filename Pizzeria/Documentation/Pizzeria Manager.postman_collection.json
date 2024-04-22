@@ -1,0 +1,284 @@
+{
+	"info": {
+		"_postman_id": "2625a15b-da06-4e7a-a4e3-7b0bd2c54e9d",
+		"name": "Pizzeria Manager",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32323927"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Auth",
+					"item": [
+						{
+							"name": "registration",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userName\": \"NewAdmin\",\r\n    \"password\": \"1234567\",\r\n    \"email\": \"NewAdmin@ww.com\",\r\n     \"birthDate\": [\r\n        2005,\r\n        5,\r\n        16\r\n    ],\r\n    \"addressCity\": \"Emmerich\",\r\n    \"addressStreetName\": \"Berlinstrasse\",\r\n    \"addressHouseNumber\": \"11-b\",\r\n    \"addressApartmentNumber\": \"\",\r\n    \"phoneNumber\": \"+23123882\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/auth/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "authentication",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userName\": \"ManagerOlena\",\r\n    \"password\": \"1234567\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8095/auth/authentication",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8095",
+									"path": [
+										"auth",
+										"authentication"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "getProfitInformation",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNYW5hZ2VyT2xlbmEiLCJyb2xlIjoiUk9MRV9NQU5BR0VSIiwiaWQiOjQsInVzZXJOYW1lIjoiTWFuYWdlck9sZW5hIiwiZW1haWwiOiJNYW5hZ2VyT2xlbmFAcGl6emEuY29tIiwiaWF0IjoxNzEzNzMxODEyLCJleHAiOjE3MTM4NzU4MTJ9.5oQHNkSlEGJdSIVIozEkf1M_C9K3HJvEuZP8ICWmEVM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8095/stat/getProfitInformation?startDate=2024-01-01&endDate=2024-04-21",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8095",
+					"path": [
+						"stat",
+						"getProfitInformation"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-01-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-04-21"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getIngredientConsumptionInfo",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNYW5hZ2VyT2xlbmEiLCJyb2xlIjoiUk9MRV9NQU5BR0VSIiwiaWQiOjQsInVzZXJOYW1lIjoiTWFuYWdlck9sZW5hIiwiZW1haWwiOiJNYW5hZ2VyT2xlbmFAcGl6emEuY29tIiwiaWF0IjoxNzEzNzMxODEyLCJleHAiOjE3MTM4NzU4MTJ9.5oQHNkSlEGJdSIVIozEkf1M_C9K3HJvEuZP8ICWmEVM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8095/stat/getIngredientConsumptionInfo?startDate=2024-01-01&endDate=2024-04-21",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8095",
+					"path": [
+						"stat",
+						"getIngredientConsumptionInfo"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-01-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-04-21"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getCountOrdersInfo",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNYW5hZ2VyT2xlbmEiLCJyb2xlIjoiUk9MRV9NQU5BR0VSIiwiaWQiOjQsInVzZXJOYW1lIjoiTWFuYWdlck9sZW5hIiwiZW1haWwiOiJNYW5hZ2VyT2xlbmFAcGl6emEuY29tIiwiaWF0IjoxNzEzNzMxODEyLCJleHAiOjE3MTM4NzU4MTJ9.5oQHNkSlEGJdSIVIozEkf1M_C9K3HJvEuZP8ICWmEVM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8095/stat/getCountOrdersInfo?startDate=2024-01-01&endDate=2024-04-21",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8095",
+					"path": [
+						"stat",
+						"getCountOrdersInfo"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-01-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-04-21"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAverageGrade",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNYW5hZ2VyT2xlbmEiLCJyb2xlIjoiUk9MRV9NQU5BR0VSIiwiaWQiOjQsInVzZXJOYW1lIjoiTWFuYWdlck9sZW5hIiwiZW1haWwiOiJNYW5hZ2VyT2xlbmFAcGl6emEuY29tIiwiaWF0IjoxNzEzNzMxODEyLCJleHAiOjE3MTM4NzU4MTJ9.5oQHNkSlEGJdSIVIozEkf1M_C9K3HJvEuZP8ICWmEVM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8095/stat/getAverageGrade?startDate=2024-01-01&endDate=2024-04-21",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8095",
+					"path": [
+						"stat",
+						"getAverageGrade"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-01-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-04-21"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getPopularityPizzasInfo",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNYW5hZ2VyT2xlbmEiLCJyb2xlIjoiUk9MRV9NQU5BR0VSIiwiaWQiOjQsInVzZXJOYW1lIjoiTWFuYWdlck9sZW5hIiwiZW1haWwiOiJNYW5hZ2VyT2xlbmFAcGl6emEuY29tIiwiaWF0IjoxNzEzNzMxODEyLCJleHAiOjE3MTM4NzU4MTJ9.5oQHNkSlEGJdSIVIozEkf1M_C9K3HJvEuZP8ICWmEVM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8095/stat/getPopularityPizzasInfo?startDate=2024-01-01&endDate=2024-04-21",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8095",
+					"path": [
+						"stat",
+						"getPopularityPizzasInfo"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-01-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-04-21"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}
