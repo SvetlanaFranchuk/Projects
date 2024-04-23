@@ -13,7 +13,7 @@ RUN mvn clean install -DskipTests
 
 FROM eclipse-temurin:21-jdk-alpine
 WORKDIR /opt/app
-EXPOSE 8090
+EXPOSE 8095
 COPY --from=frontend-builder /app/build/ /opt/app/front/static/
 COPY --from=backend-builder /opt/app/target/*.jar /opt/app/app.jar
 
